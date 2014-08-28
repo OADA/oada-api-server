@@ -1,5 +1,9 @@
-oada-test
-=========
+#OADA-Compliant API Server#
 
-OADA Sample API Backend 
-With Cucumber Tests 
+OADA Sample API Backend, with Gherkin Cucumber Tests 
+
+To run the API server:
+
+    node bin/www
+
+#Cucumber Test#
