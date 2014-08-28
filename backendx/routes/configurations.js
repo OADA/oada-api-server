@@ -1,3 +1,4 @@
+/*
 # Copyright 2014 Open Ag Data Alliance
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+*/
 
 var express = require('express');
 var router = express.Router();
@@ -65,7 +67,8 @@ router.get('/:name/:type/:id', function(req, res) {
     var list_of_resources = []
 
     if(cf_type == "machines"){
-        var list_of_resources = [new Vehicle("4000AA", 14001130202, 2014, "8010", "Combine 1")];
+        var list_of_resources = [new Vehicle("4000AA", 14001130202, 2014, "8010", "Combine 1"),
+                                 new Vehicle("4000BB", 14011510340, 2010, "4010", "Combine 2")];
     }
 
     var res_object = {
