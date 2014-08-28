@@ -1,3 +1,4 @@
+"use strict";
 /*
 # Copyright 2014 Open Ag Data Alliance
 #
@@ -18,6 +19,16 @@
 var express = require('express');
 var router = express.Router();
 
+
+/*
+    This is the class for Stream
+*/
+
+var Stream = function(name, id){
+    this.name = name;
+    this.id = id;
+}
+
 /*
     This is the class for Vehicle
     TODO: This is probably going to be replaced by MongoDB model
@@ -31,7 +42,29 @@ var Vehicle = function(vin, serial, model_year, model, name){
     this.name = name;
 }
 
+Vehicle.prototype.get_available_streams = function(){
+    /*
+        return available streams for this Vehicle
+    */
+    return [new Stream("swath_width",1236), 
+            new Stream("location",1237),
+            new Stream("header_position",1238), 
+            new Stream("wet_mass_flow",1239),
+            new Stream("moisture",1240), 
+            new Stream("geofence",1241)];
+}
+
 Vehicle.prototype.as_json = function(){
+
+    //Fill up dummy streams
+    var available_streams = {};
+    var G = this.get_available_streams();
+    for(var idx in G){
+        available_streams[G[idx].name] = {
+            "_href": "/resources/" + G[idx].id
+        }
+    }
+
     //return a json with metadata
     return {
         "formats": {
@@ -46,9 +79,7 @@ Vehicle.prototype.as_json = function(){
             "name": this.name
         },
         "data": {
-            "streams": {
-                "swath_width": "/resources/1236"
-            }
+            "streams": available_streams
         }
     }
 }

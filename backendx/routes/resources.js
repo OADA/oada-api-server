@@ -1,3 +1,4 @@
+"use strict";
 /*
 # Copyright 2014 Open Ag Data Alliance
 #
