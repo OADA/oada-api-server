@@ -4,7 +4,7 @@ Feature: Get the list of resources
 
   Scenario: Get the list of harvesters
     Given the client is logged in
-    When the client requests data for "machines" that are "harvesters" 
+    When the client requests "configurations" for "machines" that are "harvesters" 
     Then the response is a resource with multiple machines entries organized by VIN
     And each machine has the following attributes:
       |  attribute         |  descriptions    | 
