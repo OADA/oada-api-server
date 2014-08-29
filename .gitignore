@@ -2,6 +2,9 @@
 logs
 *.log
 
+#Project
+.idea
+
 # Runtime data
 pids
 *.pid
