@@ -24,29 +24,43 @@ router.get('/:id', function(req, res) {
 
     //TODO: Check the Authentication Bearer
     var id = req.params.id;
-    var formats_object = {};
-    var meta_object = {};
-    var data_resource_object = {
-        "_href": "https://" + req.headers.host + "/resources/" + id + "/data"
-    };
+    
 
+    //TODO: Is _etag dependent on id?
+    var res_object = {
+        "_href": "https://" + req.headers.host + "/resources/" + id,
+        "_etag": "aabbccdd", 
+        "_changeId": "abcdef"
+    }
+    
     if(id == 1236){
+        //Swath Width
+        var formats_object = {};
+        var meta_object = {};
+        var data_resource_object = {
+            "_href": "https://" + req.headers.host + "/resources/" + id + "/data"
+        };
+    
         //Get metadata for the “swath_width” stream
         formats_object["vnd.oada.harvester.streams.swath_width"] = {
             "original": true
         }
         meta_object["units"] = "feet";
+        res_object["meta"] = meta_object;
+        res_object["formats"] = formats_object;
+        res_object["data"] = data_resource_object;
+    }else if(id == 1241){
+        //Geofence streams
+        var t0 = new Date();
+        res_object["formats"] = "application/vnd.oada.machines.harvester.streams.geofence.1+json";
+        res_object["items"] = [{
+            "time" : t0,
+            "action": "enter",
+            "field" : "https://" + req.headers.host + "/resources/" + "1239i3j"
+        }]
     }
 
-    var res_object = {
-        "_href": "https://" + req.headers.host + "/resources/" + id,
-        "_etag": "aabbccdd",
-        "_changeId": "abcdef",
-        "meta": meta_object,
-        "formats": formats_object,
-        "data": data_resource_object
-    }
-
+    
 
     res.json(res_object);
 });
