@@ -5,7 +5,7 @@ var request = require('request')
 var World = function World(callback) {
 	this.lastResponse = null;
 	var context = this;
-	this.root_url = "http://localhost:3000"
+	this.root_url = "http://polar-fortress-6409.herokuapp.com"
 	this.get_token = function(){
 		return "123456";
 	}
@@ -22,7 +22,6 @@ var World = function World(callback) {
 				        return callback.fail(new Error(error.message))
 				      }
 				      context.lastResponse = response;
-				      console.log("GET Done");
 				      callback()
 				  });
   	}

@@ -9,7 +9,7 @@ var StepDef = function () {
 
   this.When(/^the client requests "([^"]*)" for "([^"]*)" that are "([^"]*)"$/, function (arg0, arg1, arg2, callback) {
     var url = this.root_url + "/" + arg0 + "/me/" + arg1 + "/" + arg2 + "/";
-    console.log(url);
+    console.log("Endpoint under test: " + url);
     this.get(url, this.get_token(), callback);
   });
 
