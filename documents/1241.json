@@ -1,0 +1,16 @@
+{
+  "_href": "<URI>",
+  "_etag": "<ETAG>",
+  "_format": "application/vnd.oada.machines.harvester.streams.geofence.1+json",
+  "items": {
+    "0": { "time": "<Time>", 
+      "action": "<String>", 
+      "field": "<URI>"
+    },
+    "1": {
+      "time": "<Time>",
+      "action": "<String>",
+      "field": "<URI>"
+    }
+  }
+}
