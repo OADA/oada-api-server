@@ -33,6 +33,14 @@ var StepDef = function () {
     }
 
     //Iterate over resource and check (with Regular Expression)
+    var vin_chk = new RegExp("[0-9]+[a-zA-Z]");
+    for(var key in this.data_configs.resource){
+      if(!vin_chk.test(key)){
+        callback.fail(new Error("VIN is invalid: " + key));
+      }else{
+        console.log("[PASSED] VIN is valid: " + key);
+      }
+    }
     
     callback();
   });
