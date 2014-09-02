@@ -7,17 +7,17 @@ Feature: Get the list of resources
     When the client requests "configurations" for "machines" that are "harvesters" 
     Then the response is a resource with multiple machines entries organized by VIN
     And each machine has the following attributes:
-      |  attribute         |  descriptions    | 
-      |  formats           |  String          | 
-      |  meta              |  String          | 
-      |  data              |  Integer         | 
-    And each meta attribute of each machine contains the following information:
+      |  ATTRIBUTE         |  DESCRIPTION                               | 
+      |  formats           |  describes the format of the data          | 
+      |  meta              |  contains metadata                         | 
+      |  data              |  contains stream of data                   | 
+    And each "meta" attribute of each machine contains the following information:
+      |  ATTRIBUTE     |
       |  serial_number |
       |  model_year    |
       |  model         |
       |  name          |
-    And each formats attribute of each machine is valid
-    And each data attributes of each machine are streams of the following resources:
+    And each "data" attributes of each machine are "streams" of the following resources:
       |  swath_width     |
       |  location        |
       |  header_position |

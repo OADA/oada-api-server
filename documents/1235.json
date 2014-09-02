@@ -1,0 +1,39 @@
+{
+      "_href": "<URI>",
+      "_etag": "<String>",
+      "_changeId": "<String>",
+      "_format": "application/vnd.oada.resource+json",
+      "data": {
+        "streams": {
+          "geofence": {
+            "_href": "<URI>"
+          },
+          "header_position": {
+            "_href": "<URI>"
+          },
+          "location": {
+            "_href": "<URI>"
+          },
+          "moisture": {
+            "_href": "<URI>"
+          },
+          "swath_width": {
+            "_href": "<URI>"
+          },
+          "wet_mass_flow": {
+            "_href": "<URI>"
+          }
+        }
+      },
+      "formats": {
+        "vnd.oada.machines.harvester+json": {
+          "original": "<Boolean>"
+        }
+      },
+      "meta": {
+        "model": "<String>",
+        "model_year": "<Integer>",
+        "name": "<String>",
+        "serial_number": "<Integer>"
+      }
+}

@@ -58,6 +58,10 @@ router.get('/:id', function(req, res) {
             "action": "enter",
             "field" : "https://" + req.headers.host + "/resources/" + "1239i3j"
         }]
+    }else{
+        //Pull up document format template
+        var resource_format = require('../documents/1235.json');
+        res.json(resource_format);
     }
 
     
