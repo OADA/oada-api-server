@@ -1,6 +1,6 @@
 {
       "_href": "<URI>",
-      "_etag": "<String>",
+      "_etag": "<ETAG>",
       "_changeId": "<String>",
       "_format": "application/vnd.oada.resource+json",
       "data": {

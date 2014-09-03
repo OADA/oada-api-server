@@ -60,8 +60,11 @@ router.get('/:id', function(req, res) {
         }]
     }else{
         //Pull up document format template
-        var resource_format = require('../documents/1235.json');
-        res.json(resource_format);
+        try{
+            res_object = require('../documents/' + id + '.json');
+        }catch(exp){
+            //Send out error message for unsupported Resource ID
+        }
     }
 
     
