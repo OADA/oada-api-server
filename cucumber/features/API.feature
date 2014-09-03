@@ -2,7 +2,7 @@ Feature: Get the list of resources
   Retrieves list of resources such as machines, locations
   or other type of data streams.
 
-  Scenario: Get the list of harvesters
+  Scenario: Get configurations for harvesters 
     Given the client is logged in
     When the client requests "configurations" for "machines" that are "harvesters" 
     Then the response is a resource with multiple machines entries organized by VIN
@@ -24,3 +24,16 @@ Feature: Get the list of resources
       |  wet_mass_flow   |
       |  moisture        |
       |  geofence        |
+      
+  Scenario: Get geofence stream
+    Given the client is logged in
+    When the client requests resource number "1241"
+    Then the response is a resource with the following information:
+    |   ATTRIBUTE    |
+    |   items        |
+    And each item has the following information:
+    |   ATTRIBUTE    |   DESCRIPTION                               |
+    |   action       |   enter or leave the field                  |
+    |   field        |   which field                               |
+    |   time         |   what time did it perform the above action |
+      

@@ -19,6 +19,7 @@ var StepDef = function () {
       callback.fail(new Error("Failed"));
     }
     try{
+      //TODO : rename last_response to response_object or something
       this.last_response = JSON.parse(this.lastResponse.body);
       console.log("[PASSED] Configuration parsed");
     }catch(exp){
@@ -91,6 +92,25 @@ var StepDef = function () {
     }
    callback();
   });
+
+
+  this.When(/^the client requests resource number "([^"]*)"$/, function (arg1, callback) {   
+      //Test Geofence resource
+      this.current_url = this.root_url + "/" + "resources/" + arg1;
+      console.log("Endpoint under test: " + this.current_url);
+      this.get(this.current_url, this.get_token(), callback);                                                                                                         
+  });                                                                                                                             
+                                                                                                                                    
+  this.Then(/^the response is a resource with the following information:$/, function (table, callback) {                          
+      console.log(this.lastResponse.body);
+      callback();
+  });                                                                                                                             
+                                                                                                                                    
+  this.Then(/^each item has the following information:$/, function (table, callback) {                                            
+      callback.pending();                                                                                                           
+  });                                                                                                                             
+            
+
 
 };
 

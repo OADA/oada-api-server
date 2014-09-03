@@ -27,7 +27,7 @@
       },
       "formats": {
         "vnd.oada.machines.harvester+json": {
-          "original": "<Boolean>"
+          "original": true
         }
       },
       "meta": {
