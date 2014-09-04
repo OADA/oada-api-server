@@ -1,9 +1,15 @@
 {
-      "_href": "<URI>",
+      "_href": "<URI>/resources/1235",
       "_etag": "<ETAG>",
       "_changeId": "<String>",
       "_format": "application/vnd.oada.resource+json",
+      "formats": {
+        "vnd.oada.machines.harvester+json": {
+          "original": "<Boolean>"
+        }
+      },
       "data": {
+        "_href": "<URI>",
         "streams": {
           "geofence": {
             "_href": "<URI>"
@@ -23,11 +29,6 @@
           "wet_mass_flow": {
             "_href": "<URI>"
           }
-        }
-      },
-      "formats": {
-        "vnd.oada.machines.harvester+json": {
-          "original": true
         }
       },
       "meta": {

@@ -20,10 +20,11 @@ var express = require('express');
 var router = express.Router();
 
 /* GET resource listing. */
-router.get('/:id', function(req, res) {
+router.get('/*', function(req, res) {
 
     //TODO: Check the Authentication Bearer
-    var id = req.params.id;
+    var rest_path = req.params[0].split("/");
+    var id = rest_path[0];
     
 
     //TODO: Is _etag dependent on id?
@@ -64,6 +65,10 @@ router.get('/:id', function(req, res) {
             res_object = require('../documents/' + id + '.json');
         }catch(exp){
             //Send out error message for unsupported Resource ID
+            console.log(exp);
+            res.json({
+                "error": "unsupported resource"
+            });
         }
     }
 
