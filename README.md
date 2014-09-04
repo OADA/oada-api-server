@@ -1,18 +1,26 @@
 #OADA-Compliant API Server#
 
-OADA Sample API Backend **(/backendx)**, with Gherkin Cucumber Tests **(/cucumber)**
+Notice: **All codes in repository are currently in pre-release alpha and are subject to changes.**
 
-Running the API server:
+There is an example server running [here](http://oada-test.herokuapp.com). 
 
-> `node backendx/bin/www`
+If you wish to run the API back-end on your own machine or server, you must install all the required packages by doing:
+    
+    cd  /path/to/this/project
+    npm install
+	
+To start the API server:
 
-#Cucumber Test#
+    node bin/www
 
-Specify your hostname in `cucumber/support/world.js`
+#API Testing#
+
+To perform the tests, you must have [cucumber-js](https://github.com/cucumber/cucumber-js) installed.
+
+If you wish to run the test on a different server, modify the server hostname here: `cucumber/support/world.js`
     
     this.root_url = "http://oada.yourapp.com"
 
 **Performing the tests**
 
-> `cucumber-js cucumber/features/API.feature`
-
+    cucumber-js cucumber/features/API.feature
