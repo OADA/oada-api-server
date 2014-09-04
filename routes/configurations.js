@@ -54,14 +54,14 @@ Vehicle.prototype.get_available_streams = function(){
             new Stream("geofence",1241)];
 }
 
-Vehicle.prototype.as_json = function(){
+Vehicle.prototype.as_json = function(req){
 
     //Fill up dummy streams
     var available_streams = {};
     var G = this.get_available_streams();
     for(var idx in G){
         available_streams[G[idx].name] = {
-            "_href": "/resources/" + G[idx].id
+            "_href": "http://" + req.headers.host + "/resources/" + G[idx].id
         }
     }
 
@@ -103,14 +103,14 @@ router.get('/:name/:type/:id', function(req, res) {
     }
 
     var res_object = {
-        "_href": "https://" + req.headers.host + "/" + cf_name + "/" + cf_type + "/" + cf_id,
+        "_href": "http://" + req.headers.host + "/" + cf_name + "/" + cf_type + "/" + cf_id,
         "_etag": "aabbccddeeffgg",
         "resource": {}
     }
 
     for(var index in list_of_resources){
         var resource_entry = list_of_resources[index];
-        res_object.resource[resource_entry.id] = resource_entry.as_json();
+        res_object.resource[resource_entry.id] = resource_entry.as_json(req);
     }
 
     res.json(res_object);

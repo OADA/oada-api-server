@@ -24,56 +24,35 @@ router.get('/*', function(req, res) {
 
     //TODO: Check the Authentication Bearer
     var rest_path = req.params[0].split("/");
-    var id = rest_path[0];
-    
+    var id = rest_path.shift();
 
-    //TODO: Is _etag dependent on id?
     var res_object = {
         "_href": "https://" + req.headers.host + "/resources/" + id,
         "_etag": "aabbccdd", 
         "_changeId": "abcdef"
     }
     
-    if(id == 1236){
-        //Swath Width
-        var formats_object = {};
-        var meta_object = {};
-        var data_resource_object = {
-            "_href": "https://" + req.headers.host + "/resources/" + id + "/data"
-        };
-    
-        //Get metadata for the “swath_width” stream
-        formats_object["vnd.oada.harvester.streams.swath_width"] = {
-            "original": true
+    // Pull up document format template
+    try{
+        res_object = require('../documents/' + id + '.json');
+        //walk through the requested REST Path
+        for(var idx in rest_path){
+            var child = rest_path[idx];
+            if(!res_object.hasOwnProperty(child)){
+                throw {"message": "The resource you requested does not exist."};
+            }
+            res_object = res_object[child];
+            rest_path.shift();
         }
-        meta_object["units"] = "feet";
-        res_object["meta"] = meta_object;
-        res_object["formats"] = formats_object;
-        res_object["data"] = data_resource_object;
-    }else if(id == 1241){
-        //Geofence streams
-        var t0 = new Date();
-        res_object["formats"] = "application/vnd.oada.machines.harvester.streams.geofence.1+json";
-        res_object["items"] = [{
-            "time" : t0,
-            "action": "enter",
-            "field" : "https://" + req.headers.host + "/resources/" + "1239i3j"
-        }]
-    }else{
-        //Pull up document format template
-        try{
-            res_object = require('../documents/' + id + '.json');
-        }catch(exp){
-            //Send out error message for unsupported Resource ID
-            console.log(exp);
-            res.json({
-                "error": "unsupported resource"
-            });
-        }
+        //TODO: Actually putting data into the placeholder
+    }catch(exp){
+        //Send out error message for unsupported Resource ID
+        res.json({
+            "error": "unsupported resource",
+            "reason": exp.message
+        });
     }
-
     
-
     res.json(res_object);
 });
 
