@@ -9,7 +9,7 @@ docparser.prototype.parseTokens = function(doc){
 	temp = temp.replace(/<Time>/g, new Date()); //just hardcoded for demo purpose
 
 
-	temp = temp.replace(/<ETAG>/g, md5(temp));
+	temp = temp.replace(/<ETAG>/g, md5(temp + Math.random()));
 	return JSON.parse(temp);
 };
 

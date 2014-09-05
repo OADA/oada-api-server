@@ -8,7 +8,7 @@ var StepDef = function () {
   });
 
   this.When(/^the client requests "([^"]*)" for "([^"]*)" that are "([^"]*)"$/, function (arg0, arg1, arg2, callback) {
-    this.current_url = this.root_url + "/" + arg0 + "/me/" + arg1 + "/" + arg2 + "/";
+    this.current_url = this.root_url + "/" + arg0 + "/me/" + arg1 + "/" + arg2 + "?_expand=2";
     console.log("Endpoint under test: " + this.current_url);
     this.get(this.current_url, this.get_token(), callback);
   });
@@ -96,7 +96,7 @@ var StepDef = function () {
 
   this.When(/^the client requests resource number "([^"]*)"$/, function (arg1, callback) {   
       //Test Geofence resource
-      this.current_url = this.root_url + "/" + "resources/" + arg1;
+      this.current_url = this.root_url + "/" + "resources/" + arg1 ;
       console.log("Endpoint under test: " + this.current_url);
       this.get(this.current_url, this.get_token(), callback);                                                                                                         
   });                                                                                                                             

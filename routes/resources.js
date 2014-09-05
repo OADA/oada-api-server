@@ -39,6 +39,9 @@ router.get('/*', function(req, res) {
         //walk through the requested REST Path
         for(var idx in rest_path){
             var child = rest_path[idx];
+            if(child == ""){
+                continue;
+            }
             if(!res_object.hasOwnProperty(child)){
                 throw {"message": "The resource you requested does not exist."};
             }

@@ -15,7 +15,9 @@
       "_etag": "<ETAG>",
       "_format": "application/vnd.oada.machines.harvester.streams.geofence.1+json",
       "items": [
-        { "time": "<Time>",  "action": "<String>",  "field": "<FIELD_URI>"}
+        { "id": 0, "time": "<Time>",  "action": "enter",  "field": "<FIELD_URI>"},
+        { "id": 1, "time": "<Time>",  "action": "leave",  "field": "<FIELD_URI>"},
+        { "id": 2, "time": "<Time>",  "action": "enter",  "field": "<FIELD_URI>"}
       ]
     }
 }

@@ -1,4 +1,3 @@
-"use strict";
 /*
 # Copyright 2014 Open Ag Data Alliance
 #
@@ -15,104 +14,57 @@
 # limitations under the License.
 #
 */
+var md5 = require('MD5');
+var docparser = require('../parser');
 
 var express = require('express');
 var router = express.Router();
 
+//TODO: Need a way to elegantly generate config responses
 
-/*
-    This is the class for Stream
-*/
-
-var Stream = function(name, id){
-    this.name = name;
-    this.id = id;
-}
-
-/*
-    This is the class for Vehicle
-    TODO: This is probably going to be replaced by MongoDB model
- */
-var Vehicle = function(vin, serial, model_year, model, name){
-    //initializer
-    this.id = vin;
-    this.serial_number = serial;
-    this.model_year = 2008;
-    this.model = model;
-    this.name = name;
-}
-
-Vehicle.prototype.get_available_streams = function(){
-    /*
-        return available streams for this Vehicle
-    */
-    return [new Stream("swath_width",1236), 
-            new Stream("location",1237),
-            new Stream("header_position",1238), 
-            new Stream("wet_mass_flow",1239),
-            new Stream("moisture",1240), 
-            new Stream("geofence",1241)];
-}
-
-Vehicle.prototype.as_json = function(req){
-
-    //Fill up dummy streams
-    var available_streams = {};
-    var G = this.get_available_streams();
-    for(var idx in G){
-        available_streams[G[idx].name] = {
-            "_href": "http://" + req.headers.host + "/resources/" + G[idx].id
-        }
-    }
-
-    //return a json with metadata
-    return {
-        "formats": {
-            "vnd.oada.machines.harvester+json": {
-                "original": true
-            }
-        },
-        "meta": {
-            "serial_number": this.serial_number,
-            "model_year": this.model_year,
-            "model" : this.model,
-            "name": this.name
-        },
-        "data": {
-            "streams": available_streams
-        }
-    }
-}
-
-router.get('/:name/:type/:id', function(req, res) {
+router.get('/*', function(req, res) {
 
     // TODO: Check the Authentication Bearer
+    var rest_path = req.params[0].split("/");
+    var cf_name = rest_path.shift(); //name of the config file we are loading
+    var cf_type = rest_path.shift(); //type of config we are loading
+    var cf_id = rest_path.shift();
 
-    var cf_name = req.params.name; //name of the config file we are loading
-    var cf_type = req.params.type; //type of config we are loading
-    var cf_id = req.params.id;
+    var mParser = new docparser(req.headers.host);
+    var res_object = {};
 
-    var meta_object = {};
-    var formats_object = {};
-    var data_resource_object = {};
-    var list_of_resources = []
+    try{
+        res_object = require('../documents/configurations/' + cf_type + '/' + cf_id + '.json');
 
-    if(cf_type == "machines"){
-        var list_of_resources = [new Vehicle("4000AA", 14001130202, 2014, "8010", "Combine 1"),
-                                 new Vehicle("4000BB", 14011510340, 2010, "4010", "Combine 2")];
+        if(rest_path.length > 1 || req.query['_expand'] == '2'){
+            var resource = require('../documents/configurations/' + cf_type + '/resource/' + cf_id + '.json');
+            res_object['resource'] = resource;
+        }else{
+            //Hardcoded 
+            res_object['resource'] = {
+                "4000AA": "<URI>/configurations/me/machines/harvesters/resource/4000AA"
+            }
+        }
+
+        //walk through the requested REST Path
+        for(var idx in rest_path){
+            var child = rest_path[idx];
+            if(child == ""){
+                continue;
+            }
+            if(!res_object.hasOwnProperty(child)){
+                throw {"message": "The resource you requested does not exist."};
+            }
+            res_object = res_object[child];
+        }
+    }catch(exp){
+        res.json({
+            "error": "unsupported resource",
+            "reason": exp.message
+        });
     }
-
-    var res_object = {
-        "_href": "http://" + req.headers.host + "/" + cf_name + "/" + cf_type + "/" + cf_id,
-        "_etag": "aabbccddeeffgg",
-        "resource": {}
-    }
-
-    for(var index in list_of_resources){
-        var resource_entry = list_of_resources[index];
-        res_object.resource[resource_entry.id] = resource_entry.as_json(req);
-    }
-
+    
+    res_object = mParser.parseTokens(res_object);
     res.json(res_object);
 });
 
