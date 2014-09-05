@@ -3,7 +3,7 @@
   "_etag": "<ETAG>",
   "_changeId": "<String>",
   "meta": {
-    "units": "<String>"
+    "units": "<1237_meta_units>"
   },
   "formats": {
     "vnd.oada.harvester.streams.location": {
@@ -16,7 +16,7 @@
       "_changeId": "<String>",
       "_format": "application/vnd.oada.machines.harvester.streams.location.1+json",
       "items": [
-        { "_id": 0, "time": "2014-07-15 11:31:12.123z", "location": "34.576111,54.576111" },
+        { "_id": 0, "time": "2014-07-15 11:31:12.123z", "location": "34.576111,54.576111" }
       ]
   }
 }

@@ -6,6 +6,7 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "md5": "~1.2.1",
     "express": "~4.2.0",
     "static-favicon": "~1.0.0",
     "morgan": "~1.0.0",

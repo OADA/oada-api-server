@@ -19,7 +19,9 @@ To perform the tests, you must have [cucumber-js](https://github.com/cucumber/cu
 
 If you wish to run the test on a different server, modify the server hostname here: `cucumber/support/world.js`
     
-    this.root_url = "http://oada.yourapp.com"
+    var configurations = {
+         "hostname": "http://your.hostname.com"
+	}
 
 **Performing the tests**
 

@@ -102,12 +102,24 @@ var StepDef = function () {
   });                                                                                                                             
                                                                                                                                     
   this.Then(/^the response is a resource with the following information:$/, function (table, callback) {                          
-      console.log(this.lastResponse.body);
+      try{
+        this.last_response = JSON.parse(this.lastResponse.body);
+      }catch(ex){
+        callback.fail(new Error("JSON is malformed " + " @" + this.current_url));
+      }
+      for(var idx in table.rows()){
+          var look_for = table.rows()[idx][0];
+          if(this.last_response[look_for] === undefined){
+              callback.fail(new Error("Geofence Resource missing attribute :" + look_for + " @" + this.current_url));
+          }else{
+              console.log("[PASSED] Geofence Resource attribute check : " + look_for);
+          }
+      }
       callback();
   });                                                                                                                             
                                                                                                                                     
-  this.Then(/^each item has the following information:$/, function (table, callback) {                                            
-      callback.pending();                                                                                                           
+  this.Then(/^each item has the following information:$/, function (table, callback) {                                       
+      callback.pending();                                                                                                      
   });                                                                                                                             
             
 

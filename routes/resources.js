@@ -16,25 +16,26 @@
 #
 */
 
+var docparser = require('../parser');
 var express = require('express');
 var router = express.Router();
 
-/* GET resource listing. */
+/* TODO: note a bug, child resource templates in document/ liked 'data' are hardcoded causing the md5 hash to be identical to its parent */
+
 router.get('/*', function(req, res) {
 
     //TODO: Check the Authentication Bearer
+
     var rest_path = req.params[0].split("/");
     var id = rest_path.shift();
 
-    var res_object = {
-        "_href": "https://" + req.headers.host + "/resources/" + id,
-        "_etag": "aabbccdd", 
-        "_changeId": "abcdef"
-    }
-    
+    var mParser = new docparser(req.headers.host);
+    var res_object = {};
+
     // Pull up document format template
     try{
         res_object = require('../documents/' + id + '.json');
+
         //walk through the requested REST Path
         for(var idx in rest_path){
             var child = rest_path[idx];
@@ -42,7 +43,6 @@ router.get('/*', function(req, res) {
                 throw {"message": "The resource you requested does not exist."};
             }
             res_object = res_object[child];
-            rest_path.shift();
         }
         //TODO: Actually putting data into the placeholder
     }catch(exp){
@@ -53,6 +53,7 @@ router.get('/*', function(req, res) {
         });
     }
     
+    res_object = mParser.parseTokens(res_object);
     res.json(res_object);
 });
 

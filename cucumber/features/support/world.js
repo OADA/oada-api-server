@@ -1,12 +1,14 @@
 //Initialize your parameters here
+var configurations = {
+    "hostname": "http://oada-test.herokuapp.com"
+}
+
 var request = require('request')
 var World = function World(callback) {
     this.lastResponse = null;
     var context = this;
-    this.root_url = "http://polar-fortress-6409.herokuapp.com"
-    this.get_token = function(){
-        return "123456";
-    }
+
+    this.root_url = configurations.hostname;
     
     this.get = function(uri, token, callback) {
         var header_object = {'User-Agent': 'request'}
@@ -23,6 +25,10 @@ var World = function World(callback) {
                             context.lastResponse = response;
                             callback()
         });
+    }
+
+    this.get_token = function(){
+        return "123456";
     }
 
     this.post = function(uri, token, callback){
