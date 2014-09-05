@@ -1,0 +1,23 @@
+{
+  "_href": "<URI>/resources/1241",
+  "_etag": "<ETAG>",
+  "_changeId": "<String>",
+  "meta": {
+    "units": "<String>"
+  },
+  "formats": {
+    "vnd.oada.harvester.streams.geofence": {
+      "original": "<Boolean>"
+    }
+  },
+  "data": {
+      "_href": "<URI>/resources/1241/data",
+      "_etag": "<ETAG>",
+      "_format": "application/vnd.oada.machines.harvester.streams.geofence.1+json",
+      "items": [
+        { "id": 0, "time": "<Time>",  "action": "enter",  "field": "<URI>/resources/1239i3j"},
+        { "id": 1, "time": "<Time>",  "action": "leave",  "field": "<URI>/resources/1239i3j"},
+        { "id": 2, "time": "<Time>",  "action": "enter",  "field": "<URI>/resources/1239i3j"}
+      ]
+    }
+}

@@ -1,0 +1,40 @@
+{
+      "_href": "<URI>/resources/1235",
+      "_etag": "<ETAG>",
+      "_changeId": "<1235_changeid>",
+      "_format": "application/vnd.oada.resource+json",
+      "formats": {
+        "vnd.oada.machines.harvester+json": {
+          "original": "<1235_formats_original>"
+        }
+      },
+      "data": {
+        "_href": "<URI>/resources/1235/data",
+        "streams": {
+          "geofence": {
+            "_href": "<URI>/resources/1241"
+          },
+          "header_position": {
+            "_href": "<URI>/resources/1238"
+          },
+          "location": {
+            "_href": "<URI>/resources/1237"
+          },
+          "moisture": {
+            "_href": "<URI>/resources/1240"
+          },
+          "swath_width": {
+            "_href": "<URI>/resources/1236"
+          },
+          "wet_mass_flow": {
+            "_href": "<URI>/resources/1239"
+          }
+        }
+      },
+      "meta": {
+        "model": "<1235_meta_model>",
+        "model_year": "<1235_meta_model_year>",
+        "name": "<1235_meta_name>",
+        "serial_number": "<1235_meta_serial_number>"
+      }
+}

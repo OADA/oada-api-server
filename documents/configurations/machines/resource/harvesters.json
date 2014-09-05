@@ -1,0 +1,39 @@
+{
+    "4000AA": {
+      "_href": "<URI>/configurations/me/machines/harvesters/resource/4000AA",
+  	  "_etag": "<ETAG>",
+      "formats": {
+        "vnd.oada.machines.harvester+json": {
+          "original": "<Boolean>"
+        }
+      },
+      "meta": {
+        "serial_number": 14001130202,
+        "model_year": 2008,
+        "model": "Z2M-010CTC",
+        "name": "Combine 1"
+      },
+      "data": {
+        "streams": {
+          "swath_width": {
+            "_href": "<URI>/resources/1236"
+          },
+          "location": {
+            "_href": "<URI>/resources/1237"
+          },
+          "header_position": {
+            "_href": "<URI>/resources/1238"
+          },
+          "wet_mass_flow": {
+            "_href": "<URI>/resources/1239"
+          },
+          "moisture": {
+            "_href": "<URI>/resources/1240"
+          },
+          "geofence": {
+            "_href": "<URI>/resources/1241"
+          }
+        }
+      }
+    }
+}
