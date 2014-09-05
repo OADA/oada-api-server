@@ -39,6 +39,7 @@ router.get('/*', function(req, res) {
         if(rest_path.length > 1 || req.query['_expand'] == '2'){
             //1300 = harvester
             var resource = require('../documents/1300.json');
+            res_object['items']['4000AA'] = {};
             res_object['items']['4000AA']['resource'] = resource;
         }else{
             //Hardcoded 
