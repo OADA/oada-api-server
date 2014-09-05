@@ -29,3 +29,4 @@ If you do not change this parameter, the test will run against our [test server]
 
     cucumber-js cucumber/features/API.feature
 
+Follow the standard [cucumber-js](https://github.com/cucumber/cucumber-js) procedures to add more tests.

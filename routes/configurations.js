@@ -37,11 +37,13 @@ router.get('/*', function(req, res) {
         res_object = require('../documents/configurations/' + cf_type + '/' + cf_id + '.json');
 
         if(rest_path.length > 1 || req.query['_expand'] == '2'){
-            var resource = require('../documents/configurations/' + cf_type + '/resource/' + cf_id + '.json');
-            res_object['resource'] = resource;
+            //1300 = harvester
+            var resource = require('../documents/1300.json');
+            res_object['items']['4000AA'] = {};
+            res_object['items']['4000AA']['resource'] = resource;
         }else{
             //Hardcoded 
-            res_object['resource'] = {
+            res_object['items'] = {
                 "4000AA": "<URI>/configurations/me/machines/harvesters/resource/4000AA"
             }
         }

@@ -1,5 +1,10 @@
 {
   "_href": "<URI>/configurations/me/machines/harvesters",
   "_etag": "<ETAG>",
-  "resource": "<harvesters_resource>"
+  "items": {
+  	"4000AA": {
+  		"_href": "<URI>/configurations/me/machines/harvesters/items/4000AA",
+  		"resource": "<resource_object/1300>"
+  	}
+  }
 }
