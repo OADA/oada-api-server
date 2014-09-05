@@ -26,16 +26,16 @@ var StepDef = function () {
       callback.fail(new Error("Configurations JSON is malformed"));
     }
     //Test for multiple machines entries organized by VIN
-    try{
-      this.last_response.resource;
-      console.log("[PASSED] Found attribute `resource`");
-    }catch(exp){
-      callback.fail(new Error("Configurations missing attribute `resource`"));
+    if(this.last_response.items !== undefined){
+      this.last_response.items;
+      console.log("[PASSED] Found attribute `items`");
+    }else{
+      callback.fail(new Error("Configurations missing attribute `items`"));
     }
 
     //Check VINs look like VINs (with Regular Expression)
     var vin_chk = new RegExp("[0-9]+[a-zA-Z]");
-    for(var key in this.last_response.resource){
+    for(var key in this.last_response.items){
       if(!vin_chk.test(key)){
         callback.fail(new Error("VIN looks wrong: " + key));
       }else{
@@ -48,8 +48,8 @@ var StepDef = function () {
 
   this.Then(/^each machine has the following attributes:$/, function (table, callback) {
     // Write code here that turns the phrase above into concrete actions
-    for(var machine_vin in this.last_response.resource){
-        var machine_obj = this.last_response.resource[machine_vin];
+    for(var machine_vin in this.last_response.items){
+        var machine_obj = this.last_response.items[machine_vin].resource;
         for(var idx in table.rows()){
             var look_for = table.rows()[idx][0];
             if(machine_obj[look_for] === undefined){
