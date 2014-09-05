@@ -23,6 +23,9 @@ If you wish to run the test on a different server, modify the server hostname he
          "hostname": "http://your.hostname.com"
 	}
 
+If you do not change this parameter, the test will run against our [test server](http://oada-test.herokuapp.com). 
+
 **Performing the tests**
 
     cucumber-js cucumber/features/API.feature
+
