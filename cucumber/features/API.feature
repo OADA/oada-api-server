@@ -29,8 +29,13 @@ Feature: Get the list of resources
     Given the client is logged in
     When the client requests resource number "1241"
     Then the response is a resource with the following information:
-    |   ATTRIBUTE    |
-    |   items        |
+    |   ATTRIBUTE    |   DESCRIPTION                          |
+    |   data         |   resource for geofence stream item    |
+    |   formats      |   specifies the format of the data     |
+    |   meta         |   other information like units. etc.   |
+    |   _href        |   current document location            |
+    |   _etag        |   md5 hash sum of current document     |
+    |   _changeId    |   revision number                      |
     And each item has the following information:
     |   ATTRIBUTE    |   DESCRIPTION                               |
     |   action       |   enter or leave the field                  |
