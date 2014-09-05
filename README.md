@@ -1,6 +1,6 @@
 #OADA-Compliant API Server#
 
-Notice: **All codes in repository are currently in pre-release alpha and are subject to changes.**
+Notice: ***All codes in repository are currently in pre-release alpha and are subject to changes.***
 
 There is an example server running [here](http://oada-test.herokuapp.com). 
 
