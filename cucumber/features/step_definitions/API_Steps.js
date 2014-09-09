@@ -1,8 +1,30 @@
+function check_attributes(table, object, passing_callback){
+      /*
+        check if all attributes specified in table exists in object
+        @table : attribute table passed via cucumber
+        @object: object to be tested
+      */
+      for(var idx in table.rows()){
+            var look_for = table.rows()[idx][0];
+            if(object[look_for] === undefined){
+                callback.fail(new Error("Missing attribute :" + look_for + " @" + this.current_url));
+                return;
+            }else{
+                passing_callback();
+            }
+      }
+}
+  
 var StepDef = function () {
   this.World = require("../support/world.js").World; 
 
   var context = this;
   this.Given(/^the client is logged in$/, function (callback) {
+    //Check token validity somehow
+    callback();
+  });
+  
+  this.Given(/^the client is authorized$/, function (callback) {
     //Check token validity somehow
     callback();
   });
@@ -62,35 +84,18 @@ var StepDef = function () {
     
     callback();
   });
-
-  this.Then(/^each "([^"]*)" attribute of each machine contains the following information:$/, function (n1, table, callback) {
+  
+  
+  this.Then(/^the "([^"]*)" attribute of each machine contains the following information:$/, function (n1, table, callback) {
+    var msg_success = function(){
+       console.log("[PASSED] Harvester attribute check : " + machine_vin  + "/" + look_for);
+    }
     for(var machine_vin in this.last_response.resource){
         var machine_obj = this.last_response.resource[machine_vin];
-        for(var idx in table.rows()){
-            var look_for = table.rows()[idx][0];
-            if(machine_obj[n1][look_for] === undefined){
-                callback.fail(new Error("Missing attribute :" + look_for + " @" + this.current_url));
-            }else{
-                console.log("[PASSED] Harvester attribute check : " + machine_vin  + "/" + look_for);
-            }
-        }
+        var machine_obj_meta = machine_obj.meta;
+        check_attributes(table, machine_obj, msg_success);
     }
     callback();
-  });
-
-  this.Then(/^each "([^"]*)" attributes of each machine are "([^"]*)" of the following resources:$/, function (n1, n2, table, callback) {
-    for(var machine_vin in this.last_response.resource){
-        var machine_obj = this.last_response.resource[machine_vin];
-        for(var idx in table.rows()){
-            var look_for = table.rows()[idx][0];
-            if(machine_obj[n1][n2][look_for] === undefined){
-                callback.fail(new Error("Missing attribute :" + look_for + " @" + this.current_url));
-            }else{
-                console.log("[PASSED] Harvester attribute check : " + machine_vin  + "/" + look_for);
-            }
-        }
-    }
-   callback();
   });
 
 
@@ -122,6 +127,13 @@ var StepDef = function () {
       callback.pending();                                                                                                      
   });                                                                                                                             
             
+  this.When(/^the client requests a geofence stream for harvester with VIN "([^"]*)"$/, function (arg1, callback) {   
+      callback.pending();      
+  });                                                                                                                             
+
+  this.When(/^the client requests a swath_width stream for harvester with VIN "([^"]*)"$/, function (arg1, callback) {   
+      callback.pending();      
+  });                                                                                                                             
 
 
 };

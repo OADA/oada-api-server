@@ -49,6 +49,26 @@ var World = function World(callback) {
                     callback();
         });
     }
+    
+    /*
+        Very important portion of the test,
+        these are sets of english words that our parser knows about.
+        
+        an asterisk (*) denotes "any string".
+    */
+    this.vocabulary_set = {
+        "configuration" : {
+            "machine": {
+                "jsonpath": "items/*"
+            },
+            "resource": {
+                "jsonpath": "items/*/resource"
+            },
+            "streams":{
+                "jsonpath": "items/*/resource/data/streams"
+            }
+        }
+    }
 
 
     callback();
