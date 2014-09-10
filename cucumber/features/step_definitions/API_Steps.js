@@ -1,4 +1,4 @@
-function check_attributes(table, object, passing_callback){
+function check_attributes(table, object, passing_callback, callback){
       /*
         check if all attributes specified in table exists in object
         @table : attribute table passed via cucumber
@@ -7,13 +7,43 @@ function check_attributes(table, object, passing_callback){
       for(var idx in table.rows()){
             var look_for = table.rows()[idx][0];
             if(object[look_for] === undefined){
-                callback.fail(new Error("Missing attribute :" + look_for + " @" + this.current_url));
-                return;
+                return false;
             }else{
-                passing_callback();
+                passing_callback(look_for);
             }
       }
+
+      return true;
 }
+
+function getNode(jsonpath, root, opt){
+  /*
+    given a path string (ie. foo/bar)
+    return the node at root->foo->bar
+
+    @jsonpath : see example
+    @root: the root object  
+  */
+    if(opt === undefined){
+      opt = 0;
+    }
+    var node = root;
+    var keys = jsonpath.split("/");
+    try{
+          for(var idx in keys){
+            if (keys[idx] == "*"){
+              node = node[Object.keys(node)[opt]];
+              continue;
+            }
+            node = node[keys[idx]];
+          }
+
+    }catch(ex){
+      return null;
+    }
+    return node;
+  }
+
   
 var StepDef = function () {
   this.World = require("../support/world.js").World; 
@@ -30,110 +60,111 @@ var StepDef = function () {
   });
 
   this.When(/^the client requests "([^"]*)" for "([^"]*)" that are "([^"]*)"$/, function (arg0, arg1, arg2, callback) {
-    this.current_url = this.root_url + "/" + arg0 + "/me/" + arg1 + "/" + arg2 + "?_expand=2";
-    console.log("Endpoint under test: " + this.current_url);
-    this.get(this.current_url, this.get_token(), callback);
+      this.current_url = this.root_url + "/" + arg0 + "/me/" + arg1 + "/" + arg2 + "?_expand=2";
+      this.get(this.current_url, this.get_token(), callback);
+      this.current_model = null;
+      console.log("Endpoint: " + this.current_url);
   });
 
-  this.Then(/^the response is a resource with multiple machines entries organized by VIN$/, function (callback) {
-    // Write code here that turns the phrase above into concrete actions
-    if(this.lastResponse.statusCode != 200){
-      callback.fail(new Error("Failed"));
-    }
+
+  this.Then(/^the response is a "([^"]*)"$/, function (model_name, callback) {
+    // This step tells the parser what response model to use/expect in
+    // subsequent tests 
+    this.current_model = this.models[model_name];
     try{
-      //TODO : rename last_response to response_object or something
-      this.last_response = JSON.parse(this.lastResponse.body);
-      console.log("[PASSED] Configuration parsed");
-    }catch(exp){
-      callback.fail(new Error("Configurations JSON is malformed"));
-    }
-    //Test for multiple machines entries organized by VIN
-    if(this.last_response.items !== undefined){
-      this.last_response.items;
-      console.log("[PASSED] Found attribute `items`");
-    }else{
-      callback.fail(new Error("Configurations missing attribute `items`"));
+      this.last_response = JSON.parse(this._lastResponse.body);
+    }catch(ex){
+      console.log(this._lastResponse)
     }
 
-    //Check VINs look like VINs (with Regular Expression)
-    var vin_chk = new RegExp("[0-9]+[a-zA-Z]");
-    for(var key in this.last_response.items){
-      if(!vin_chk.test(key)){
-        callback.fail(new Error("VIN looks wrong: " + key));
-      }else{
-        console.log("[PASSED] VIN looks ok: " + key);
-      }
-    }
+    console.log("Expecting a " + model_name + " back");
+    callback();
+  });
+
+
+  this.Then(/^each "([^"]*)" has the following attributes:$/, function (arg1, table, callback) {
+    var object = getNode(this.current_model.vocabularies[arg1].jsonpath, 
+                         this.last_response);
+    var result = check_attributes(table, object, function(key){
+      console.log("Passed - Attribute Check for : " + arg1 + "/" + key);
+    });
+    if(!result) callback.fail(new Error("Failed - Attribute Check for: " + arg1));
     
     callback();
   });
 
-  this.Then(/^each machine has the following attributes:$/, function (table, callback) {
-    // Write code here that turns the phrase above into concrete actions
-    for(var machine_vin in this.last_response.items){
-        var machine_obj = this.last_response.items[machine_vin].resource;
-        for(var idx in table.rows()){
-            var look_for = table.rows()[idx][0];
-            if(machine_obj[look_for] === undefined){
-                callback.fail(new Error("Missing attribute :" + look_for + " @" + this.current_url));
-            }else{
-                console.log("[PASSED] Harvester attribute check : " + machine_vin  + "/" + look_for);
-            }
-        }
-    }
-    
-    callback();
-  });
-  
-  
-  this.Then(/^the "([^"]*)" attribute of each machine contains the following information:$/, function (n1, table, callback) {
-    var msg_success = function(){
-       console.log("[PASSED] Harvester attribute check : " + machine_vin  + "/" + look_for);
-    }
-    for(var machine_vin in this.last_response.resource){
-        var machine_obj = this.last_response.resource[machine_vin];
-        var machine_obj_meta = machine_obj.meta;
-        check_attributes(table, machine_obj, msg_success);
-    }
+
+  this.Then(/^the "([^"]*)" attribute of each "([^"]*)" contains the following information:$/, function (arg1, arg2, table, callback) {
+    var iter = 0;
+    do{
+       var object = getNode(this.current_model.vocabularies[arg2].jsonpath, 
+                         this.last_response, 
+                         iter++);
+
+       if(object == null) break;
+
+       object = object[arg1]; 
+
+       var result = check_attributes(table, object, function(key){
+         console.log("Passed - Attribute Check for : " + arg2 + "/" + arg1 + "/" + key);
+       });
+
+       if(!result) callback.fail(new Error("Failed - Attribute Check for: " + arg1));
+
+
+    }while(object != null);
     callback();
   });
 
+  this.Then(/^the "([^"]*)" attribute contains the following information:$/, function (arg1, table, callback) {
+       var object = getNode(this.current_model.vocabularies[arg1].jsonpath, 
+                         this.last_response, 
+                         0);
+       var result = check_attributes(table, object, function(key){
+         console.log("Passed - Attribute Check for : " + arg1  + "/" + key);
+       });
+       if(!result) callback.fail(new Error("Failed - Attribute Check for: " + arg1));
+       callback();
+  });
 
-  this.When(/^the client requests resource number "([^"]*)"$/, function (arg1, callback) {   
-      //Test Geofence resource
-      this.current_url = this.root_url + "/" + "resources/" + arg1 ;
-      console.log("Endpoint under test: " + this.current_url);
-      this.get(this.current_url, this.get_token(), callback);                                                                                                         
-  });                                                                                                                             
-                                                                                                                                    
-  this.Then(/^the response is a resource with the following information:$/, function (table, callback) {                          
-      try{
-        this.last_response = JSON.parse(this.lastResponse.body);
-      }catch(ex){
-        callback.fail(new Error("JSON is malformed " + " @" + this.current_url));
-      }
-      for(var idx in table.rows()){
-          var look_for = table.rows()[idx][0];
-          if(this.last_response[look_for] === undefined){
-              callback.fail(new Error("Geofence Resource missing attribute :" + look_for + " @" + this.current_url));
-          }else{
-              console.log("[PASSED] Geofence Resource attribute check : " + look_for);
-          }
-      }
-      callback();
-  });                                                                                                                             
-                                                                                                                                    
-  this.Then(/^each item has the following information:$/, function (table, callback) {                                       
-      callback.pending();                                                                                                      
-  });                                                                                                                             
-            
-  this.When(/^the client requests a geofence stream for harvester with VIN "([^"]*)"$/, function (arg1, callback) {   
-      callback.pending();      
-  });                                                                                                                             
 
-  this.When(/^the client requests a swath_width stream for harvester with VIN "([^"]*)"$/, function (arg1, callback) {   
-      callback.pending();      
-  });                                                                                                                             
+  this.When(/^the client requests a "([^"]*)" stream for harvester with VIN "([^"]*)"$/, function (arg1, arg2, callback) {
+    /*
+      Obtain the requested stream link from configuration document
+    */
+
+    this.current_url = this.root_url + "/configurations/me/machines/harvesters?_expand=2";
+    var that = this;
+    var kallback = callback;
+    this.get(this.current_url, this.get_token(), function(){
+      var configobj = JSON.parse(that._lastResponse.body);
+      var streamlink = configobj.items[arg2].resource.data.streams[arg1]._href;
+      
+      that.get(streamlink, that.get_token(), kallback);
+
+    });
+    this.current_model = null;
+  });
+
+  this.Then(/^the response contains the following information:$/, function (table, callback) {
+    var object = JSON.parse(this._lastResponse.body);
+
+    var result = check_attributes(table, object, function(key){
+      console.log("Passed - Attribute Check for : resource/" + key);
+    });
+
+    if(!result) callback.fail(new Error("Failed - Attribute Check for: " + arg1));
+
+    callback.pending();
+  });
+
+  this.Then(/^the "([^"]*)" attribute contains (\d+) or more item$/, function (arg1, arg2, callback) {
+    var object = getNode(this.current_model.vocabularies[arg1].jsonpath, 
+                         this.last_response, 
+                         0);
+    console.log(object);
+    callback();
+  });
 
 
 };
