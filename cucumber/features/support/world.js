@@ -5,7 +5,7 @@ var configurations = {
 
 var request = require('request')
 var World = function World(callback) {
-    this.lastResponse = null;
+    this._lastResponse = null;
     var context = this;
 
     this.root_url = configurations.hostname;
@@ -20,10 +20,10 @@ var World = function World(callback) {
                     headers: header_object
                         },function(error, response) {
                             if (error) {
-                        return callback.fail(new Error(error.message))
+                                return callback.fail(new Error(error.message))
                             }
-                            context.lastResponse = response;
-                            callback()
+                            context._lastResponse = response;
+                            callback();
         });
     }
 
@@ -56,16 +56,25 @@ var World = function World(callback) {
         
         an asterisk (*) denotes "any string".
     */
-    this.vocabulary_set = {
+    this.models = {
         "configuration" : {
-            "machine": {
-                "jsonpath": "items/*"
-            },
-            "resource": {
-                "jsonpath": "items/*/resource"
-            },
-            "streams":{
-                "jsonpath": "items/*/resource/data/streams"
+            "vocabularies": {
+                "machine": {
+                    "jsonpath": "items/*/resource"
+                },
+                "resource": {
+                    "jsonpath": "items/*/resource"
+                },
+                "streams":{
+                    "jsonpath": "items/*/resource/data/streams"
+                }
+            }
+        },
+        "resource": {
+            "vocabularies": {
+                "items": {
+                    "jsonpath": "data/items"
+                }
             }
         }
     }

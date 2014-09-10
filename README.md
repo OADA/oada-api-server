@@ -27,7 +27,7 @@ If you do not change this parameter, the test will run against our [test server]
 
 **Performing the tests**
 
-    cucumber-js cucumber/features/API.feature
+    cucumber-js -f pretty cucumber
 
 Follow the standard [cucumber-js](https://github.com/cucumber/cucumber-js) procedures to add more tests.
 
