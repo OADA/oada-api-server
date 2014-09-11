@@ -74,6 +74,9 @@ var World = function World(callback) {
             "vocabularies": {
                 "items": {
                     "jsonpath": "data/items"
+                },
+                "data": {
+                    "jsonpath": "data"
                 }
             }
         }

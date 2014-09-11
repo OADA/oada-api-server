@@ -150,19 +150,25 @@ var StepDef = function () {
     var object = JSON.parse(this._lastResponse.body);
 
     var result = check_attributes(table, object, function(key){
-      console.log("Passed - Attribute Check for : resource/" + key);
+      console.log("Passed - Attribute Check for : resource/" + key + ".");
     });
 
     if(!result) callback.fail(new Error("Failed - Attribute Check for: " + arg1));
 
-    callback.pending();
+    callback();
   });
 
   this.Then(/^the "([^"]*)" attribute contains (\d+) or more item$/, function (arg1, arg2, callback) {
+    //TODO: give suggestion that you maybe missing entry in the vocab definition
     var object = getNode(this.current_model.vocabularies[arg1].jsonpath, 
                          this.last_response, 
                          0);
-    console.log(object);
+
+    //TODO: items API format is {0:A, 1:B, 2:C}
+    if(Number(object.length) < Number(arg2)){
+      callback.fail(new Error("The property " + arg1 + " must be iterable and have 0 more 1 items inside."));
+    }
+    console.log("Passed - " + arg1 + " contains 0 or more items.");
     callback();
   });
 

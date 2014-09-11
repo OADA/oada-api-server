@@ -1,6 +1,6 @@
 {
-  "name": "backendx",
-  "version": "0.0.1",
+  "name": "oada-testkit",
+  "version": "0.0.2",
   "private": true,
   "scripts": {
     "start": "node ./bin/www"
