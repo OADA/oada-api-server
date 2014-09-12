@@ -20,7 +20,7 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res) {
-  res.render('index', { title: 'OADA-Compliant API Server' });
+  res.send("<h1>OADA lives here.</h1>Try making some API requests. Like <a href='/configurations/me/machines/harvesters/?_expand=2'>this one</a>")
 });
 
 module.exports = router;

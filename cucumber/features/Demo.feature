@@ -226,4 +226,5 @@ Feature: Get resources
     | units      | units of data resource                 |
 
 
+# check field resource
 
