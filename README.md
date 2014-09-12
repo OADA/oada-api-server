@@ -29,8 +29,11 @@ If you do not change this parameter, the test will run against our [test server]
 
     cucumber-js -f pretty cucumber
 
-Follow the standard [cucumber-js](https://github.com/cucumber/cucumber-js) procedures to add more tests.
+When you do this, it will perform all the tests located in `/cucumber/features` directory.
+
 
 #Modifying the testcases#
 
-To be written
+Follow the standard [cucumber-js](https://github.com/cucumber/cucumber-js) procedures to add more tests. Take a look at Cucumber's wiki [here](https://github.com/cucumber/cucumber/wiki) to see how tests can be written or modified.
+
+Our main test is specified by the `Demo.feature` file under the `/cucumber/features` directory. 
