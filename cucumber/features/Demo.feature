@@ -213,7 +213,7 @@ Feature: Get resources
     | _changeId  | revision number                        |
     | items      | actual data in this resource stream    |
     And the "formats" attribute contains the following information:
-    | ATTRIBUTE                                     | 
+    | ATTRIBUTE                                     |   
     | vnd.oada.harvester.streams.wet_mass_flow      |
     And the "items" attribute contains 0 or more item
     And each item in "items" has the following information:
