@@ -1,7 +1,7 @@
 function check_attributes(table, object, passing_callback, callback){
       /*
         check if all attributes specified in table exists in object
-        @table : attribute table passed via cucumber
+        @table : attribute table [PASSED]  via cucumber
         @object: object to be tested
       */
       for(var idx in table.rows()){
@@ -86,7 +86,7 @@ var StepDef = function () {
     var object = getNode(this.current_model.vocabularies[arg1].jsonpath, 
                          this.last_response);
     var result = check_attributes(table, object, function(key){
-      console.log("Passed - Attribute Check for : " + arg1 + "/" + key);
+      console.log("[PASSED]  - Attribute Check for : " + arg1 + "/" + key);
     });
     if(!result) callback.fail(new Error("Failed - Attribute Check for: " + arg1));
     
@@ -106,7 +106,7 @@ var StepDef = function () {
        object = object[arg1]; 
 
        var result = check_attributes(table, object, function(key){
-         console.log("Passed - Attribute Check for : " + arg2 + "/" + arg1 + "/" + key);
+         console.log("[PASSED]  - Attribute Check* for : " + arg2 + "/" + arg1 + "/" + key);
        });
 
        if(!result) callback.fail(new Error("Failed - Attribute Check for: " + arg1));
@@ -121,7 +121,8 @@ var StepDef = function () {
                          this.last_response, 
                          0);
        var result = check_attributes(table, object, function(key){
-         console.log("Passed - Attribute Check for : " + arg1  + "/" + key);
+         console.log("[PASSED]  - Attribute Check for : " + arg1  + "/" + key);
+
        });
        if(!result) callback.fail(new Error("Failed - Attribute Check for: " + arg1));
        callback();
@@ -150,7 +151,7 @@ var StepDef = function () {
     var object = JSON.parse(this._lastResponse.body);
 
     var result = check_attributes(table, object, function(key){
-      console.log("Passed - Attribute Check for : resource/" + key + ".");
+      console.log("[PASSED]  - Attribute Check for : resource/" + key + ".");
     });
 
     if(!result) callback.fail(new Error("Failed - Attribute Check for: " + arg1));
@@ -168,10 +169,22 @@ var StepDef = function () {
     if(Number(object.length) < Number(arg2)){
       callback.fail(new Error("The property " + arg1 + " must be iterable and have 0 more 1 items inside."));
     }
-    console.log("Passed - " + arg1 + " contains 0 or more items.");
+    console.log("[PASSED]  - " + arg1 + " contains 0 or more items.");
     callback();
   });
 
+  this.Then(/^each item in "([^"]*)" has the following information:$/, function (arg1, table, callback) {
+    var iterable = getNode(this.current_model.vocabularies[arg1].jsonpath, 
+                         this.last_response, 
+                         0);
+    for(var key in iterable){
+      var object = iterable[key];
+      if(!check_attributes(table, object, function(key){
+        console.log("[PASSED]  - Item Attribute Check for : resource/" + key + ".");
+      })){ callback.fail(new Error("Failed - Item Attribute Check for: " + arg1)); }
+    }
+    callback();
+  });
 
 };
 

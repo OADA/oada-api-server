@@ -67,6 +67,9 @@ var World = function World(callback) {
                 },
                 "streams":{
                     "jsonpath": "items/*/resource/data/streams"
+                },
+                "formats":{
+                    "jsonpath": "items/*/resource/formats"
                 }
             }
         },
@@ -77,6 +80,12 @@ var World = function World(callback) {
                 },
                 "data": {
                     "jsonpath": "data"
+                },
+                "meta": {
+                    "jsonpath" : "meta"
+                },
+                "formats": {
+                    "jsonpath" : "formats"
                 }
             }
         }
