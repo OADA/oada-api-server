@@ -1,8 +1,25 @@
+/*
+# Copyright 2014 Open Ag Data Alliance
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+*/
+
 function check_attributes(table, object, passing_callback, callback){
-      /*
-        check if all attributes specified in table exists in object
-        @table : attribute table [PASSED]  via cucumber
-        @object: object to be tested
+      /**
+       *  check if all attributes specified in table exists in object
+       *  @param {Object} table : attribute table passed  via cucumber
+       *  @param {Object} object: object to be tested
       */
       for(var idx in table.rows()){
             var look_for = table.rows()[idx][0];
@@ -17,13 +34,7 @@ function check_attributes(table, object, passing_callback, callback){
 }
 
 function getNode(jsonpath, root, opt){
-  /*
-    given a path string (ie. foo/bar)
-    return the node at root->foo->bar
-
-    @jsonpath : see example
-    @root: the root object  
-  */
+ //TODO: Replace this function with jsonpath thingy
     if(opt === undefined){
       opt = 0;
     }
@@ -43,19 +54,22 @@ function getNode(jsonpath, root, opt){
     }
     return node;
   }
-
-  
+ 
 var StepDef = function () {
+  /*
+   *  Define all the definitions for the steps here
+   *  
+  */
   this.World = require("../support/world.js").World; 
 
   var context = this;
   this.Given(/^the client is logged in$/, function (callback) {
-    //Check token validity somehow
+    //TODO: Obtain the token from wherever
     callback();
   });
   
   this.Given(/^the client is authorized$/, function (callback) {
-    //Check token validity somehow
+    //TODO: Check token validity somehow
     callback();
   });
 

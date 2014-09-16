@@ -15,19 +15,12 @@
 #
 */
 
-var md5 = require('MD5');
-var docparser = function(root_url){
-	this.root_url = "http://" + root_url;
-}
-docparser.prototype.parseTokens = function(doc){
-	var temp = JSON.stringify(doc);
-	temp = temp.replace(/<URI>/g, this.root_url);
-	temp = temp.replace(/<Boolean>/g, "true"); //just hardcoded for demo purpose
-	temp = temp.replace(/<Time>/g, new Date()); //just hardcoded for demo purpose
+var debug = require('debug')('oada-testkit');
+var app = require('./app');
 
 
-	temp = temp.replace(/<ETAG>/g, md5(temp + Math.random()));
-	return JSON.parse(temp);
-};
+app.set('port', process.env.PORT || 3000);
 
-module.exports = docparser;
+var server = app.listen(app.get('port'), function() {
+    debug('Express server listening on port ' + server.address().port);
+});
