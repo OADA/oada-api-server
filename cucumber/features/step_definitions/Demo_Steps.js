@@ -89,6 +89,7 @@ var StepDef = function () {
       this.last_response = JSON.parse(this._lastResponse.body);
     }catch(ex){
       console.log(this._lastResponse)
+      callback.fail(new Error("Unable to parse response from test server. Invalid JSON from " + this.current_url));
     }
     console.log("Expecting a " + model_name + " back");
     callback();
