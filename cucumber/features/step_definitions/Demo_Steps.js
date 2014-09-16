@@ -74,6 +74,7 @@ var StepDef = function () {
   });
 
   this.When(/^the client requests "([^"]*)" for "([^"]*)" that are "([^"]*)"$/, function (arg0, arg1, arg2, callback) {
+      //TODO: 'me' will go away
       this.current_url = this.root_url + "/" + arg0 + "/me/" + arg1 + "/" + arg2 + "?_expand=2";
       this.get(this.current_url, this.get_token(), callback);
       this.current_model = null;
@@ -82,78 +83,79 @@ var StepDef = function () {
 
 
   this.Then(/^the response is a "([^"]*)"$/, function (model_name, callback) {
-    // This step tells the parser what response model to use/expect in
-    // subsequent tests 
+    // This step tells the parser what response model to use/expect in subsequent tests 
     this.current_model = this.models[model_name];
     try{
       this.last_response = JSON.parse(this._lastResponse.body);
     }catch(ex){
       console.log(this._lastResponse)
     }
-
     console.log("Expecting a " + model_name + " back");
     callback();
   });
 
 
-  this.Then(/^each "([^"]*)" has the following attributes:$/, function (arg1, table, callback) {
-    var object = getNode(this.current_model.vocabularies[arg1].jsonpath, 
+  this.Then(/^each "([^"]*)" has the following attributes:$/, function (item_key, table, callback) {
+    var object = getNode(this.current_model.vocabularies[item_key].jsonpath, 
                          this.last_response);
-    var result = check_attributes(table, object, function(key){
-      console.log("[PASSED]  - Attribute Check for : " + arg1 + "/" + key);
+    var result = check_attributes(table, object, function(child_key){
+      console.log("[PASSED]  - Attribute Check for : " + item_key + "/" + child_key);
     });
-    if(!result) callback.fail(new Error("Failed - Attribute Check for: " + arg1));
+
+    if(!result) callback.fail(new Error("Failed - Attribute Check for: " + item_key));
     
     callback();
   });
 
 
-  this.Then(/^the "([^"]*)" attribute of each "([^"]*)" contains the following information:$/, function (arg1, arg2, table, callback) {
+  this.Then(/^the "([^"]*)" attribute of each "([^"]*)" contains the following information:$/, function (attribute_name, parent_key, table, callback) {
     var iter = 0;
     do{
-       var object = getNode(this.current_model.vocabularies[arg2].jsonpath, 
+       var object = getNode(this.current_model.vocabularies[parent_key].jsonpath, 
                          this.last_response, 
                          iter++);
 
        if(object == null) break;
 
-       object = object[arg1]; 
+       object = object[attribute_name]; 
 
-       var result = check_attributes(table, object, function(key){
-         console.log("[PASSED]  - Attribute Check* for : " + arg2 + "/" + arg1 + "/" + key);
+       var result = check_attributes(table, object, function(child_key){
+         console.log("[PASSED]  - Attribute Check* for : " + parent_key + "/" + attribute_name + "/" + child_key);
        });
 
-       if(!result) callback.fail(new Error("Failed - Attribute Check for: " + arg1));
+       if(!result) callback.fail(new Error("Failed - Attribute Check for: " + attribute_name));
 
 
     }while(object != null);
     callback();
   });
 
-  this.Then(/^the "([^"]*)" attribute contains the following information:$/, function (arg1, table, callback) {
-       var object = getNode(this.current_model.vocabularies[arg1].jsonpath, 
+  this.Then(/^the "([^"]*)" attribute contains the following information:$/, function (attribute_name, table, callback) {
+       var object = getNode(this.current_model.vocabularies[attribute_name].jsonpath, 
                          this.last_response, 
                          0);
        var result = check_attributes(table, object, function(key){
-         console.log("[PASSED]  - Attribute Check for : " + arg1  + "/" + key);
+         console.log("[PASSED]  - Attribute Check for : " + attribute_name  + "/" + key);
 
        });
-       if(!result) callback.fail(new Error("Failed - Attribute Check for: " + arg1));
+       if(!result) callback.fail(new Error("Failed - Attribute Check for: " + attribute_name));
        callback();
   });
 
 
-  this.When(/^the client requests a "([^"]*)" stream for harvester with VIN "([^"]*)"$/, function (arg1, arg2, callback) {
+  this.When(/^the client requests a "([^"]*)" stream for harvester with VIN "([^"]*)"$/, function (what_stream, vin, callback) {
     /*
       Obtain the requested stream link from configuration document
     */
 
     this.current_url = this.root_url + "/configurations/me/machines/harvesters?_expand=2";
     var that = this;
-    var kallback = callback;
+
+    var kallback = callback; //TODO: switch to superagent, and this may go away..
+
     this.get(this.current_url, this.get_token(), function(){
       var configobj = JSON.parse(that._lastResponse.body);
-      var streamlink = configobj.items[arg2].resource.data.streams[arg1]._href;
+      var streamlink = configobj.items[vin].resource.data.streams[what_stream]._href;
       
       that.get(streamlink, that.get_token(), kallback);
 
@@ -173,29 +175,29 @@ var StepDef = function () {
     callback();
   });
 
-  this.Then(/^the "([^"]*)" attribute contains (\d+) or more item$/, function (arg1, arg2, callback) {
+  this.Then(/^the "([^"]*)" attribute contains (\d+) or more item$/, function (attribute, min_children, callback) {
     //TODO: give suggestion that you maybe missing entry in the vocab definition
-    var object = getNode(this.current_model.vocabularies[arg1].jsonpath, 
+    var object = getNode(this.current_model.vocabularies[attribute].jsonpath, 
                          this.last_response, 
                          0);
 
     //TODO: items API format is {0:A, 1:B, 2:C}
-    if(Number(object.length) < Number(arg2)){
-      callback.fail(new Error("The property " + arg1 + " must be iterable and have 0 more 1 items inside."));
+    if(Number(object.length) < Number(children)){
+      callback.fail(new Error("The property " + attribute + " must be iterable and have 0 more 1 items inside."));
     }
-    console.log("[PASSED]  - " + arg1 + " contains 0 or more items.");
+    console.log("[PASSED]  - " + attribute + " contains " + min_children +  " or more items.");
     callback();
   });
 
-  this.Then(/^each item in "([^"]*)" has the following information:$/, function (arg1, table, callback) {
-    var iterable = getNode(this.current_model.vocabularies[arg1].jsonpath, 
+  this.Then(/^each item in "([^"]*)" has the following information:$/, function (this_key, table, callback) {
+    var iterable = getNode(this.current_model.vocabularies[this_key].jsonpath, 
                          this.last_response, 
                          0);
     for(var key in iterable){
       var object = iterable[key];
       if(!check_attributes(table, object, function(key){
         console.log("[PASSED]  - Item Attribute Check for : resource/" + key + ".");
-      })){ callback.fail(new Error("Failed - Item Attribute Check for: " + arg1)); }
+      })){ callback.fail(new Error("Failed - Item Attribute Check for: " + this_key)); }
     }
     callback();
   });
