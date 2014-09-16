@@ -183,7 +183,7 @@ var StepDef = function () {
                          0);
 
     //TODO: items API format is {0:A, 1:B, 2:C}
-    if(Number(object.length) < Number(children)){
+    if(Number(object.length) < Number(min_children)){
       callback.fail(new Error("The property " + attribute + " must be iterable and have 0 more 1 items inside."));
     }
     console.log("[PASSED]  - " + attribute + " contains " + min_children +  " or more items.");
