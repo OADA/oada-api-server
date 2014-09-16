@@ -16,16 +16,14 @@
 */
 
 //Initialize your parameters here
-var configurations = {
-    "hostname": "http://oada-test.herokuapp.com"
-}
+var configurations = require('./config');
 
 var request = require('request')
 var World = function World(callback) {
     this._lastResponse = null;
     var context = this;
 
-    this.root_url = configurations.hostname;
+    this.root_url = configurations.server.root;
     
     this.get = function(uri, token, callback) {
         var header_object = {'User-Agent': 'request'}
