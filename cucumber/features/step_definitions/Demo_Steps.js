@@ -37,6 +37,8 @@ function check_attributes(table, object, passing_callback, callback){
 }
 
 function getNode(jsonpath, root, opt){
+    //TODO: remove this function 
+    //just do : jsonPath.eval(root, jsonpath) directly 
     var node = jsonPath.eval(root, jsonpath);
     if(node[0] === undefined){
         //so that the test will stop
@@ -101,7 +103,7 @@ var StepDef = function () {
   });
 
 
-  this.Then(/^the "([^"]*)" attribute of each "([^"]*)" contains the following information:$/, function (attribute_name, parent_key, table, callback) {
+  this.Then(/^the "([^"]*)" attribute of each "([^"]*)" contains at least the following information:$/, function (attribute_name, parent_key, table, callback) {
     var roots = jsonPath.eval(this.last_response, this.current_model.vocabularies[parent_key].jsonpath);
     var cnt = 0;
     for(var rootkey in roots){
@@ -118,7 +120,7 @@ var StepDef = function () {
     callback();
   });
 
-  this.Then(/^the "([^"]*)" attribute contains the following information:$/, function (attribute_name, table, callback) {
+  this.Then(/^the "([^"]*)" attribute contains at least the following information:$/, function (attribute_name, table, callback) {
        var object = getNode(this.current_model.vocabularies[attribute_name].jsonpath, 
                          this.last_response, 
                          0);
@@ -151,7 +153,7 @@ var StepDef = function () {
     this.current_model = null;
   });
 
-  this.Then(/^the response contains the following information:$/, function (table, callback) {
+  this.Then(/^the response contains at least the following information:$/, function (table, callback) {
     var object = JSON.parse(this._lastResponse.body);
 
     var result = check_attributes(table, object, function(key){

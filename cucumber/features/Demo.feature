@@ -29,19 +29,19 @@ Feature: Get resources
       | formats   | describes the format of the data |
       | meta      | contains metadata                |
       | data      | contains stream of data          |
-    And the "meta" attribute of each "machine" contains the following information:
+    And the "meta" attribute of each "machine" contains at least the following information:
       | ATTRIBUTE     |
       | serial_number |
       | model_year    |
       | model         |
       | name          |
-    And the "formats" attribute contains the following information:
+    And the "formats" attribute contains at least the following information:
       | ATTRIBUTE                                |   DESCRIPTION                            |
       | vnd.oada.machines.harvester+json         |   harvester stream format id for oada    |
-    And the "data" attribute of each "machine" contains the following information:
+    And the "data" attribute of each "machine" contains at least the following information:
       | ATTRIBUTE     | DESCRIPTION      |
       | streams       | resource streams |
-    And the "streams" attribute contains the following information:
+    And the "streams" attribute contains at least the following information:
       | ATTRIBUTE       |
       | swath_width     |
       | location        |
@@ -59,7 +59,7 @@ Feature: Get resources
     And the client is authorized
     When the client requests a "geofence" stream for harvester with VIN "4000AA"
     Then the response is a "resource"
-    And the response contains the following information:
+    And the response contains at least the following information:
     | ATTRIBUTE | DESCRIPTION                        |
     | data      | resource for geofence stream item  |
     | formats   | specifies the format of the data   |
@@ -67,7 +67,7 @@ Feature: Get resources
     | _href     | current document location          |
     | _etag     | md5 hash sum of current document   |
     | _changeId | revision number                    |
-    And the "data" attribute contains the following information:
+    And the "data" attribute contains at least the following information:
     | ATTRIBUTE  | DESCRIPTION                            |
     | _etag      | md5 hash sum of data document          |
     | _format    | specifies the format of the data       |
@@ -82,7 +82,7 @@ Feature: Get resources
     And the client is authorized
     When the client requests a "swath_width" stream for harvester with VIN "4000AA"
     Then the response is a "resource"
-    And the response contains the following information:
+    And the response contains at least the following information:
     | ATTRIBUTE | DESCRIPTION                        |
     | data      | swath_width data.                  |
     | formats   | specifies the format of the data   |
@@ -90,7 +90,7 @@ Feature: Get resources
     | _href     | current document location          |
     | _etag     | md5 hash sum of current document   |
     | _changeId | revision number                    |
-    And the "data" attribute contains the following information:
+    And the "data" attribute contains at least the following information:
     | ATTRIBUTE  | DESCRIPTION                            |
     | _etag      | md5 hash sum of data document          |
     | _format    | specifies the format of the data       |
@@ -103,7 +103,7 @@ Feature: Get resources
     | _id        | just id          |
     | time       | just timestamp   |
     | width      | swath_width      |
-    And the "meta" attribute contains the following information:
+    And the "meta" attribute contains at least the following information:
     | ATTRIBUTE  | DESCRIPTION                            |
     | units      | units of data resource                 |
 
@@ -115,7 +115,7 @@ Feature: Get resources
     And the client is authorized
     When the client requests a "moisture" stream for harvester with VIN "4000AA"
     Then the response is a "resource"
-    And the response contains the following information:
+    And the response contains at least the following information:
     | ATTRIBUTE | DESCRIPTION                        |
     | data      | swath_width data.                  |
     | formats   | specifies the format of the data   |
@@ -123,7 +123,7 @@ Feature: Get resources
     | _href     | current document location          |
     | _etag     | md5 hash sum of current document   |
     | _changeId | revision number                    |
-    And the "data" attribute contains the following information:
+    And the "data" attribute contains at least the following information:
     | ATTRIBUTE  | DESCRIPTION                            |
     | _etag      | md5 hash sum of data document          |
     | _format    | specifies the format of the data       |
@@ -136,7 +136,7 @@ Feature: Get resources
     | _id        | just id          |
     | time       | just timestamp   |
     | percent    | your data        |
-    And the "meta" attribute contains the following information:
+    And the "meta" attribute contains at least the following information:
     | ATTRIBUTE  | DESCRIPTION                            |
     | units      | units of data resource                 |
 
@@ -147,7 +147,7 @@ Feature: Get resources
     And the client is authorized
     When the client requests a "header_position" stream for harvester with VIN "4000AA"
     Then the response is a "resource"
-    And the response contains the following information:
+    And the response contains at least the following information:
     | ATTRIBUTE | DESCRIPTION                        |
     | data      | swath_width data.                  |
     | formats   | specifies the format of the data   |
@@ -155,7 +155,7 @@ Feature: Get resources
     | _href     | current document location          |
     | _etag     | md5 hash sum of current document   |
     | _changeId | revision number                    |
-    And the "data" attribute contains the following information:
+    And the "data" attribute contains at least the following information:
     | ATTRIBUTE  | DESCRIPTION                            |
     | _etag      | md5 hash sum of data document          |
     | _format    | specifies the format of the data       |
@@ -168,7 +168,7 @@ Feature: Get resources
     | _id        | just id          |
     | time       | just timestamp   |
     | position   | your data        |
-    And the "meta" attribute contains the following information:
+    And the "meta" attribute contains at least the following information:
     | ATTRIBUTE  | DESCRIPTION                            |
     | units      | units of data resource                 |
 
@@ -179,7 +179,7 @@ Feature: Get resources
     And the client is authorized
     When the client requests a "location" stream for harvester with VIN "4000AA"
     Then the response is a "resource"
-    And the response contains the following information:
+    And the response contains at least the following information:
     | ATTRIBUTE | DESCRIPTION                        |
     | data      | swath_width data.                  |
     | formats   | specifies the format of the data   |
@@ -187,14 +187,14 @@ Feature: Get resources
     | _href     | current document location          |
     | _etag     | md5 hash sum of current document   |
     | _changeId | revision number                    |
-    And the "data" attribute contains the following information:
+    And the "data" attribute contains at least the following information:
     | ATTRIBUTE  | DESCRIPTION                            |
     | _etag      | md5 hash sum of data document          |
     | _format    | specifies the format of the data       |
     | _href      | other information like units. etc.     |
     | _changeId  | revision number                        |
     | items      | actual data in this resource stream    |
-    And the "formats" attribute contains the following information:
+    And the "formats" attribute contains at least the following information:
     | ATTRIBUTE                                | DESCRIPTION                            |
     | vnd.oada.harvester.streams.location      | location stream format id for oada     |
     And the "items" attribute contains 0 or more item
@@ -203,7 +203,7 @@ Feature: Get resources
     | _id        | just id          |
     | time       | just timestamp   |
     | location   | coordinate       |
-    And the "meta" attribute contains the following information:
+    And the "meta" attribute contains at least the following information:
     | ATTRIBUTE  | DESCRIPTION                            |
     | units      | units of data resource                 |
 
@@ -214,7 +214,7 @@ Feature: Get resources
     And the client is authorized
     When the client requests a "wet_mass_flow" stream for harvester with VIN "4000AA"
     Then the response is a "resource"
-    And the response contains the following information:
+    And the response contains at least the following information:
     | ATTRIBUTE | DESCRIPTION                        |
     | data      | swath_width data.                  |
     | formats   | specifies the format of the data   |
@@ -222,14 +222,14 @@ Feature: Get resources
     | _href     | current document location          |
     | _etag     | md5 hash sum of current document   |
     | _changeId | revision number                    |
-    And the "data" attribute contains the following information:
+    And the "data" attribute contains at least the following information:
     | ATTRIBUTE  | DESCRIPTION                            |
     | _etag      | md5 hash sum of data document          |
     | _format    | specifies the format of the data       |
     | _href      | other information like units. etc.     |
     | _changeId  | revision number                        |
     | items      | actual data in this resource stream    |
-    And the "formats" attribute contains the following information:
+    And the "formats" attribute contains at least the following information:
     | ATTRIBUTE                                     |   
     | vnd.oada.harvester.streams.wet_mass_flow      |
     And the "items" attribute contains 0 or more item
@@ -238,7 +238,7 @@ Feature: Get resources
     | _id        | just id          |
     | time       | just timestamp   |
     | gram       | weight in gram   |
-    And the "meta" attribute contains the following information:
+    And the "meta" attribute contains at least the following information:
     | ATTRIBUTE  | DESCRIPTION                            |
     | units      | units of data resource                 |
 
