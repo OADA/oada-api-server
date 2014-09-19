@@ -1,14 +1,32 @@
+/*
+# Copyright 2014 Open Ag Data Alliance
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+*/
+
 //Initialize your parameters here
-var configurations = {
-    "hostname": "http://oada-test.herokuapp.com"
-}
+var configurations = require('./config');
+var models = require('./known_words');
 
+//TODO: switch to superrequest in the next pull
 var request = require('request')
-var World = function World(callback) {
-    this.lastResponse = null;
-    var context = this;
 
-    this.root_url = configurations.hostname;
+var World = function World(callback) {
+    this._lastResponse = null;
+    var context = this;
+    this.models = models; 
+    this.root_url = configurations.server.root;
     
     this.get = function(uri, token, callback) {
         var header_object = {'User-Agent': 'request'}
@@ -20,10 +38,10 @@ var World = function World(callback) {
                     headers: header_object
                         },function(error, response) {
                             if (error) {
-                        return callback.fail(new Error(error.message))
+                                return callback.fail(new Error(error.message))
                             }
-                            context.lastResponse = response;
-                            callback()
+                            context._lastResponse = response;
+                            callback();
         });
     }
 
@@ -49,8 +67,7 @@ var World = function World(callback) {
                     callback();
         });
     }
-
-
+    
     callback();
 };
 
