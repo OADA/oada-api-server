@@ -15,6 +15,7 @@
 #
 */
 
+var jsonPath = require('JSONPath');
 function check_attributes(table, object, passing_callback, callback){
       /**
        *  check if all attributes specified in table exists in object
@@ -23,7 +24,9 @@ function check_attributes(table, object, passing_callback, callback){
       */
       for(var idx in table.rows()){
             var look_for = table.rows()[idx][0];
-            if(object[look_for] === undefined){
+            //console.log(object);
+	    //console.log(look_for);
+	    if(object[look_for] === undefined){
                 return false;
             }else{
                 passing_callback(look_for);
@@ -34,25 +37,12 @@ function check_attributes(table, object, passing_callback, callback){
 }
 
 function getNode(jsonpath, root, opt){
- //TODO: Replace this function with jsonpath thingy
-    if(opt === undefined){
-      opt = 0;
+    var node = jsonPath.eval(root, jsonpath);
+    if(node[0] === undefined){
+        //so that the test will stop
+	throw {"reason": "json path is invalid" };  
     }
-    var node = root;
-    var keys = jsonpath.split("/");
-    try{
-          for(var idx in keys){
-            if (keys[idx] == "*"){
-              node = node[Object.keys(node)[opt]];
-              continue;
-            }
-            node = node[keys[idx]];
-          }
-
-    }catch(ex){
-      return null;
-    }
-    return node;
+    return node[0];
   }
  
 var StepDef = function () {
@@ -97,8 +87,10 @@ var StepDef = function () {
 
 
   this.Then(/^each "([^"]*)" has the following attributes:$/, function (item_key, table, callback) {
+   
     var object = getNode(this.current_model.vocabularies[item_key].jsonpath, 
                          this.last_response);
+    //console.log(object);
     var result = check_attributes(table, object, function(child_key){
       console.log("[PASSED]  - Attribute Check for : " + item_key + "/" + child_key);
     });
@@ -110,24 +102,19 @@ var StepDef = function () {
 
 
   this.Then(/^the "([^"]*)" attribute of each "([^"]*)" contains the following information:$/, function (attribute_name, parent_key, table, callback) {
-    var iter = 0;
-    do{
-       var object = getNode(this.current_model.vocabularies[parent_key].jsonpath, 
-                         this.last_response, 
-                         iter++);
-
-       if(object == null) break;
-
+    var roots = jsonPath.eval(this.last_response, this.current_model.vocabularies[parent_key].jsonpath);
+    var cnt = 0;
+    for(var rootkey in roots){
+       var object = roots[rootkey];
        object = object[attribute_name]; 
-
        var result = check_attributes(table, object, function(child_key){
          console.log("[PASSED]  - Attribute Check* for : " + parent_key + "/" + attribute_name + "/" + child_key);
        });
 
        if(!result) callback.fail(new Error("Failed - Attribute Check for: " + attribute_name));
-
-
-    }while(object != null);
+       cnt++;
+    }
+    
     callback();
   });
 
@@ -178,10 +165,9 @@ var StepDef = function () {
 
   this.Then(/^the "([^"]*)" attribute contains (\d+) or more item$/, function (attribute, min_children, callback) {
     //TODO: give suggestion that you maybe missing entry in the vocab definition
-    var object = getNode(this.current_model.vocabularies[attribute].jsonpath, 
-                         this.last_response, 
-                         0);
-
+                         
+    var object = jsonPath.eval(this.last_response,this.current_model.vocabularies[attribute].jsonpath )[0];
+    
     //TODO: items API format is {0:A, 1:B, 2:C}
     if(Number(object.length) < Number(min_children)){
       callback.fail(new Error("The property " + attribute + " must be iterable and have 0 more 1 items inside."));

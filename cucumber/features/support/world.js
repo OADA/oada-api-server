@@ -17,12 +17,15 @@
 
 //Initialize your parameters here
 var configurations = require('./config');
+var models = require('./known_words');
 
+//TODO: switch to superrequest in the next pull
 var request = require('request')
+
 var World = function World(callback) {
     this._lastResponse = null;
     var context = this;
-
+    this.models = models; 
     this.root_url = configurations.server.root;
     
     this.get = function(uri, token, callback) {
@@ -65,48 +68,6 @@ var World = function World(callback) {
         });
     }
     
-    /*
-        Very important portion of the test,
-        these are sets of english words that our parser knows about.
-        
-        an asterisk (*) denotes "any string".
-    */
-    this.models = {
-        "configuration" : {
-            "vocabularies": {
-                "machine": {
-                    "jsonpath": "items/*/resource"
-                },
-                "resource": {
-                    "jsonpath": "items/*/resource"
-                },
-                "streams":{
-                    "jsonpath": "items/*/resource/data/streams"
-                },
-                "formats":{
-                    "jsonpath": "items/*/resource/formats"
-                }
-            }
-        },
-        "resource": {
-            "vocabularies": {
-                "items": {
-                    "jsonpath": "data/items"
-                },
-                "data": {
-                    "jsonpath": "data"
-                },
-                "meta": {
-                    "jsonpath" : "meta"
-                },
-                "formats": {
-                    "jsonpath" : "formats"
-                }
-            }
-        }
-    }
-
-
     callback();
 };
 
