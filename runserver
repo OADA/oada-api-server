@@ -1,3 +1,4 @@
+#!/usr/bin/node
 /*
 # Copyright 2014 Open Ag Data Alliance
 #
@@ -15,12 +16,12 @@
 #
 */
 
-var express = require('express');
-var router = express.Router();
+var debug = require('debug')('oada-testkit');
+var app = require('./app');
 
-/* GET home page. */
-router.get('/', function(req, res) {
-  res.send("<h1>OADA lives here.</h1>Try making some API requests. Like <a href='/configurations/me/machines/harvesters/?_expand=2'>this one</a>")
+
+app.set('port', process.env.PORT || 3000);
+
+var server = app.listen(app.get('port'), function() {
+    debug('Express server listening on port ' + server.address().port);
 });
-
-module.exports = router;

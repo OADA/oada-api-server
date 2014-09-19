@@ -1,0 +1,35 @@
+{
+        "configuration" : {
+            "vocabularies": {
+                "machine": {
+                    "jsonpath": "$.items.*.resource"
+                },
+                "resource": {
+                    "jsonpath": "$.items.*.resource"
+                },
+                "streams":{
+                    "jsonpath": "$.items.*.resource.data.streams"
+                },
+                "formats":{
+                    "jsonpath": "$.items.*.resource.formats"
+                }
+            }
+        },
+        "resource": {
+            "vocabularies": {
+                "items": {
+                    "jsonpath": "$.data.items"
+                },
+                "data": {
+                    "jsonpath": "$.data"
+                },
+                "meta": {
+                    "jsonpath" : "$.meta"
+                },
+                "formats": {
+                    "jsonpath" : "$.formats"
+                }
+            }
+        }
+    }
+
