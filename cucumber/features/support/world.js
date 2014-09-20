@@ -18,9 +18,7 @@
 //Initialize your parameters here
 var configurations = require('./config');
 var models = require('./known_words');
-
-//TODO: switch to superrequest in the next pull
-var request = require('request')
+var request = require('superagent')
 
 var World = function World(callback) {
     this._lastResponse = null;
@@ -29,19 +27,17 @@ var World = function World(callback) {
     this.root_url = configurations.server.root;
     
     this.get = function(uri, token, callback) {
-        var header_object = {'User-Agent': 'request'}
+        var r = request.get(uri);
+
         if(token !== null){
-            header_object['Authentication'] = 'Bearer ' + token;
+            r.set('Authentication', 'Bearer ' + token);
         }
-        request.get({
-                    url: uri, 
-                    headers: header_object
-                        },function(error, response) {
-                            if (error) {
-                                return callback.fail(new Error(error.message))
-                            }
-                            context._lastResponse = response;
-                            callback();
+
+        r.end(function(res) {
+            if (res.error) { return callback.fail(new Error(res.error)); }
+
+            context._lastResponse = res;
+            callback();
         });
     }
 
@@ -50,21 +46,16 @@ var World = function World(callback) {
     }
 
     this.post = function(uri, token, callback){
-        var header_object = {'User-Agent': 'request'}
+        var r = request.post(uri);
+
         if(token !== null){
-            header_object['Authentication'] = 'Bearer ' + token;
+            r.set('Authentication', 'Bearer ' + token);
         }
-        request({
-            url: uri,
-            body: requestBody,
-            method: "POST",
-            headers: header_object
-        }, function(error, response){
-                    if (error) {
-                return callback(new Error(error.message));
-                    }
-                    console.log(response);
-                    callback();
+
+        r.end(function(res){
+            if (res.error) { return callback.fail(new Error(res.error)); }
+
+            callback();
         });
     }
     
