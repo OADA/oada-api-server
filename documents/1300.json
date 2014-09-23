@@ -1,19 +1,9 @@
 {
-      "_href": "<URI>/resources/1300",
-      "_etag": "<ETAG>",
-      "formats": {
-        "vnd.oada.machines.harvester+json": {
-          "original": "<Boolean>"
-        }
-      },
-      "meta": {
-        "serial_number": 14001130202,
-        "model_year": 2008,
-        "model": "Z2M-010CTC",
-        "name": "Combine 1"
-      },
-      "data": {
-        "streams": {
+     "serial_number": 14001130202,
+      "model_year": 2008,
+      "model": "Z2M-010CTC",
+      "name": "Combine 1",
+      "streams": {
           "swath_width": {
             "_href": "<URI>/resources/1236"
           },
@@ -32,6 +22,5 @@
           "geofence": {
             "_href": "<URI>/resources/1241"
           }
-        }
-      }
+        } 
   }

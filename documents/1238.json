@@ -1,22 +1,10 @@
 {
-  "_href": "<URI>/resources/1238",
-  "_etag": "<ETAG>",
-  "_changeId": "<String>",
-  "meta": {
-    "units": "<String>"
+  "_oada": {
+    "lastChangeSet": 5
   },
-  "formats": {
-    "vnd.oada.harvester.streams.header_position": {
-      "original": "<Boolean>"
-    }
-  },
-  "data": {
-      "_href": "<URI>/resources/1238/data",
-      "_etag": "<ETAG>",
-      "_changeId": "<String>",
-      "_format": "application/vnd.oada.machines.harvester.streams.header_position.1+json",
-      "items": [
-        { "_id": 0, "time": "2014-07-15 11:31:12.123z", "position": "402 mm" }
-      ]
-  }
+  "units": "percent",
+  "positions": [
+    { "_oada": { "_id": 2 }, "t": "20193284926.1345", "pos": 15 },
+    { "_oada": { "_id": 3 }, "t": "20193284927.1345", "pos": 17 }
+  ]
 }
