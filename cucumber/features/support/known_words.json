@@ -8,7 +8,7 @@
                     "jsonpath": "$.items.*.resource"
                 },
                 "streams":{
-                    "jsonpath": "$.items.*.resource.data.streams"
+                    "jsonpath": "$.streams"
                 },
                 "formats":{
                     "jsonpath": "$.items.*.resource.formats"
@@ -17,8 +17,20 @@
         },
         "resource": {
             "vocabularies": {
+	        "widths": {
+		   "jsonpath": "$.widths"
+                },
                 "items": {
                     "jsonpath": "$.data.items"
+                },
+                "field": {
+ 		    "jsonpath": "$.events.*.field"
+  	        },
+                "_oada": {
+   		    "jsonpath": "$.events.*.field._oada"
+    		},
+                "events": {
+  		    "jsonpath": "$.events"
                 },
                 "data": {
                     "jsonpath": "$.data"
