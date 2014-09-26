@@ -1,5 +1,5 @@
 /* Server Config */
 //http://scalingwallhack.cloudapp.net:8888/
 exports.server = {
-    root: "http://scalingwallhack.cloudapp.net:8888"
+    root: "http://oada-test.herokuapp.com"
 };
