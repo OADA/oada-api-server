@@ -27,11 +27,11 @@ Feature: Get resources
     And each item has at least the following information:
     | ATTRIBUTE  | DESCRIPTION                            |
     |  _href     | link to data stream                    |
-  
- 
+
+
   Scenario: Get available information about one of the machine
     Retrieves the geofence data for specified machine to obtain locations and actions that it performs.
-  
+
     Given the client is logged in
     And the client is authorized
     When the client requests for the harvester with VIN "4000AA"
@@ -49,7 +49,7 @@ Feature: Get resources
 
   Scenario: Get geofence stream
     Retrieves the geofence data for specified machine to obtain locations and actions that it performs.
-  
+
     Given the client is logged in
     And the client is authorized
     When the client requests a "geofence" stream for harvester with VIN "4000AA"
@@ -61,13 +61,13 @@ Feature: Get resources
     |    field   | field information                      |
     And the "field" of each item in "events" contains at least the following information:
     | ATTRIBUTE  | DESCRIPTION   			  |
-    |   _oada    | .. 			 	   	  |
+    |   _meta    | .. 			 	   	  |
     |    name    | human-readable name of the field       |
   Scenario: Get swath width
     Given the client is logged in
     And the client is authorized
     When the client requests a "swath_width" stream for harvester with VIN "4000AA"
-    Then the response is a "resource" 
+    Then the response is a "resource"
     And the response contains at least the following information:
     | ATTRIBUTE  | DESCRIPTION   			  |
     |  units     | unit stream   	 	   	  |
@@ -77,4 +77,4 @@ Feature: Get resources
     | ATTRIBUTE  | DESCRIPTION   			  |
     |  t         | timestamp 			 	  |
     |  width     | width  			          |
-   
+
