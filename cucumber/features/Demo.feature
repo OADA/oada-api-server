@@ -29,7 +29,7 @@ Feature: Get resources
     |  _href     | link to data stream                    |
 
 
-  Scenario: Get available information about one of the machine
+  Scenario: Go to the finder endpoint and we'll get some info from the machine
     Retrieves the geofence data for specified machine to obtain locations and actions that it performs.
 
     Given the client is logged in
@@ -63,7 +63,7 @@ Feature: Get resources
     | ATTRIBUTE  | DESCRIPTION   			  |
     |   _meta    | .. 			 	   	  |
     |    name    | human-readable name of the field       |
-  Scenario: Get swath width
+  Scenario: Get swath width stream
     Given the client is logged in
     And the client is authorized
     When the client requests a "swath_width" stream for harvester with VIN "4000AA"
@@ -77,4 +77,73 @@ Feature: Get resources
     | ATTRIBUTE  | DESCRIPTION   			  |
     |  t         | timestamp 			 	  |
     |  width     | width  			          |
+  Scenario: Get location stream (resource 1237) with no meta but has id
+    Given the client is logged in
+    And the client is authorized
+    When the client requests a "location" stream for harvester with VIN "4000AA"
+    Then the response is a "resource"
+    And the response contains at least the following information: 
+    | ATTRIBUTE                | DESCRIPTION                |
+    |   coordinate_system      | what coordinate system     |
+    |   locations              | action data array          |
+    And each item in "locations" has the following information:
+    | ATTRIBUTE            | 
+    |  _meta               |
+    |  t                   |
+    |  lat                 |
+    |  lon                 |
+    |  alt                 |
+  Scenario: Get location stream (resource 1237) with meta # PENDING
+  Scenario: Get location stream that have been added since last request # PENDING
+  Scenario: Get header_position stream (resource 1238) 
+    Given the client is logged in
+    And the client is authorized
+    When the client requests a "header_position" stream for harvester with VIN "4000AA"
+    Then the response is a "header_position_stream_resource"
+    And the response contains at least the following information:
+    | ATTRIBUTE                | DESCRIPTION                |
+    |   _meta                  | Just meta                  |
+    |   units                  |                            |
+    |   positions              | Array                      |
+    And the "_meta" attribute contains at least the following information:
+    | ATTRIBUTE                | DESCRIPTION                         |
+    |   _changeId              | What revision are these data        |
+    And each item in "positions" has the following information:
+    | ATTRIBUTE        |
+    |  _meta           |
+    |  t               |
+    |  pos             |
+  Scenario: Get wet_mass_flow stream (resource 1239)
+    Given the client is logged in
+    And the client is authorized
+    When the client requests a "wet_mass_flow" stream for harvester with VIN "4000AA"
+    Then the response is a "resource"
+    And the response contains at least the following information: 
+    | ATTRIBUTE          | DESCRIPTION                |
+    |  _meta             |                            |
+    |  units             |                            |
+    |  flows             |                            |
+    And each item in "flows" has the following information:
+    |     ATTRIBUTE      |
+    |       _id          |
+    |        t           |
+    |      flow          |
 
+  Scenario: Get the moisture stream (1240)
+    Given the client is logged in
+    And the client is authorized
+    When the client requests a "moisture" stream for harvester with VIN "4000AA"
+    Then the response is a "moisture_stream_resource"
+    And the response contains at least the following information: 
+    | ATTRIBUTE          | DESCRIPTION                |
+    |  _meta             |                            |
+    |  units             |                            |
+    |  moisture          |                            |
+    And each item in "moisture" has the following information:
+    |     ATTRIBUTE      |
+    |       _id          |
+    |       moisture     |
+    |       t            |
+    And the "_meta" attribute contains at least the following information:
+    | ATTRIBUTE                | DESCRIPTION                         |
+    |   _changeId              | What revision are these data        |

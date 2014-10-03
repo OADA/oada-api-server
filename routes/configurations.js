@@ -33,7 +33,7 @@ router.get('/*', function(req, res) {
     var res_object = {};
 
     try{
-        res_object = require('../documents/configurations/' + cf_type + '/' + cf_id + '.json');
+        res_object = require('../documents/finder.json');
 
         if(rest_path.length > 1 || req.query['_expand'] == '2'){
             //if expansion is on, we expand
