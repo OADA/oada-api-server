@@ -11,7 +11,7 @@ If you wish to run the API back-end on your own machine or server, you must inst
 	
 To start the API server:
 
-    node bin/www
+    npm start
 
 #API Testing#
 

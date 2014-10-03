@@ -77,15 +77,15 @@ var StepDef = function () {
   this.Then(/^the response is a "([^"]*)"$/, function (model_name, callback) {
     // This step tells the parser what response model to use/expect in subsequent tests
     this.current_model = this.models[model_name];
-    try{
-      this.last_response = JSON.parse(this._lastResponse.body);
-    }catch(ex){
-      callback.fail(new Error("Unable to parse response from test server. Invalid JSON from " + this.current_url));
-    }
+    //try{
+    //  this.last_response = JSON.parse(this._lastResponse.body);
+    this.last_response = this._lastResponse.body;
+    //}catch(ex){
+    //callback.fail(new Error("Bad JSON: " + ex.message));
+    //}
     console.log("Expecting a " + model_name + " back");
     callback();
   });
-
 
   this.Then(/^each "([^"]*)" has the following attributes:$/, function (item_key, table, callback) {
 
@@ -95,17 +95,17 @@ var StepDef = function () {
     var result = check_attributes(table, object);
 
     if(!result) callback.fail(new Error("Failed - Attribute Check for: " + item_key));
-
     callback();
   });
 
+
   this.Then(/^the response contains (\d+) or more items$/, function (minkey, callback) {
       var cnt = 0;
-      try{
-        this.last_response = JSON.parse(this._lastResponse.body);
-      }catch(ex){
-        callback.fail(new Error("Unable to parse response from test server. Invalid JSON from " + this.current_url));
-    }
+     // try{
+      this.last_response = this._lastResponse.body;
+     // }catch(ex){
+     //   callback.fail(new Error("Bad JSON" + ex.message + " <- " + this._lastResponse.body));
+   //   }
       for (var i in this.last_response){
          cnt++;
       }
@@ -114,8 +114,10 @@ var StepDef = function () {
   });
 
 
-  this.Then(/^the "([^"]*)" attribute of each "([^"]*)" contains at least the following information:$/, function (attribute_name, parent_key, table, callback) {
-    var roots = jsonPath.eval(this.last_response, this.current_model.vocabularies[parent_key].jsonpath);
+  this.Then(/^the "([^"]*)" attribute of each "([^"]*)" contains at least the following information:$/,
+      function (attribute_name, parent_key, table, callback) {
+    var roots = jsonPath.eval(this._lastResponse.body,
+            this.current_model.vocabularies[parent_key].jsonpath);
     var cnt = 0;
     for(var rootkey in roots){
        var object = roots[rootkey];
@@ -143,14 +145,15 @@ var StepDef = function () {
      var that = this;
      var kallback = callback;
      this.get(this.current_url, this.get_token(), function(){
-         var configobj = JSON.parse(that._lastResponse.body);
+         var configobj = that._lastResponse.body;
          var streamlink = configobj[vin]._href;
 
          that.get(streamlink, that.get_token(), kallback);
      });
   });
 
-  this.When(/^the client requests a "([^"]*)" stream for harvester with VIN "([^"]*)"$/, function (what_stream, vin, callback) {
+  this.When(/^the client requests a "([^"]*)" stream for harvester with VIN "([^"]*)"$/,
+      function (what_stream, vin, callback) {
     /*
       Obtain the requested stream link from configuration document
     */
@@ -160,11 +163,11 @@ var StepDef = function () {
 
     var kallback = callback;
     this.get(this.current_url, this.get_token(), function(){
-      var configobj = JSON.parse(that._lastResponse.body);
+      var configobj = that._lastResponse.body;
       var streamlink = configobj[vin]._href;
 
       that.get(streamlink, that.get_token(), function(){
-            var resourceobj = JSON.parse(that._lastResponse.body);
+            var resourceobj = that._lastResponse.body;
             var datalink = resourceobj.streams[what_stream]._href;
 	    //kallback();
 	    console.log("New Endpoint: " + datalink );
@@ -176,21 +179,20 @@ var StepDef = function () {
   });
 
   this.Then(/^the response contains at least the following information:$/, function (table, callback) {
-    var object = JSON.parse(this._lastResponse.body);
+    var object = this._lastResponse.body;
     var result = check_attributes(table, object);
     if(!result) callback.fail(new Error("Failed - Attribute Check"));
 
     callback();
   });
 
-  this.Then(/^the "([^"]*)" attribute contains (\d+) or more item$/, function (attribute, min_children, callback) {
-    //TODO: give suggestion that you maybe missing entry in the vocab definition
-
+  this.Then(/^the "([^"]*)" attribute contains (\d+) or more item$/,
+          function (attribute, min_children, callback) {
     var object = jsonPath.eval(this.last_response,this.current_model.vocabularies[attribute].jsonpath );
 
-    //TODO: items API format is {0:A, 1:B, 2:C}
     if(Number(object.length) < Number(min_children)){
-      callback.fail(new Error("The property " + attribute + " must be iterable and have 0 more 1 items inside."));
+      callback.fail(new Error("The property " + attribute
+              + " must be iterable and have 0 more 1 items inside."));
     }
     callback();
   });
@@ -231,5 +233,6 @@ var StepDef = function () {
 
 
 }
+
 
 module.exports = StepDef;
