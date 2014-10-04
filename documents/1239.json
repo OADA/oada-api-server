@@ -1,22 +1,10 @@
 {
-  "_href": "<URI>/resources/1239",
-  "_etag": "<ETAG>",
-  "_changeId": "<String>",
-  "meta": {
-    "units": "<String>"
+  "_meta": {
+    "_changeId": 5
   },
-  "formats": {
-    "vnd.oada.harvester.streams.wet_mass_flow": {
-      "original": "<Boolean>"
-    }
-  },
-  "data": {
-      "_href": "<URI>/resources/1239/data",
-      "_etag": "<ETAG>",
-      "_changeId": "<String>",
-      "_format": "application/vnd.oada.machines.harvester.streams.wet_mass_flow.1+json",
-      "items": [
-        { "_id": 0, "time": "2014-07-15 11:31:12.123z", "gram": "30" }
-      ]
-  }
+  "units": "uncalibrated",
+  "flows": [
+    { "_id": 7, "t": "20193284926.1345", "flow": 1.23213 },
+    { "_id": 8, "t": "20193284927.1345", "flow": 1.23241 }
+  ]
 }

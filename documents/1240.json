@@ -1,22 +1,10 @@
 {
-  "_href": "<URI>/resources/1240",
-  "_etag": "<ETAG>",
-  "_changeId": "<String>",
-  "meta": {
-    "units": "<String>"
+  "_meta": {
+    "_changeId": 5
   },
-  "formats": {
-    "vnd.oada.harvester.streams.moisture": {
-      "original": "<Boolean>"
-    }
-  },
-  "data": {
-      "_href": "<URI>/resources/1240/data",
-      "_etag": "<ETAG>",
-      "_changeId": "<String>",
-      "_format": "application/vnd.oada.machines.harvester.streams.moisture.1+json",
-      "items": [
-        { "_id": 0, "time": "2014-07-15 11:31:12.123z", "percent": "30" }
-      ]
-  }
+  "units": "percent water",
+  "moisture": [
+    { "_id": 7, "t": "20193284926.1345", "moisture": 15.4343 },
+    { "_id": 8, "t": "20193284927.1345", "moisture": 15.9834 }
+  ]
 }

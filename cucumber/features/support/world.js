@@ -23,9 +23,9 @@ var request = require('superagent')
 var World = function World(callback) {
     this._lastResponse = null;
     var context = this;
-    this.models = models; 
+    this.models = models;
     this.root_url = configurations.server.root;
-    
+
     this.get = function(uri, token, callback) {
         var r = request.get(uri);
 
@@ -35,7 +35,6 @@ var World = function World(callback) {
 
         r.end(function(res) {
             if (res.error) { return callback.fail(new Error(res.error)); }
-
             context._lastResponse = res;
             callback();
         });
@@ -58,7 +57,7 @@ var World = function World(callback) {
             callback();
         });
     }
-    
+
     callback();
 };
 

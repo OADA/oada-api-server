@@ -26,7 +26,6 @@ router.get('/*', function(req, res) {
 
     // TODO: Check the Authentication Bearer
     var rest_path = req.params[0].split("/");
-    var cf_name = rest_path.shift(); //name of the config file we are loading
     var cf_type = rest_path.shift(); //type of config we are loading
     var cf_id = rest_path.shift();
 
@@ -34,18 +33,11 @@ router.get('/*', function(req, res) {
     var res_object = {};
 
     try{
-        res_object = require('../documents/configurations/' + cf_type + '/' + cf_id + '.json');
+        res_object = require('../documents/finder.json');
 
         if(rest_path.length > 1 || req.query['_expand'] == '2'){
-            //1300 = harvester
+            //if expansion is on, we expand
             var resource = require('../documents/1300.json');
-            res_object['items']['4000AA'] = {};
-            res_object['items']['4000AA']['resource'] = resource;
-        }else{
-            //Hardcoded 
-            res_object['items'] = {
-                "4000AA": "<URI>/configurations/me/machines/harvesters/resource/4000AA"
-            }
         }
 
         //walk through the requested REST Path

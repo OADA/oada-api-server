@@ -8,7 +8,7 @@
                     "jsonpath": "$.items.*.resource"
                 },
                 "streams":{
-                    "jsonpath": "$.items.*.resource.data.streams"
+                    "jsonpath": "$.streams"
                 },
                 "formats":{
                     "jsonpath": "$.items.*.resource.formats"
@@ -17,9 +17,21 @@
         },
         "resource": {
             "vocabularies": {
+	        "widths": {
+		          "jsonpath": "$.widths"
+                },
                 "items": {
                     "jsonpath": "$.data.items"
                 },
+                "field": {
+         		    "jsonpath": "$.events.*.field"
+          	        },
+                "_meta": {
+           		    "jsonpath": "$.events.*.field._meta"
+            		},
+                "events": {
+          		    "jsonpath": "$.events"
+                        },
                 "data": {
                     "jsonpath": "$.data"
                 },
@@ -28,6 +40,71 @@
                 },
                 "formats": {
                     "jsonpath" : "$.formats"
+                },
+                "positions":{
+                    "jsonpath" : "$.positions"
+                }
+            }
+        },
+        "header_position_stream_resource": {
+            "vocabularies": {
+            "widths": {
+                  "jsonpath": "$.widths"
+                },
+                "items": {
+                    "jsonpath": "$.data.items"
+                },
+                "field": {
+                    "jsonpath": "$.events.*.field"
+                    },
+                "_meta": {
+                    "jsonpath": "$._meta"
+                    },
+                "events": {
+                    "jsonpath": "$.events"
+                        },
+                "data": {
+                    "jsonpath": "$.data"
+                },
+                "meta": {
+                    "jsonpath" : "$.meta"
+                },
+                "formats": {
+                    "jsonpath" : "$.formats"
+                },
+                "positions":{
+                    "jsonpath" : "$.positions"
+                }
+            }
+        },
+         "moisture_stream_resource": {
+            "vocabularies": {
+            "widths": {
+                  "jsonpath": "$.widths"
+                },
+                "items": {
+                    "jsonpath": "$.data.items"
+                },
+                "field": {
+                    "jsonpath": "$.events.*.field"
+                    },
+                "_meta": {
+                    "jsonpath": "$._meta"
+                    },
+                "events": {
+                    "jsonpath": "$.events"
+                        },
+                "data": {
+                    "jsonpath": "$.data"
+                },
+                "meta": {
+                    "jsonpath" : "$.meta"
+                },
+                "formats": {
+                    "jsonpath" : "$.formats"
+                },
+                "positions":{
+                    "jsonpath" : "$.positions"
                 }
             }
         }

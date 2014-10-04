@@ -1,22 +1,7 @@
 {
-  "_href": "<URI>/resources/1236",
-  "_etag": "<ETAG>",
-  "_changeId": "<String>",
-  "meta": {
-    "units": "<String>"
-  },
-  "formats": {
-    "vnd.oada.harvester.streams.swath_width": {
-      "original": "<Boolean>"
-    }
-  },
-  "data": {
-      "_href": "<URI>/resources/1236/data",
-      "_etag": "<ETAG>",
-      "_changeId": "<String>",
-      "_format": "application/vnd.oada.machines.harvester.streams.swath_width.1+json",
-      "items": [
-        { "_id": 0, "time": "2014-07-15 11:31:12.123z", "width": "30" }
+    "units": "feet",
+    "widths": [
+        { "t": "2014-07-15 11:31:12.123z", "width": "30" }
       ]
-  }
+  
 }
