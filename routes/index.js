@@ -20,7 +20,7 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res) {
-  res.send("<h1>OADA lives here.</h1>Try making some API requests. Like <a href='/configurations/me/machines/harvesters/?_expand=2'>this one</a>")
+  res.send("<h1>OADA lives here.</h1>Try making some API requests. Like <a href='/configurations/machines/harvesters'>this one</a>")
 });
 
 module.exports = router;
