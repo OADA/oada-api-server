@@ -3,8 +3,5 @@
     "_changeId": 5
   },
   "units": "percent water",
-  "moisture": [
-    { "_id": 7, "t": "20193284926.1345", "moisture": 15.4343 },
-    { "_id": 8, "t": "20193284927.1345", "moisture": 15.9834 }
-  ]
+  "moisture": [  ]
 }

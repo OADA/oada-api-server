@@ -7,6 +7,8 @@ if(process.argv.length < 4){
 var file = process.argv[2];
 var template = process.argv[3];
 var header = {}; //this is what a 'record' look like (will be generated)
+var record = require("./" + template.replace(".json","_record.json"));
+var fulldoc = require("./" + template);
 var Table = [];
 
 fs.readFile('data/header.csv', 'utf-8', cb_header);
@@ -19,22 +21,30 @@ function cb_header(error, data){
    var field = _data[i].match(/[a-zA-Z0-9_-]+/g)[0];
    header[i] = field;
  }
- console.log(header );
  fs.readFile(file,'utf-8', cb_data);
 }
 
 function cb_data(error, data){
-  data = data.replace(/'/g, "");
   if(error) return console.log(error);
+  var A = [];
+  data = data.replace(/'/g, "");
   _data = data.split("\r\n");
   for(row_i in _data){
-    console.log(_data[row_i]);
     row = _data[row_i].split(";");
     var object = {};
+
     for(fc in row){
+      if(row[fc] == "") continue;
       object[header[fc]] = row[fc];
     }
-    console.log(object);
+    V = JSON.parse(JSON.stringify(record));
+    for(var key in V){
+      V[key] = object[V[key]];
+    }
+    A.push(V);
   }
+  fulldoc.moisture = A;
+  console.log(JSON.stringify(fulldoc));
+
 
 }
