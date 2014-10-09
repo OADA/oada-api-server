@@ -47,6 +47,7 @@ function cb_header(error, data){
 function cb_data(error, data){
   if(error) return console.log(error);
   var A = [];
+  var logs = [];
   data = data.replace(/'/g, "");
   _data = data.split("\r\n");
   for(row_i in _data){
@@ -58,12 +59,15 @@ function cb_data(error, data){
       object[header[fc]] = row[fc];
     }
     //console.log(object);
+    logs.push(object);
+    object.num_value = Number(object.num_value) * parseFloat(object.resolution);
     V = JSON.parse(JSON.stringify(record));
     for(var key in V){
       V[key] = object[V[key]];
     }
     A.push(V);
   }
+  fs.writeFile("log.txt", JSON.stringify(logs), null);
   fulldoc[process.argv[4]] = A;
   console.log(JSON.stringify(fulldoc));
 }
