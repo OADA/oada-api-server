@@ -19,8 +19,8 @@ This scripts generate the response document from csv can data
 */
 
 fs = require('fs');
-if(process.argv.length < 4){
-  console.log("Usage: make_responses.js <data_file.csv> <template_name.json>");
+if(process.argv.length < 5){
+  console.log("Usage: make_responses.js <data_file.csv> <template_name.json> <data_property>");
   return;
 }
 
@@ -57,14 +57,13 @@ function cb_data(error, data){
       if(row[fc] == "") continue;
       object[header[fc]] = row[fc];
     }
+    //console.log(object);
     V = JSON.parse(JSON.stringify(record));
     for(var key in V){
       V[key] = object[V[key]];
     }
     A.push(V);
   }
-  fulldoc.moisture = A;
+  fulldoc[process.argv[4]] = A;
   console.log(JSON.stringify(fulldoc));
-
-
 }
