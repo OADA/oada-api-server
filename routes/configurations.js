@@ -22,7 +22,7 @@ var router = express.Router();
 
 //TODO: Need a way to elegantly generate config responses
 
-router.get('/*', function(req, res) {
+router.get('/machines/harvesters(/?)', function(req, res) {
 
     // TODO: Check the Authentication Bearer
     var rest_path = req.params[0].split("/");

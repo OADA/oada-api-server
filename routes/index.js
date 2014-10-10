@@ -20,7 +20,7 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res) {
-  res.send("<h1>OADA lives here.</h1>Try making some API requests. Like <a href='/configurations/me/machines/harvesters/?_expand=2'>this one</a>")
+  res.send("<html><body style='background-color:#ebebeb;padding-top:45px;text-align:center'><div style='margin:auto'><img width='500' src='http://openag.io/img/oada-logo.svg'></div></body></html>")
 });
 
 module.exports = router;

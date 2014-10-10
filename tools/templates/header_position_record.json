@@ -1,2 +1,2 @@
-{ "_id": "id", "t": "timestamp", "pos": "position" }
+{ "_id": "id", "t": "timestamp", "pos": "num_value" }
 

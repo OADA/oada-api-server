@@ -19,8 +19,8 @@ This scripts generate the response document from csv can data
 */
 
 fs = require('fs');
-if(process.argv.length < 5){
-  console.log("Usage: make_responses.js <data_file.csv> <template_name.json> <data_property>");
+if(process.argv.length < 6){
+  console.log("Usage: make_responses.js <data_file.csv> <template_name.json> <data_property> <resource_id>");
   return;
 }
 
@@ -29,6 +29,8 @@ var template = process.argv[3];
 var header = {}; //this is what a 'record' look like (will be generated)
 var record = require("./" + template.replace(".json","_record.json"));
 var fulldoc = require("./" + template);
+var resource_id = process.argv[5];
+var data_tag = process.argv[4];
 var Table = [];
 
 fs.readFile('data/header.csv', 'utf-8', cb_header);
@@ -55,15 +57,19 @@ function cb_data(error, data){
     var object = {};
 
     for(fc in row){
-      if(row[fc] == "") continue;
       object[header[fc]] = row[fc];
     }
+    if(object.num_value == null) continue;
     //console.log(object);
     logs.push(object);
     object.num_value = Number(object.num_value) * parseFloat(object.resolution);
+    object.id = resource_id + "/" + data_tag + "/" + object.id;
+    object.timestamp = Date.parse(object.timestamp)/1000;
     V = JSON.parse(JSON.stringify(record));
     for(var key in V){
-      V[key] = object[V[key]];
+      var value = V[key];
+      if(!(V[key] in object)) value = V[key];
+      V[key] = object[value];
     }
     A.push(V);
   }
