@@ -19,16 +19,6 @@ Feature: Get resources
   Retrieves list of resources such as machines, locations
   or other type of data streams.
 
-  Scenario: Get configurations for harvesters
-    Given the client is logged in
-    And the client is authorized
-    When the client requests "configurations" for "machines" that are "harvesters"
-    Then the response contains 1 or more items
-    And each item has at least the following information:
-    | ATTRIBUTE  | DESCRIPTION                            |
-    |  _href     | link to data stream                    |
-
-
   Scenario: Go to the finder endpoint and we'll get some info from the machine
     Retrieves the geofence data for specified machine to obtain locations and actions that it performs.
 
@@ -45,7 +35,7 @@ Feature: Get resources
     And the response is a "configuration"
     And each item in "streams" has the following information:
     | ATTRIBUTE  | DESCRIPTION                            |
-    |  _href     | link to data stream                    |
+    |  _id       | link to data stream                    |
 
   Scenario: Get geofence stream
     Retrieves the geofence data for specified machine to obtain locations and actions that it performs.
@@ -136,9 +126,9 @@ Feature: Get resources
     Then the response is a "moisture_stream_resource"
     And the response contains at least the following information: 
     | ATTRIBUTE          | DESCRIPTION                |
-    |  _meta             |                            |
-    |  units             |                            |
-    |  moisture          |                            |
+    |       _meta        |                            |
+    |       units        |                            |
+    |       moisture     |                            |
     And each item in "moisture" has the following information:
     |     ATTRIBUTE      |
     |       _id          |

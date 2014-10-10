@@ -27,10 +27,10 @@ function check_attributes(table, object){
             var look_for = table.rows()[idx][0];
 
 	         if(object[look_for] === undefined){
-                console.log(object);
-     	          console.log(look_for);
-                return false;
-           }
+                  //console.log(object);
+     	          //console.log(look_for);
+                  return false;
+          	 }
       }
 
       return true;
@@ -65,6 +65,7 @@ var StepDef = function () {
     callback();
   });
 
+/*
   this.When(/^the client requests "([^"]*)" for "([^"]*)" that are "([^"]*)"$/, function (arg0, arg1, arg2, callback) {
 
       this.current_url = this.root_url + "/" + arg0 + "/" + arg1 + "/" + arg2 + "?_expand=2";
@@ -72,7 +73,7 @@ var StepDef = function () {
       this.current_model = null;
       console.log("Endpoint: " + this.current_url);
   });
-
+*/
 
   this.Then(/^the response is a "([^"]*)"$/, function (model_name, callback) {
     // This step tells the parser what response model to use/expect in subsequent tests
@@ -141,12 +142,13 @@ var StepDef = function () {
 
    this.When(/^the client requests for the harvester with VIN "([^"]*)"$/, function (vin, callback) {
 
-    this.current_url = this.root_url + "/configurations/machines/harvesters";
+     this.current_url = this.root_url + "/" +  this.finder_path;
      var that = this;
      var kallback = callback;
+     console.log("Fetching " + this.current_url);
      this.get(this.current_url, this.get_token(), function(){
          var configobj = that._lastResponse.body;
-         var streamlink = configobj[vin]._href;
+         var streamlink = that.root_url + "/resources/" + configobj[vin]._id;
 
          that.get(streamlink, that.get_token(), kallback);
      });
@@ -157,23 +159,25 @@ var StepDef = function () {
     /*
       Obtain the requested stream link from configuration document
     */
-
-    this.current_url = this.root_url + "/configurations/machines/harvesters";
+    
+    //navigate to finder
+    this.current_url = this.root_url + "/" + this.finder_path;
     var that = this;
 
     var kallback = callback;
     this.get(this.current_url, this.get_token(), function(){
       var configobj = that._lastResponse.body;
-      var streamlink = configobj[vin]._href;
-
+      //fetch the link to the resource we want
+      var streamlink = that.root_url + "/resources/" + configobj[vin]._id;
+      //load that configuration documents
+      console.log("Fetching " + streamlink );
       that.get(streamlink, that.get_token(), function(){
             var resourceobj = that._lastResponse.body;
-            var datalink = resourceobj.streams[what_stream]._href;
-	    //kallback();
-	    console.log("New Endpoint: " + datalink );
+            var datalink = that.root_url + "/resources/" + resourceobj.streams[what_stream]._id;
+	    console.log("Fetching: " + datalink );
+            //load that stream
 	    that.get(datalink, that.get_token(), kallback);
       });
-
     });
     this.current_model = null;
   });
