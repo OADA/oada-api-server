@@ -25,7 +25,7 @@ var World = function World(callback) {
     var context = this;
     this.models = models;
     this.root_url = configurations.server.root;
-
+    this.finder_path = configurations.server.finder;
     this.get = function(uri, token, callback) {
         var r = request.get(uri);
 

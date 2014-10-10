@@ -5,22 +5,22 @@
       "name": "Combine 1",
       "streams": {
           "swath_width": {
-            "_href": "<DOMAIN>/resources/1236"
+            "_id": "1236"
           },
           "location": {
-            "_href": "<DOMAIN>/resources/1237"
+            "_id": "1237"
           },
           "header_position": {
-            "_href": "<DOMAIN>/resources/1238"
+            "_id": "1238"
           },
           "wet_mass_flow": {
-            "_href": "<DOMAIN>/resources/1239"
+            "_id": "1239"
           },
           "moisture": {
-            "_href": "<DOMAIN>/resources/1240"
+            "_id": "1240"
           },
           "geofence": {
-            "_href": "<DOMAIN>/resources/1241"
+            "_id": "1241"
           }
         } 
   }
