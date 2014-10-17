@@ -15,11 +15,29 @@
 #
 #
 
+Feature: Get Fields
+  Retrieves fields' boundary
+  Scenario: Go to /bookmarks/fields finder endpoint
+    Retrieves the boundary coordinates of all fields in this oada cloud
+    Given the client is logged in
+    And the client is authorized
+    When the client requests the "fields" bookmark
+    And the response is a "configuration"  
+    And each item has at least the following information:
+    | ATTRIBUTE     | DESCRIPTION                        |
+    | _id           | id of the field resources          |
+    | boundary      | bounding coordinates               |
+    | name          | human-readable field name          |
+    And each item in "boundary" has the following information:
+    | ATTRIBUTE     | DESCRIPTION    |
+    | coordinates   |                |
+    | type          |                |
+
 Feature: Get resources
   Retrieves list of resources such as machines, locations
   or other type of data streams.
 
-  Scenario: Go to the finder endpoint and we'll get some info from the machine
+  Scenario: Go to the /bookmarks/machines/harvesters finder endpoint 
     Retrieves the geofence data for specified machine to obtain locations and actions that it performs.
 
     Given the client is logged in
@@ -50,9 +68,10 @@ Feature: Get resources
     |      t     | timestamp of stream                    |
     |    field   | field information                      |
     And the "field" of each item in "events" contains at least the following information:
-    | ATTRIBUTE  | DESCRIPTION   			  |
-    |   _meta    | .. 			 	   	  |
+    | ATTRIBUTE  | DESCRIPTION   			              |
+    |   _id      | .. 			 	   	                  |
     |    name    | human-readable name of the field       |
+
   Scenario: Get swath width stream
     Given the client is logged in
     And the client is authorized
@@ -78,7 +97,7 @@ Feature: Get resources
     |   locations              | action data array          |
     And each item in "locations" has the following information:
     | ATTRIBUTE            | 
-    |  _meta               |
+    |  _id                 |
     |  t                   |
     |  lat                 |
     |  lon                 |
@@ -100,7 +119,7 @@ Feature: Get resources
     |   _changeId              | What revision are these data        |
     And each item in "positions" has the following information:
     | ATTRIBUTE        |
-    |  _meta           |
+    |  _id             |
     |  t               |
     |  pos             |
   Scenario: Get wet_mass_flow stream (resource 1239)

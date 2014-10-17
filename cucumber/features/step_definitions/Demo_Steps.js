@@ -16,29 +16,24 @@
 */
 
 var jsonPath = require('JSONPath');
+
+/**
+ *  check if all attributes specified in table exists in object
+ *  @param {Object} table : attribute table passed  via cucumber
+ *  @param {Object} object: object to be tested
+*/
 function check_attributes(table, object){
-      /**
-       *  check if all attributes specified in table exists in object
-       *  @param {Object} table : attribute table passed  via cucumber
-       *  @param {Object} object: object to be tested
-      */
+   for(var idx in table.rows()){
+      var look_for = table.rows()[idx][0];
 
-      for(var idx in table.rows()){
-            var look_for = table.rows()[idx][0];
-
-	         if(object[look_for] === undefined){
-                  //console.log(object);
-     	          //console.log(look_for);
-                  return false;
-          	 }
+	    if(object[look_for] === undefined){
+         return false;
       }
-
-      return true;
+   }
+   return true;
 }
 
 function getNode(jsonpath, root, opt){
-    //TODO: remove this function
-    //just do : jsonPath.eval(root, jsonpath) directly
     var node = jsonPath.eval(root, jsonpath);
     if(node[0] === undefined){
         //so that the test will stop
@@ -47,11 +42,11 @@ function getNode(jsonpath, root, opt){
     return node[0];
   }
 
+/*
+ *  Define all the definitions for the steps here
+ *
+*/
 var StepDef = function () {
-  /*
-   *  Define all the definitions for the steps here
-   *
-  */
   this.World = require("../support/world.js").World;
 
   var context = this;
@@ -65,25 +60,18 @@ var StepDef = function () {
     callback();
   });
 
-/*
-  this.When(/^the client requests "([^"]*)" for "([^"]*)" that are "([^"]*)"$/, function (arg0, arg1, arg2, callback) {
-
-      this.current_url = this.root_url + "/" + arg0 + "/" + arg1 + "/" + arg2 + "?_expand=2";
-      this.get(this.current_url, this.get_token(), callback);
-      this.current_model = null;
-      console.log("Endpoint: " + this.current_url);
+  this.When(/^the client requests the "([^"]*)" bookmark$/, function (bk_name, callback) {
+     this.current_url = this.root_url + "/bookmarks/" +  bk_name;
+     var that = this;
+     console.log("Fetching " + this.current_url);
+     this.get(this.current_url, this.get_token(), callback);
   });
-*/
 
-  this.Then(/^the response is a "([^"]*)"$/, function (model_name, callback) {
+  this.Then(/^the response is a "([^"]*)"$/, function (model_name, callback) { 
+    //TODO: To be removed - this specification is redundant
     // This step tells the parser what response model to use/expect in subsequent tests
     this.current_model = this.models[model_name];
-    //try{
-    //  this.last_response = JSON.parse(this._lastResponse.body);
     this.last_response = this._lastResponse.body;
-    //}catch(ex){
-    //callback.fail(new Error("Bad JSON: " + ex.message));
-    //}
     console.log("Expecting a " + model_name + " back");
     callback();
   });
@@ -92,7 +80,6 @@ var StepDef = function () {
 
     var object = getNode(this.current_model.vocabularies[item_key].jsonpath,
                          this.last_response);
-    //console.log(object);
     var result = check_attributes(table, object);
 
     if(!result) callback.fail(new Error("Failed - Attribute Check for: " + item_key));
@@ -102,11 +89,7 @@ var StepDef = function () {
 
   this.Then(/^the response contains (\d+) or more items$/, function (minkey, callback) {
       var cnt = 0;
-     // try{
       this.last_response = this._lastResponse.body;
-     // }catch(ex){
-     //   callback.fail(new Error("Bad JSON" + ex.message + " <- " + this._lastResponse.body));
-   //   }
       for (var i in this.last_response){
          cnt++;
       }
@@ -190,6 +173,7 @@ var StepDef = function () {
     callback();
   });
 
+
   this.Then(/^the "([^"]*)" attribute contains (\d+) or more item$/,
           function (attribute, min_children, callback) {
     var object = jsonPath.eval(this.last_response,this.current_model.vocabularies[attribute].jsonpath );
@@ -202,10 +186,16 @@ var StepDef = function () {
   });
 
   this.Then(/^each item has at least the following information:$/, function (table,callback) {
+     if(this.last_response === undefined){
+       callback.fail(new Error("No response from previous step"));
+     }
      for(var key in this.last_response){
          var result = check_attributes(table, this.last_response[key]);
-         callback();
+         if(!result){
+            callback.fail(new Error("Missing attribute(s)"));
+         }
      }
+     callback();
   });
 
   this.Then(/^each item in "([^"]*)" has the following information:$/, function (this_key, table, callback) {
@@ -217,7 +207,11 @@ var StepDef = function () {
 	    var iterable = root[key];
  	    this.previous_step[key] = iterable;
 	    var result = check_attributes(table, iterable);
-
+      if(!result){
+            console.log(iterable);
+            callback.fail(new Error("Missing attribute(s)"));
+            return;
+      }
  	    fallthrough++;
     }
    console.log(fallthrough);
@@ -228,9 +222,12 @@ var StepDef = function () {
   this.Then(/^the "([^"]*)" of each item in "([^"]*)" contains at least the following information:$/, function (inner, outer, table, callback) {
     var iter = this.last_response[outer];
     for(key in iter){
-     var iterable = iter[key][inner];
+           var iterable = iter[key][inner];
            //console.log(iterable);
            var result = check_attributes(table, iterable);
+           if(!result){
+            callback.fail(new Error("Missing attribute(s)"));
+           }
     }
     callback();
 });

@@ -26,8 +26,6 @@ router.get('/machines/harvesters(/?)', function(req, res) {
 
     // TODO: Check the Authentication Bearer
     var rest_path = req.params[0].split("/");
-    var cf_type = rest_path.shift(); //type of config we are loading
-    var cf_id = rest_path.shift();
 
     var mParser = new docparser(req.headers.host);
     var res_object = {};
@@ -66,8 +64,6 @@ router.get('/fields(/?)', function(req, res) {
 
     // TODO: Check the Authentication Bearer
     var rest_path = req.params[0].split("/");
-    var cf_type = rest_path.shift(); //type of config we are loading
-    var cf_id = rest_path.shift();
 
     var mParser = new docparser(req.headers.host);
     var res_object = {};
