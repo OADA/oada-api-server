@@ -26,8 +26,6 @@ router.get('/machines/harvesters(/?)', function(req, res) {
 
     // TODO: Check the Authentication Bearer
     var rest_path = req.params[0].split("/");
-    var cf_type = rest_path.shift(); //type of config we are loading
-    var cf_id = rest_path.shift();
 
     var mParser = new docparser(req.headers.host);
     var res_object = {};
@@ -61,5 +59,44 @@ router.get('/machines/harvesters(/?)', function(req, res) {
     res_object = mParser.parseTokens(res_object);
     res.json(res_object);
 });
+
+router.get('/fields(/?)', function(req, res) {
+
+    // TODO: Check the Authentication Bearer
+    var rest_path = req.params[0].split("/");
+
+    var mParser = new docparser(req.headers.host);
+    var res_object = {};
+
+    try{
+        res_object = require('../documents/fields.json');
+
+        if(rest_path.length > 1 || req.query['_expand'] == '2'){
+            //if expansion is on, we expand
+            var resource = require('../documents/1300.json');
+        }
+
+        //walk through the requested REST Path
+        for(var idx in rest_path){
+            var child = rest_path[idx];
+            if(child == ""){
+                continue;
+            }
+            if(!res_object.hasOwnProperty(child)){
+                throw {"message": "The resource you requested does not exist."};
+            }
+            res_object = res_object[child];
+        }
+    }catch(exp){
+        res.json({
+            "error": "unsupported resource",
+            "reason": exp.message
+        });
+    }
+    
+    res_object = mParser.parseTokens(res_object);
+    res.json(res_object);
+});
+
 
 module.exports = router;
