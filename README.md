@@ -21,7 +21,7 @@ You may perform the OADA compliance at [oada-test.herokuapp.com/compliancy](http
 
 ### Option B
 
-You may clone, and modify the test and run them on your machine.
+You may clone, modify the tests and run them on your machine.
 
 You must have [cucumber-js](https://github.com/cucumber/cucumber-js) installed.
 All the dependencies for the tests are located inside [/cucumber](https://github.com/ssabpisa/oada-test/tree/master/cucumber).
