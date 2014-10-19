@@ -23,4 +23,11 @@ router.get('/', function(req, res) {
   res.send("<html><body style='background-color:#ebebeb;padding-top:45px;text-align:center'><div style='margin:auto'><img width='500' src='http://openag.io/img/oada-logo.svg'></div></body></html>")
 });
 
+
+router.get('/compliance(/?)', function(req, res) {
+	res.render('index',
+	  { title : 'Home' }
+	  )
+});
+
 module.exports = router;

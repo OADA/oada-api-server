@@ -60,8 +60,13 @@ var StepDef = function () {
     callback();
   });
 
-  this.When(/^the client requests the "([^"]*)" bookmark$/, function (bk_name, callback) {
+  this.When(/^the client requests the "([^"]*)" bookmark ([A-Za-z]*) view parameter$/, function (bk_name, view_state, callback) {
+     var has_view_parameter = (view_state == "with" ? 1 : 0);
+     var VIEW_PARAM = {"$each":{"$expand":true}};
+
      this.current_url = this.root_url + "/bookmarks/" +  bk_name;
+     if(has_view_parameter)
+      this.current_url += "?view=" + encodeURIComponent(JSON.stringify(VIEW_PARAM));
      var that = this;
      console.log("Fetching " + this.current_url);
      this.get(this.current_url, this.get_token(), callback);
@@ -71,7 +76,6 @@ var StepDef = function () {
     //TODO: To be removed - this specification is redundant
     // This step tells the parser what response model to use/expect in subsequent tests
     this.current_model = this.models[model_name];
-    this.last_response = this._lastResponse.body;
     console.log("Expecting a " + model_name + " back");
     callback();
   });
@@ -123,7 +127,7 @@ var StepDef = function () {
        callback();
   });
 
-   this.When(/^the client requests for the harvester with VIN "([^"]*)"$/, function (vin, callback) {
+   this.When(/^the client requests for the harvester with identifier "([^"]*)"$/, function (vin, callback) {
 
      this.current_url = this.root_url + "/" +  this.finder_path;
      var that = this;
@@ -137,7 +141,7 @@ var StepDef = function () {
      });
   });
 
-  this.When(/^the client requests a "([^"]*)" stream for harvester with VIN "([^"]*)"$/,
+  this.When(/^the client requests a "([^"]*)" stream for harvester with identifier "([^"]*)"$/,
       function (what_stream, vin, callback) {
     /*
       Obtain the requested stream link from configuration document
@@ -198,9 +202,31 @@ var StepDef = function () {
      callback();
   });
 
-  this.Then(/^each item in "([^"]*)" has the following information:$/, function (this_key, table, callback) {
+  this.Then(/^each item has just the following information:$/, function (table,callback) {
+     if(this.last_response === undefined){
+       callback.fail(new Error("No response from previous step"));
+     }
+     
+     for(var key in this.last_response){
+         var dut = this.last_response[key];
+         var result = check_attributes(table, dut);
+         if(!result){
+            callback.fail(new Error("Missing attribute(s)"));
+         }
+         if(Object.keys(dut).length != table.rows().length){
+          callback.fail(new Error("Too many attribute(s)! Looked for " + table.rows().length + " but got " + keycount));
+         }
+     }
+
+     
+     callback();
+  });
+
+
+  this.Then(/^each item in "([^"]*)" has at least the following information:$/, function (this_key, table, callback) {
     //TODO: need to match that greedy regex ^
     var root = this.last_response[this_key];
+
     this.previous_step = {};
     var fallthrough = 0;
     for(key in root){

@@ -27,6 +27,8 @@ var resources = require('./routes/resources');
 var configurations =  require('./routes/configurations.js')
 
 var app = express();
+app.set('views', __dirname + '/views');
+app.set('view engine', 'jade');
 
 // view engine setup
 //app.set('views', path.join(__dirname, 'views'));
@@ -59,7 +61,7 @@ if (app.get('env') === 'development') {
         res.status(err.status || 500);
         res.json({
             "success": false,
-            "reason": "mock server does not know about the thing you requested."
+            "reason": err
         });
     });
 }

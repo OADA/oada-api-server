@@ -69,7 +69,13 @@ router.get('/fields(/?)', function(req, res) {
     var res_object = {};
 
     try{
-        res_object = require('../documents/fields.json');
+        var normal = require('../documents/fields.json');
+        var expand = require('../documents/fields_expanded.json');
+        res_object = normal;
+        
+        if("view" in req.query){
+            res_object = expand;
+        }
 
         if(rest_path.length > 1 || req.query['_expand'] == '2'){
             //if expansion is on, we expand

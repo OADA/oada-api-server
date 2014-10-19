@@ -20,8 +20,6 @@ var docparser = require('../parser');
 var express = require('express');
 var router = express.Router();
 
-/* TODO: note a bug, child resource templates in document/ liked 'data' are hardcoded causing the md5 hash to be identical to its parent */
-
 router.get('/*', function(req, res) {
 
     //TODO: Check the Authentication Bearer

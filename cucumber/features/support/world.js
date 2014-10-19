@@ -26,22 +26,22 @@ var World = function World(callback) {
     this.models = models;
     this.root_url = configurations.server.root;
     this.finder_path = configurations.server.finder;
+    this.token = configurations.server.token_key;
+    this.last_response  = null;
     this.get = function(uri, token, callback) {
-        var r = request.get(uri);
-
-        if(token !== null){
-            r.set('Authentication', 'Bearer ' + token);
-        }
+        var r = request.get(uri).set('Authorization', 'Bearer ' + this.token).buffer(true);
 
         r.end(function(res) {
             if (res.error) { return callback.fail(new Error(res.error)); }
             context._lastResponse = res;
+            context.last_response = JSON.parse(res.text);
+            //TODO: Experiencing this -- https://github.com/visionmedia/superagent/issues/270
             callback();
         });
     }
 
     this.get_token = function(){
-        return "123456";
+        return this.token;
     }
 
     this.post = function(uri, token, callback){
