@@ -41,11 +41,11 @@ Feature: Get Fields with and without view
     | ATTRIBUTE     | DESCRIPTION    |
     | coordinates   |                |
     | type          |                |
-
-
-
-# # TODO: follow the field link , check that each field is a resource
-# # no id at resource level
+    And each key has a valid resource with just the following information:
+    | ATTRIBUTE     | DESCRIPTION                        |
+    | boundary      | bounding coordinates               |
+    | name          | human-readable field name          |
+    | crop          |                                    |
 
 # Feature: Get resources
 #   Retrieves list of resources such as machines, locations

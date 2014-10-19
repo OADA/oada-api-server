@@ -214,12 +214,55 @@ var StepDef = function () {
             callback.fail(new Error("Missing attribute(s)"));
          }
          if(Object.keys(dut).length != table.rows().length){
-          callback.fail(new Error("Too many attribute(s)! Looked for " + table.rows().length + " but got " + keycount));
+          callback.fail(new Error("Too many attribute(s)! Looked for " + table.rows().length + " but got " + Object.keys(dut).length));
          }
      }
 
      
      callback();
+  });
+
+
+  this.When(/^each key has a valid resource with just the following information:$/, function (table, callback) {
+    var fields = Object.keys(this.last_response);
+    var root = this.root_url;
+    var context = this;
+
+    var testcount = 0;
+
+    var CustomCallback = function(){
+      var dut = context.last_response;
+      var result = check_attributes(table, dut);
+      if(!result){
+          callback.fail(new Error("Missing attribute(s)"));
+      }
+      //check that there is just this and nothign else
+      if(Object.keys(dut).length != table.rows().length){
+          callback.fail(new Error("Too many attribute(s)! Looked for " + table.rows().length + " but got " + Object.keys(dut).length));
+      }
+
+      if(++testcount == fields.length){
+        //do callback if we are done checking all the fields
+        callback();
+      }
+    }
+
+    CustomCallback.pending = function(){
+       callback.pending();
+    }
+
+    CustomCallback.fail = function(e){
+       callback.fail(new Error(e));
+    }
+
+
+    for(var i in fields){
+      var fid = fields[i];
+      var field_url = root + "/resources/" +  fid;
+      console.log("Fetching " + field_url);
+      context.get(field_url, context.get_token(), CustomCallback);
+    }
+
   });
 
 
