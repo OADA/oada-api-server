@@ -48,7 +48,13 @@ router.post('/compliance/go/', function(req, res) {
 	//remove web_client cfg file since the test is finished
 	fs.unlinkSync(write_to);
 	//remove control characters and send to screen
-	res.send(found[0].replace(/\[\d+m/g,""));
+	var slim_output = "Error occurred while parsing the report.";
+	try{
+		slim_output = found[0].replace(/\[\d+m/g,"");
+	}catch(ex){
+		res.send("We think there is something wrong with the URL, or the token you provided. Please try again.");
+	}
+	res.send(slim_output);
 });
 
 router.get('/compliance(/?)', function(req, res) {
