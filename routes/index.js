@@ -21,6 +21,23 @@ var path = require('path');
 var fs = require('fs');
 var execSync = require('exec-sync');
 
+function toHtml(output_text){
+	var red = function(t){
+		return "<span style='color:#FF0000'>" + t  + "</span>";
+	}
+	var green = function(t){
+		return "<span style='color:#1BAE1C'>" + t  + "</span>";
+	}
+	var bold = function(t){
+		return "<strong>" + t + "</strong>";
+	}
+	return "<pre>" + output_text.replace(/Error/g,red(bold("Error")))
+								.replace(/Failing scenarios/g, red(bold("Failing scenarios")))
+								.replace(/failed/g, red(bold("failed")))
+								.replace(/Scenario/g, bold("> Scenario"))
+								.replace(/passed/g, green(bold("passed"))) + "</pre>";
+}
+
 /* GET home page. */
 router.get('/', function(req, res) {
   res.send("<html><body style='background-color:#ebebeb;padding-top:45px;text-align:center'><div style='margin:auto'><img width='500' src='http://openag.io/img/oada-logo.svg'></div></body></html>")
@@ -39,22 +56,24 @@ router.post('/compliance/go/', function(req, res) {
 	    token_key: req.body.token
 	}));
 	//run the test
-	var raw = execSync('cucumber-js -f summary cucumber');
+	var raw = execSync('cucumber-js -f pretty cucumber');
 	//parse the result -- from the end of the report
-	var run_results = raw.substr(-150);
+	var run_results = raw;
 	//look for the final result
-	var re = /\d+ scenarios \(.*(\d+ failed).*(\d+ passed).*\)/g;
-	var found = re.exec(run_results);
+	// var re = /\d+ scenarios \(.*(\d+ failed).*(\d+ passed).*\)/g;
 	//remove web_client cfg file since the test is finished
 	fs.unlinkSync(write_to);
-	//remove control characters and send to screen
+	
 	var slim_output = "Error occurred while parsing the report.";
 	try{
-		slim_output = found[0].replace(/\[\d+m/g,"");
+		//remove control characters and send to screen
+		//remove stack trace
+		slim_output = run_results.replace(/\[\d+m/g,"").replace(/(\s+(at)\s).*/g, "");
 	}catch(ex){
+		console.log(ex);
 		res.send("We think there is something wrong with the URL, or the token you provided. Please try again.");
 	}
-	res.send(slim_output);
+	res.send(toHtml(slim_output));
 });
 
 router.get('/compliance(/?)', function(req, res) {
