@@ -287,6 +287,7 @@ var StepDef = function () {
 
   this.Then(/^each item in "([^"]*)" has at least the following information:$/, function (this_key, table, callback) {
     //TODO: need to match that greedy regex ^
+    if(this.last_response == null) console.log("Error: last response is null")
     var root = this.last_response[this_key];
 
     this.previous_step = {};

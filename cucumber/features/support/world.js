@@ -35,7 +35,11 @@ var World = function World(callback) {
         var r = request.get(uri).set('Authorization', 'Bearer ' + this.token).buffer(true);
 
         r.end(function(res) {
-            if (res.error) { return callback.fail(new Error(res.error)); }
+            if (res.error) { 
+                //callback.fail(new Error(res.error));
+                console.log("^^^^^ Failed. Unable to fetch URL. "  + uri);
+                return null;
+            }
             context._lastResponse = res;
             context.last_response = JSON.parse(res.text);
             //TODO: Experiencing this -- https://github.com/visionmedia/superagent/issues/270
