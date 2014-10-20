@@ -18,12 +18,12 @@
       	<form action="/compliance/go/" method="post">
         <div class="input-group input-group-lg">
 		  <span class="input-group-addon"><strong>Base URL</strong></span>
-		  <input type="text" class="form-control" name="endpoint" placeholder="http://oada-test.herokuapp.net">
+		  <input type="text" class="form-control" name="endpoint" placeholder="https://oada-url.com:port/path/">
 		</div>
 		<br>
 		<div class="input-group input-group-lg">
-		  <span class="input-group-addon"><strong>Authorization Token</strong></span>
-		  <input type="text" name="token" class="form-control" placeholder="123456789">
+		  <span class="input-group-addon"><strong>Authorization Bearer</strong></span>
+		  <input type="text" name="token" class="form-control" placeholder="123456789" value="123456789">
 		</div>
 		<br>
         <p class="lead" style="font-size:16px">Enter your endpoint above to check the API responses for correctness, or see it on <a href="https://github.com/OADA/oada-test">Github</a>.</p>
