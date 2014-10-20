@@ -17,6 +17,9 @@
 
 var express = require('express');
 var router = express.Router();
+var path = require('path');
+var fs = require('fs');
+var execSync = require('exec-sync');
 
 /* GET home page. */
 router.get('/', function(req, res) {
@@ -24,10 +27,35 @@ router.get('/', function(req, res) {
 });
 
 
+router.post('/compliance/go/', function(req, res) {
+
+	var appDir = path.dirname(require.main.filename).split("/");
+	appDir.pop();
+	var write_to = appDir.join("/") + "/" + "cucumber/features/support/_web_client.cfg";
+	//Write _web_client config file so that the cucumber test knows that user is running from web
+	fs.writeFileSync(write_to, JSON.stringify({
+	    root: req.body.endpoint,
+	    finder: "bookmarks/machines/harvesters",
+	    token_key: req.body.token
+	}));
+	//run the test
+	var raw = execSync('cucumber-js -f summary cucumber');
+	//parse the result -- from the end of the report
+	var run_results = raw.substr(-150);
+	//look for the final result
+	var re = /\d+ scenarios \(.*(\d+ failed).*(\d+ passed).*\)/g;
+	var found = re.exec(run_results);
+	//remove web_client cfg file since the test is finished
+	fs.unlinkSync(write_to);
+	//remove control characters and send to screen
+	res.send(found[0].replace(/\[\d+m/g,""));
+});
+
 router.get('/compliance(/?)', function(req, res) {
-	res.render('index',
-	  { title : 'Home' }
+	res.render('compliance',
+	  { title : 'Home'}
 	  )
 });
+
 
 module.exports = router;

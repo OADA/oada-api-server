@@ -19,6 +19,8 @@
 var docparser = require('../parser');
 var express = require('express');
 var router = express.Router();
+var md5 = require('MD5');
+// var jsonPath = require('JSONPath');
 
 router.get('/*', function(req, res) {
 
@@ -29,10 +31,18 @@ router.get('/*', function(req, res) {
 
     var mParser = new docparser(req.headers.host);
     var res_object = {};
-
     // Pull up document format template
     try{
-        res_object = require('../documents/' + id + '.json');
+        var normal = require('../documents/' + id + '.json');
+        res_object = normal;
+
+        if("view" in req.query){
+            var view_param_hash = md5(req.query.view);
+            console.log("vp hash: " + view_param_hash);
+            // var search = jsonPath.eval(view_param, '$.*.*._meta._changeId');
+            res_object = require('../documents/' + id + '_' + view_param_hash + '.json');
+        }
+
 
         //walk through the requested REST Path
         for(var idx in rest_path){
@@ -48,6 +58,7 @@ router.get('/*', function(req, res) {
         //TODO: Actually putting data into the placeholder
     }catch(exp){
         //Send out error message for unsupported Resource ID
+        console.log(exp);
         res.json({
             "error": "unsupported resource",
             "reason": exp.message

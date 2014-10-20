@@ -1,0 +1,8 @@
+{
+  "geofence": "locations",
+  "moisture": "moisture",
+  "work_status": "status",
+  "geofence": "locations",
+  "wet_mass_flow": "flows",
+  "swath_width": "widths"
+}

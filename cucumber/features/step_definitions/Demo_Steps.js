@@ -60,6 +60,7 @@ var StepDef = function () {
     callback();
   });
 
+
   this.When(/^the client requests the "([^"]*)" bookmark ([A-Za-z]*) view parameter$/, function (bk_name, view_state, callback) {
      var has_view_parameter = (view_state == "with" ? 1 : 0);
      var VIEW_PARAM = {"$each":{"$expand":true}};
@@ -141,14 +142,17 @@ var StepDef = function () {
      });
   });
 
-  this.When(/^the client requests a "([^"]*)" stream for harvester with identifier "([^"]*)"$/,
-      function (what_stream, vin, callback) {
-    /*
-      Obtain the requested stream link from configuration document
-    */
-    
+  this.When(/^the client requests a "([^"]*)" stream for harvester with identifier "([^"]*)" ([^"]*) view parameter ([A-Za-z0-9_])?$/,
+      function (what_stream, vin, view_state, parameter_filename, callback) {
+     
+    var has_view_parameter = (view_state == "with" ? 1 : 0);
+    var use_SSK = this.stream_keys[what_stream]; //stream specific key
+    var _json_param = JSON.stringify(require("../support/view_parameters/" + parameter_filename +  ".json")).replace("<use_SSK>", use_SSK);
+    var VIEW_PARAM = JSON.parse(_json_param);
     //navigate to finder
     this.current_url = this.root_url + "/" + this.finder_path;
+
+
     var that = this;
 
     var kallback = callback;
@@ -156,14 +160,19 @@ var StepDef = function () {
       var configobj = that._lastResponse.body;
       //fetch the link to the resource we want
       var streamlink = that.root_url + "/resources/" + configobj[vin]._id;
+
       //load that configuration documents
       console.log("Fetching " + streamlink );
       that.get(streamlink, that.get_token(), function(){
             var resourceobj = that._lastResponse.body;
             var datalink = that.root_url + "/resources/" + resourceobj.streams[what_stream]._id;
-	    console.log("Fetching: " + datalink );
             //load that stream
-	    that.get(datalink, that.get_token(), kallback);
+            if(has_view_parameter)
+              datalink += "?view=" + encodeURIComponent(JSON.stringify(VIEW_PARAM));
+              
+            console.log("Fetching: " + datalink);
+
+	          that.get(datalink, that.get_token(), kallback);
       });
     });
     this.current_model = null;
@@ -178,13 +187,23 @@ var StepDef = function () {
   });
 
 
-  this.Then(/^the "([^"]*)" attribute contains (\d+) or more item$/,
-          function (attribute, min_children, callback) {
-    var object = jsonPath.eval(this.last_response,this.current_model.vocabularies[attribute].jsonpath );
+  this.Then(/^the "([^"]*)" attribute contains (\d+) or more item$/, function (attribute, min_children, callback) {
+    // var object = jsonPath.eval(this.last_response,this.current_model.vocabularies[attribute].jsonpath );
+    var object = this.last_response[attribute];
 
     if(Number(object.length) < Number(min_children)){
-      callback.fail(new Error("The property " + attribute
-              + " must be iterable and have 0 more 1 items inside."));
+      callback.fail(new Error("The property " + attribute + " must be iterable and have " + min_children + " or more children."));
+    }
+    callback();
+  });
+
+  this.Then(/^the "([^"]*)" attribute contains only (\d+) item$/, function (attribute, exact_children, callback) {
+    
+    // var object = jsonPath.eval(this.last_response,this.current_model.vocabularies[attribute].jsonpath);
+    var object = this.last_response[attribute];
+
+    if(Number(object.length) != Number(exact_children)){
+      callback.fail(new Error("The property " + attribute + " must be iterable and have exactly "  + exact_children + " children."));
     }
     callback();
   });

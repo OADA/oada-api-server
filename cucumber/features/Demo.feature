@@ -16,8 +16,8 @@
 #
 
 Feature: Get Fields with and without view
-  Retrieves fields' boundary
-  Scenario: Go to /bookmarks/fields finder endpoint with no view parameter
+  
+  Scenario: Go to fields bookmark endpoint with no view parameter
     Retrieves the boundary coordinates of all fields in this oada cloud
     Given the client is authorized
     When the client requests the "fields" bookmark without view parameter
@@ -26,7 +26,7 @@ Feature: Get Fields with and without view
     | ATTRIBUTE     | DESCRIPTION                        |
     | _id           | id of the field resources          |
 
-  Scenario: Go to /bookmarks/fields finder endpoint with view GET parameter to expand responses
+  Scenario: Go to fields bookmarks finder endpoint with view GET parameter to expand responses
     Retrieves the boundary coordinates of all fields in this oada cloud
     Given the client is authorized
     When the client requests the "fields" bookmark with view parameter
@@ -47,122 +47,216 @@ Feature: Get Fields with and without view
     | name          | human-readable field name          |
     | crop          |                                    |
 
-# Feature: Get resources
-#   Retrieves list of resources such as machines, locations
-#   or other type of data streams.
+Feature: Get harvesters bookmark
 
-#   Scenario: Go to the /bookmarks/machines/harvesters finder endpoint 
-#     Retrieves the geofence data for specified machine to obtain locations and actions that it performs.
+  Scenario: Go to harvesters bookmarks endpoint with no view parameter
+    test that what comes back is an object with one key in it, and the value at that key is an object with only an "_id" key
 
-#     Given the client is authorized
-#     When the client requests for the harvester with identifier "4727"
-#     And the response contains at least the following information:
-#     | ATTRIBUTE      | DESCRIPTION                        |
-#     | serial_number  | Serial number of the vehicle       |
-#     | model_year     | Model Year                         |
-#     | model          | Model Name                         |
-#     | name           | Name of the harvester              |
-#     | streams        | Stream of useful data              |
-#     And the response is a "configuration"
-#     And each item in "streams" has the following information:
-#     | ATTRIBUTE  | DESCRIPTION                            |
-#     |  _id       | link to data stream                    |
+    Given the client is authorized
+    When the client requests the "machines/harvesters" bookmark without view parameter
+    And each item has just the following information:
+    | ATTRIBUTE     | DESCRIPTION                        |
+    | _id           | id of the field resources          |
 
-#   Scenario: Get geofence stream
-#     Retrieves the geofence data for specified machine to obtain locations and actions that it performs.
+  Scenario: Go to the harvesters bookmarks endpoint 
+    Retrieves the geofence data for specified machine to obtain locations and actions that it performs.
 
-#     Given the client is authorized
-#     When the client requests a "geofence" stream for harvester with identifier "4727"
-#     Then the response is a "resource"
-#     And the "events" attribute contains 0 or more item
-#     And each item in "events" has the following information:
-#     | ATTRIBUTE  | DESCRIPTION                            |
-#     |      t     | timestamp of stream                    |
-#     |    field   | field information                      |
-#     And the "field" of each item in "events" contains at least the following information:
-#     | ATTRIBUTE  | DESCRIPTION   			              |
-#     |   _id      | .. 			 	   	                  |
-#     |    name    | human-readable name of the field       |
+    Given the client is authorized
+    When the client requests for the harvester with identifier "4727"
+    And the response contains at least the following information:
+    | ATTRIBUTE      | DESCRIPTION                        |
+    | serial_number  | Serial number of the vehicle       |
+    | model_year     | Model Year                         |
+    | model          | Model Name                         |
+    | name           | Name of the harvester              |
+    | streams        | Stream of useful data              |
+    And the response is a "configuration"
+    And each item in "streams" has at least the following information:
+    | ATTRIBUTE  | DESCRIPTION                            |
+    |  _id       | link to data stream                    |
 
-#   Scenario: Get swath width stream
-#     Given the client is authorized
-#     When the client requests a "swath_width" stream for harvester with identifier "4727"
-#     Then the response is a "resource"
-#     And the response contains at least the following information:
-#     | ATTRIBUTE  | DESCRIPTION   			  |
-#     |  units     | unit stream   	 	   	  |
-#     |  widths    | width stream			   	  |
-#     And the "widths" attribute contains 1 or more item
-#     And each item in "widths" has the following information:
-#     | ATTRIBUTE  | DESCRIPTION   			  |
-#     |  t         | timestamp 			 	  |
-#     |  width     | width  			          |
-#   Scenario: Get location stream (resource 1237) with no meta but has id
-#     Given the client is authorized
-#     When the client requests a "location" stream for harvester with identifier "4727"
-#     Then the response is a "resource"
-#     And the response contains at least the following information: 
-#     | ATTRIBUTE                | DESCRIPTION                |
-#     |   coordinate_system      | what coordinate system     |
-#     |   locations              | action data array          |
-#     And each item in "locations" has the following information:
-#     | ATTRIBUTE            | 
-#     |  _id                 |
-#     |  t                   |
-#     |  lat                 |
-#     |  lon                 |
-#     |  alt                 |
-#   # Scenario: Get location stream (resource 1237) with meta # PENDING
-#   # Scenario: Get location stream that have been added since last request # PENDING
+
+
+
+Feature: Get resources WITHOUT view parameters
+  Scenario: Get swath width stream (1236) without view
+    Given the client is authorized
+    When the client requests a "swath_width" stream for harvester with identifier "4727" without view parameter A
+    And the response contains at least the following information:
+    | ATTRIBUTE  | DESCRIPTION   			  |
+    |  units     | unit stream   	 	   	  |
+    |  widths    | width stream			   	  |
+    And the "widths" attribute contains 1 or more item
+    And each item in "widths" has at least the following information:
+    | ATTRIBUTE  | DESCRIPTION   			  |
+    |  t         | timestamp 			 	  |
+    |  width     | width  			          |
+
+  Scenario: Get work status stream (1238)  without view
+    Given the client is authorized
+    When the client requests a "work_status" stream for harvester with identifier "4727" without view parameter A
+    And the "status" attribute contains 1 or more item
+    And the response contains at least the following information:
+    | ATTRIBUTE                | DESCRIPTION                |
+    |   status                 | Array                      |
+    And each item in "positions" has at least the following information:
+    | ATTRIBUTE          |
+    |  _meta             |
+    |  t                 |
+    |  case              |
+
+  Scenario: Get wet_mass_flow stream (resource 1239) without view
+    Given the client is authorized
+    When the client requests a "wet_mass_flow" stream for harvester with identifier "4727" without view parameter A
+    And the response contains at least the following information: 
+    | ATTRIBUTE          | DESCRIPTION                |
+    |  units             |                            |
+    |  flows             |                            |
+    And each item in "flows" has at least the following information:
+    |     ATTRIBUTE      |
+    |       _meta        |
+    |        t           |
+    |      flow          |
+
+  Scenario: Get the moisture stream (1240) without view
+    Given the client is authorized
+    When the client requests a "moisture" stream for harvester with identifier "4727" without view parameter A
+    And the response contains at least the following information: 
+    | ATTRIBUTE          | DESCRIPTION                |
+    |       units        |                            |
+    |       moisture     |                            |
+    And each item in "moisture" has at least the following information:
+    |     ATTRIBUTE      |
+    |       _meta        |
+    |       moisture     |
+    |       t            |
+    And the "_meta" of each item in "moisture" contains at least the following information:
+    | ATTRIBUTE                | DESCRIPTION                         |
+    |   _changeId              | What revision are these data        |
+
+Feature: Get resources without view parameter
+  Scenario: Get geofence stream (1241) without view
+    Retrieves the geofence data for specified machine to obtain locations and actions that it performs.
+
+    Given the client is authorized
+    When the client requests a "geofence" stream for harvester with identifier "4727" without view parameter A
+    And the "events" attribute contains 1 or more item
+    And each item in "events" has at least the following information:
+    | ATTRIBUTE  | DESCRIPTION                            |
+    |      t     | timestamp of stream                    |
+    |    field   | field information                      |
+    And the "field" of each item in "events" contains at least the following information:
+    | ATTRIBUTE  | DESCRIPTION                            |
+    |   _id      | ..                                     |
+    |    name    | human-readable name of the field       |
+
+  Scenario: Get swath width stream (1236) without view
+    Given the client is authorized
+    When the client requests a "swath_width" stream for harvester with identifier "4727" without view parameter A
+    And the response contains at least the following information:
+    | ATTRIBUTE  | DESCRIPTION                |
+    |  units     | unit stream                |
+    |  widths    | width stream               |
+    And the "widths" attribute contains 1 or more item
+    And each item in "widths" has at least the following information:
+    | ATTRIBUTE  | DESCRIPTION                |
+    |  t         | timestamp                  |
+    |  width     | width                      |
+
+  Scenario: Get location stream (1237)  without view
+    Given the client is authorized
+    When the client requests a "location" stream for harvester with identifier "4727" without view parameter A
+    And the response contains at least the following information: 
+    | ATTRIBUTE                | DESCRIPTION                |
+    |   coordinate_system      | what coordinate system     |
+    |   locations              | action data array          |
+    And the "locations" attribute contains 1 or more item
+    And each item in "locations" has at least the following information:
+    | ATTRIBUTE            | 
+    |  _meta               |
+    |  t                   |
+    |  lat                 |
+    |  lon                 |
+    |  alt                 |
   
-#   Scenario: Get header_position stream (resource 1238) 
-#     Given the client is authorized
-#     When the client requests a "work_status" stream for harvester with identifier "4727"
-#     Then the response is a "header_position_stream_resource"
-#     And the response contains at least the following information:
-#     | ATTRIBUTE                | DESCRIPTION                |
-#     |   _meta                  | Just meta                  |
-#     |   units                  |                            |
-#     |   positions              | Array                      |
-#     And the "_meta" attribute contains at least the following information:
-#     | ATTRIBUTE                | DESCRIPTION                         |
-#     |   _changeId              | What revision are these data        |
-#     And each item in "positions" has the following information:
-#     | ATTRIBUTE        |
-#     |  _id             |
-#     |  t               |
-#     |  pos             |
+  Scenario: Get work status stream (1238)  without view
+    Given the client is authorized
+    When the client requests a "work_status" stream for harvester with identifier "4727" without view parameter A
+    And the "status" attribute contains 1 or more item
+    And the response contains at least the following information:
+    | ATTRIBUTE                | DESCRIPTION                |
+    |   status                 | Array                      |
+    And each item in "positions" has at least the following information:
+    | ATTRIBUTE          |
+    |  _meta             |
+    |  t                 |
+    |  case              |
+
+  Scenario: Get wet_mass_flow stream (resource 1239) without view
+    Given the client is authorized
+    When the client requests a "wet_mass_flow" stream for harvester with identifier "4727" without view parameter A
+    And the response contains at least the following information: 
+    | ATTRIBUTE          | DESCRIPTION                |
+    |  units             |                            |
+    |  flows             |                            |
+    And each item in "flows" has at least the following information:
+    |     ATTRIBUTE      |
+    |       _meta        |
+    |        t           |
+    |      flow          |
+
+Feature: Get resources WITH various view parameters
+  Scenario: Get the moisture stream (1240) with filtering changeId > 0 
+    Given the client is authorized
+    When the client requests a "moisture" stream for harvester with identifier "4727" with view parameter A
+    And the response contains at least the following information: 
+    |    ATTRIBUTE       |     DESCRIPTION            |
+    |       units        |                            |
+    |       moisture     |                            |
+    And each item in "moisture" has at least the following information:
+    |     ATTRIBUTE      |
+    |       _meta        |
+    |       moisture     |
+    |       t            |
+    And the "moisture" attribute contains 1 or more item
+    And the "_meta" of each item in "moisture" contains at least the following information:
+    | ATTRIBUTE                | DESCRIPTION                         |
+    |   _changeId              | What revision are these data        |
+  
+  # Scenario: Get the moisture stream (1240) with filtering changeId > max - 1 
+  #   Given the client is authorized
+  #   When the client requests a "moisture" stream for harvester with identifier "4727" with view parameter B
+  #   And the response contains at least the following information: 
+  #   |    ATTRIBUTE       |     DESCRIPTION            |
+  #   |       units        |                            |
+  #   |       moisture     |                            |
+  #   And the "moisture" attribute contains 1 or more item
+  #   And each item in "moisture" has at least the following information:
+  #   |     ATTRIBUTE      |
+  #   |       _meta        |
+  #   |       moisture     |
+  #   |       t            |
+  #   And the "_meta" of each item in "moisture" contains at least the following information:
+  #   | ATTRIBUTE                | DESCRIPTION                         |
+  #   |   _changeId              | What revision are these data        |
 
 
-#   Scenario: Get wet_mass_flow stream (resource 1239)
-#     Given the client is authorized
-#     When the client requests a "wet_mass_flow" stream for harvester with identifier "4727"
-#     Then the response is a "resource"
-#     And the response contains at least the following information: 
-#     | ATTRIBUTE          | DESCRIPTION                |
-#     |  _meta             |                            |
-#     |  units             |                            |
-#     |  flows             |                            |
-#     And each item in "flows" has the following information:
-#     |     ATTRIBUTE      |
-#     |       _id          |
-#     |        t           |
-#     |      flow          |
+  # Scenario: Get geofence stream (1241) and verify that the data make sense
+  #   Retrieves the geofence data with view and check for enter/exit pairs.
 
-#   Scenario: Get the moisture stream (1240)
-#     Given the client is authorized
-#     When the client requests a "moisture" stream for harvester with identifier "4727"
-#     Then the response is a "moisture_stream_resource"
-#     And the response contains at least the following information: 
-#     | ATTRIBUTE          | DESCRIPTION                |
-#     |       _meta        |                            |
-#     |       units        |                            |
-#     |       moisture     |                            |
-#     And each item in "moisture" has the following information:
-#     |     ATTRIBUTE      |
-#     |       _id          |
-#     |       moisture     |
-#     |       t            |
-#     And the "_meta" attribute contains at least the following information:
-#     | ATTRIBUTE                | DESCRIPTION                         |
-#     |   _changeId              | What revision are these data        |
+  #   Given the client is authorized
+  #   When the client requests a "geofence" stream for harvester with identifier "4727" with view parameter 1 
+  #   And the "events" attribute contains 1 or more item
+  #   And the 1st event for any particular field in this sorted array is an "enter" event
+  #   And the 2nd event (if any exit) for a particular field is an "exit" event
+  #   And there are no subsequent enter events for a particular field before exiting that field
+  #   And there are no subsequent exit events for a particular field before entering that field
+  #   And each item in "events" has at least the following information:
+  #   | ATTRIBUTE  | DESCRIPTION                            |
+  #   |      t     | timestamp of stream                    |
+  #   |    field   | field information                      |
+  #   And the "field" of each item in "events" contains at least the following information:
+  #   | ATTRIBUTE  | DESCRIPTION                            |
+  #   |   _id      | ..                                     |
+  #   |    name    | human-readable name of the field       |
+

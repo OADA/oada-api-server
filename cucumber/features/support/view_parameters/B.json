@@ -1,0 +1,9 @@
+{
+  "<use_SSK>": {
+    "$each": {
+       "_meta": {
+         "_changeId": { "$gt": "<max-1>" }
+       }
+    }
+  }
+}

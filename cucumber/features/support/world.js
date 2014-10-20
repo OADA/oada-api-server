@@ -16,7 +16,8 @@
 */
 
 //Initialize your parameters here
-var configurations = require('./config');
+var configurations = require('./_auto_config');
+var stream_keys = require('./ssk.json');
 var models = require('./known_words');
 var request = require('superagent')
 
@@ -28,6 +29,8 @@ var World = function World(callback) {
     this.finder_path = configurations.server.finder;
     this.token = configurations.server.token_key;
     this.last_response  = null;
+    this.stream_keys = stream_keys;
+    
     this.get = function(uri, token, callback) {
         var r = request.get(uri).set('Authorization', 'Bearer ' + this.token).buffer(true);
 
