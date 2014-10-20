@@ -17,7 +17,7 @@
 
 //Initialize your parameters here
 var configurations = require('./_auto_config');
-var stream_keys = require('./ssk.json');
+var stream_keys = require('./SSK.json');
 var models = require('./known_words');
 var request = require('superagent')
 
