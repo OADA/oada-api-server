@@ -17,7 +17,7 @@ To start the API server:
 
 ### Option A
 
-You may perform the OADA compliance at [oada-test.herokuapp.com/compliancy](https://oada-test.herokuapp.com/compliancy) by simply give it your API endpoint. The automated tester will test your API with the latest OADA specifications and report on the results. It takes about 5 seconds.
+You may perform the OADA compliance check via [this web client](http://oada-test.herokuapp.com/compliance) by simply give it your API endpoint. The automated tester will test your API with the latest OADA specifications and report on the results. It takes about 5 seconds.
 
 ### Option B
 
