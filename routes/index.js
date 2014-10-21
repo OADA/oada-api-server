@@ -40,7 +40,7 @@ function toHtml(output_text){
 
 /* GET home page. */
 router.get('/', function(req, res) {
-  res.send("<html><body style='background-color:#ebebeb;padding-top:45px;text-align:center'><div style='margin:auto'><img width='500' src='http://openag.io/img/oada-logo.svg'></div></body></html>")
+  res.redirect("/compliance/");
 });
 
 
@@ -59,9 +59,8 @@ router.post('/compliance/go/', function(req, res) {
 	var raw = execSync('cucumber-js -f pretty cucumber');
 	//parse the result -- from the end of the report
 	var run_results = raw;
-	//look for the final result
-	// var re = /\d+ scenarios \(.*(\d+ failed).*(\d+ passed).*\)/g;
-	//remove web_client cfg file since the test is finished
+	
+  	//remove web_client cfg file since the test is finished
 	fs.unlinkSync(write_to);
 	
 	var slim_output = "Error occurred while parsing the report.";
