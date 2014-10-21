@@ -73,7 +73,7 @@ var StepDef = function () {
      this.get(this.current_url, this.get_token(), callback);
   });
 
-  this.Then(/^the response is a "([^"]*)"$/, function (model_name, callback) { 
+  this.Then(/^the response is a "([^"]*)"$/, function (model_name, callback) {
     //TODO: To be removed - this specification is redundant
     // This step tells the parser what response model to use/expect in subsequent tests
     this.current_model = this.models[model_name];
@@ -94,7 +94,7 @@ var StepDef = function () {
 
   this.Then(/^the response contains (\d+) or more items$/, function (minkey, callback) {
       var cnt = 0;
-      this.last_response = this._lastResponse.body;
+      this.last_response = this.last_response;
       for (var i in this.last_response){
          cnt++;
       }
@@ -105,7 +105,7 @@ var StepDef = function () {
 
   this.Then(/^the "([^"]*)" attribute of each "([^"]*)" contains at least the following information:$/,
       function (attribute_name, parent_key, table, callback) {
-    var roots = jsonPath.eval(this._lastResponse.body,
+    var roots = jsonPath.eval(this.last_response,
             this.current_model.vocabularies[parent_key].jsonpath);
     var cnt = 0;
     for(var rootkey in roots){
@@ -135,7 +135,7 @@ var StepDef = function () {
      var kallback = callback;
      console.log("Fetching " + this.current_url);
      this.get(this.current_url, this.get_token(), function(){
-         var configobj = that._lastResponse.body;
+         var configobj = that.last_response;
          var streamlink = that.root_url + "/resources/" + configobj[vin]._id;
 
          that.get(streamlink, that.get_token(), kallback);
@@ -144,7 +144,7 @@ var StepDef = function () {
 
   this.When(/^the client requests a "([^"]*)" stream for harvester with identifier "([^"]*)" ([^"]*) view parameter ([A-Za-z0-9_])?$/,
       function (what_stream, vin, view_state, parameter_filename, callback) {
-     
+
     var has_view_parameter = (view_state == "with" ? 1 : 0);
     var use_SSK = this.stream_keys[what_stream]; //stream specific key
     var _json_param = JSON.stringify(require("../support/view_parameters/" + parameter_filename +  ".json")).replace("<use_SSK>", use_SSK);
@@ -157,19 +157,19 @@ var StepDef = function () {
 
     var kallback = callback;
     this.get(this.current_url, this.get_token(), function(){
-      var configobj = that._lastResponse.body;
+      var configobj = that.last_response;
       //fetch the link to the resource we want
       var streamlink = that.root_url + "/resources/" + configobj[vin]._id;
 
       //load that configuration documents
       console.log("Fetching " + streamlink );
       that.get(streamlink, that.get_token(), function(){
-            var resourceobj = that._lastResponse.body;
+            var resourceobj = that.last_response;
             var datalink = that.root_url + "/resources/" + resourceobj.streams[what_stream]._id;
             //load that stream
             if(has_view_parameter)
               datalink += "?view=" + encodeURIComponent(JSON.stringify(VIEW_PARAM));
-              
+
             console.log("Fetching: " + datalink);
 
 	          that.get(datalink, that.get_token(), kallback);
@@ -179,7 +179,7 @@ var StepDef = function () {
   });
 
   this.Then(/^the response contains at least the following information:$/, function (table, callback) {
-    var object = this._lastResponse.body;
+    var object = this.last_response;
     var result = check_attributes(table, object);
     if(!result) callback.fail(new Error("Failed - Attribute Check"));
 
@@ -198,7 +198,7 @@ var StepDef = function () {
   });
 
   this.Then(/^the "([^"]*)" attribute contains only (\d+) item$/, function (attribute, exact_children, callback) {
-    
+
     // var object = jsonPath.eval(this.last_response,this.current_model.vocabularies[attribute].jsonpath);
     var object = this.last_response[attribute];
 
@@ -225,7 +225,7 @@ var StepDef = function () {
      if(this.last_response === undefined){
        callback.fail(new Error("No response from previous step"));
      }
-     
+
      for(var key in this.last_response){
          var dut = this.last_response[key];
          var result = check_attributes(table, dut);
@@ -237,7 +237,7 @@ var StepDef = function () {
          }
      }
 
-     
+
      callback();
   });
 

@@ -1,6 +1,6 @@
 /* Server Config */
 exports.server = {
-    root: "http://localhost:3000",
+  root: "https://beta.newhollandfleetforce.com:8443/oada",
     finder: "bookmarks/machines/harvesters",
     token_key: "123456789"
 };
