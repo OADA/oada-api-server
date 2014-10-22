@@ -32,6 +32,7 @@ function toHtml(output_text){
 		return "<strong>" + t + "</strong>";
 	}
 	return "<pre>" + output_text.replace(/Error/g,red(bold("Error")))
+								.replace(/Missing attribute/g, red(bold('Missing attribute')))
 								.replace(/Failing scenarios/g, red(bold("Failing scenarios")))
 								.replace(/failed/g, red(bold("failed")))
 								.replace(/Scenario/g, bold("> Scenario"))
