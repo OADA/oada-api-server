@@ -32,7 +32,7 @@ function check_attributes(table, object){
          pass.passed = false;
       }
    }
-   pass.E = new Error("Error - Missing Attribute: " + pass.missing.join(", "));
+   pass.E = new Error("Missing Attribute: " + pass.missing.join(", "));
    return pass;
 }
 
