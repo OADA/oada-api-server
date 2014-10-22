@@ -38,10 +38,8 @@ Feature: Get Fields with and without view
     | ATTRIBUTE     | DESCRIPTION    |
     | coordinates   |                |
     | type          |                |
-    And each key has a valid resource with just the following information:
+    And each key in "fields" has a valid resource with just the following information:
     | ATTRIBUTE     | DESCRIPTION                        |
     | boundary      | bounding coordinates               |
     | name          | human-readable field name          |
     | crop          |                                    |
-
-

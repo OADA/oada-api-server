@@ -268,8 +268,9 @@ var StepDef = function () {
   });
 
 
-  this.When(/^each key has a valid resource with just the following information:$/, function (table, callback) {
-    var fields = Object.keys(this.last_response);
+  this.When(/^each key in "([^"]*)" has a valid resource with just the following information:$/, function (subkey,table, callback) {
+    var fields = Object.keys(this.last_response[subkey]);
+
     var root = this.root_url;
     var context = this;
 

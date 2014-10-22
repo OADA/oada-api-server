@@ -49,12 +49,14 @@ router.post('/compliance/go/', function(req, res) {
 	var appDir = path.dirname(require.main.filename).split("/");
 	appDir.pop();
 	var write_to = appDir.join("/") + "/" + "cucumber/features/support/_web_client.cfg";
+	
 	//Write _web_client config file so that the cucumber test knows that user is running from web
 	fs.writeFileSync(write_to, JSON.stringify({
 	    root: req.body.endpoint,
 	    finder: "bookmarks/machines/harvesters",
 	    token_key: req.body.token
 	}));
+
 	//run the test
 	var raw = execSync('cucumber-js -f pretty cucumber');
 	//parse the result -- from the end of the report
