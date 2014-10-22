@@ -40,7 +40,7 @@ function toHtml(output_text){
 }
 
 router.get('/', function(req, res) {
-  res.redirect("/configurations/machines/harvester/");
+  res.redirect("/bookmarks/machines/harvesters/");
 });
 
 

@@ -22,9 +22,9 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-var routes = require('./routes/index');
-var resources = require('./routes/resources');
-var configurations =  require('./routes/configurations.js')
+var _toplevel = require('./routes/index');
+var _resources = require('./routes/resources');
+var _bookmarks =  require('./routes/bookmarks.js')
 
 var app = express();
 app.set('views', __dirname + '/views');
@@ -42,8 +42,8 @@ app.use(bodyParser.urlencoded());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', routes);
-app.use('/resources/', resources);
+app.use('/', _toplevel);
+app.use('/resources/', _resources);
 app.use('/bookmarks/', configurations);
 
 /// catch 404 and forward to error handler
@@ -60,11 +60,7 @@ app.use(function(req, res, next) {
 if (app.get('env') === 'development') {
     app.use(function(err, req, res, next) {
         res.status(err.status || 500);
-        console.log(err);
-        res.json({
-            "success": false,
-            "reason": err
-        });
+        res.send(err);
     });
 }
 
@@ -75,7 +71,7 @@ app.use(function(err, req, res, next) {
     console.log(err);
     res.json({
             "success": false,
-            "reason": "mock server does not know about the thing you requested."
+            "reason": "Mock Server does not know about the thing you requested."
         });
 });
 
