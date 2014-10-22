@@ -275,6 +275,7 @@ var StepDef = function () {
     var context = this;
 
     var testcount = 0;
+    var failcount = 0;
 
     var CustomCallback = function(){
       var dut = context.last_response;
@@ -300,16 +301,50 @@ var StepDef = function () {
     }
 
     CustomCallback.fail = function(e){
+       failcount++;
        callback.fail(new Error(e));
     }
 
+    var FirstCallback = function(){
 
-    for(var i in fields){
-      var fid = fields[i];
-      var field_url = root + "/resources/" +  fid;
-      console.log("Fetching " + field_url);
-      context.get(field_url, context.get_token(), CustomCallback);
+      var dut = context.last_response;
+      var result = check_attributes(table, dut);
+      if(!result.passed){
+          callback.fail(result.E);
+          return;
+      }
+      //check that there is just this and nothign else
+      if(Object.keys(dut).length != table.rows().length){
+          callback.fail(new Error("Too many attribute(s)! Looked for " + table.rows().length +
+           " but got " + Object.keys(dut).length) + ".. Skipping ahead.");
+          return;
+      }
+
+      if(++testcount == fields.length){
+        //check the rest
+        for(var i = 1; i < fields.length ; i++ ){
+          var fid = fields[i];
+          var field_url = root + "/resources/" +  fid;
+          console.log("Fetching " + field_url);
+          context.get(field_url, context.get_token(), CustomCallback);
+          //TODO: create a get auto-queue instead of getting everything at the same time
+        }
+      }
+
+      
     }
+
+    FirstCallback.fail = CustomCallback.fail;
+    FirstCallback.pending = CustomCallback.pending;
+
+
+    //check the first one separately so we can skip the rest if the first is wrong
+    var fid = fields[0];
+    var field_url = root + "/resources/" +  fid;
+    console.log("Fetching " + field_url);
+    context.get(field_url, context.get_token(), FirstCallback);
+
+
 
   });
 

@@ -21,7 +21,10 @@ var path = require('path');
 var fs = require('fs');
 var execSync = require('exec-sync');
 
+// var exec = require('child_process').exec;
+
 function toHtml(output_text){
+	//TODO: move to helper func
 	var red = function(t){
 		return "<span style='color:#FF0000'>" + t  + "</span>";
 	}
@@ -48,32 +51,50 @@ router.post('/compliance/go/', function(req, res) {
 
 	var appDir = path.dirname(require.main.filename).split("/");
 	appDir.pop();
-	var write_to = appDir.join("/") + "/" + "cucumber/features/support/_web_client.cfg";
-	
+	var config_buffer = appDir.join("/") + "/" + "cucumber/features/support/_web_client.cfg";
+	var report_path = appDir.join("/") + "/" + "public/report.html";
+
 	//Write _web_client config file so that the cucumber test knows that user is running from web
-	fs.writeFileSync(write_to, JSON.stringify({
+	//temporary solution
+	fs.writeFileSync(config_buffer, JSON.stringify({
 	    root: req.body.endpoint,
 	    finder: "bookmarks/machines/harvesters",
 	    token_key: req.body.token
 	}));
 
 	//run the test
-	var raw = execSync('cucumber-js -f pretty cucumber');
+	var raw = execSync("cucumber-js -f pretty cucumber/features/ | egrep -v '(\s+(at)\s).*'");
+
+	//TODO: Asynchronous version
+
+	// child = exec('cucumber-js -f pretty cucumber/features/fields.feature',
+	//   {maxBuffer: 1073741824},
+	//   function (error, stdout, stderr) {
+	//     console.log('stdout: ' + stdout);
+	//     console.log('stderr: ' + stderr);
+	//     if (error !== null) {
+	//       console.log('exec error: ' + error);
+	//     }
+	// });
+
 	//parse the result -- from the end of the report
 	var run_results = raw;
 	
   	//remove web_client cfg file since the test is finished
-	fs.unlinkSync(write_to);
+	fs.unlinkSync(config_buffer);
 	
 	var slim_output = "Error occurred while parsing the report.";
 	try{
 		//remove control characters and send to screen
 		//remove stack trace
-		slim_output = run_results.replace(/\[\d+m/g,"").replace(/(\s+(at)\s).*/g, "");
+		slim_output = run_results.replace(/\[\d+m/g,"").replace(/(\s+(at)\s).*/g,"");
 	}catch(ex){
 		console.log(ex);
 		res.send("We think there is something wrong with the URL, or the token you provided. Please try again.");
 	}
+
+	// fs.writeFileSync(report_path, toHtml(slim_output));
+
 	res.send(toHtml(slim_output));
 });
 
