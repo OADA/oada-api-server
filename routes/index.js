@@ -39,9 +39,8 @@ function toHtml(output_text){
 								.replace(/passed/g, green(bold("passed"))) + "</pre>";
 }
 
-/* GET home page. */
 router.get('/', function(req, res) {
-  res.redirect("/compliance/");
+  res.redirect("/configurations/machines/harvester/");
 });
 
 
@@ -78,7 +77,7 @@ router.post('/compliance/go/', function(req, res) {
 
 router.get('/compliance(/?)', function(req, res) {
 	res.render('compliance',
-	  { title : 'Home'}
+	  { title : 'OADA Test'}
 	  )
 });
 
