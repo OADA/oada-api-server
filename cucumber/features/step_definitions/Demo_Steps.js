@@ -23,14 +23,16 @@ var jsonPath = require('JSONPath');
  *  @param {Object} object: object to be tested
 */
 function check_attributes(table, object){
+   var pass = true;
    for(var idx in table.rows()){
       var look_for = table.rows()[idx][0];
 
 	    if(object[look_for] === undefined){
-         return false;
+         console.log(">> Missing attribute: " + look_for);
+         pass = false;
       }
    }
-   return true;
+   return pass;
 }
 
 function getNode(jsonpath, root, opt){
@@ -87,7 +89,11 @@ var StepDef = function () {
                          this.last_response);
     var result = check_attributes(table, object);
 
-    if(!result) callback.fail(new Error("Failed - Attribute Check for: " + item_key));
+    if(!result) {
+      callback.fail(new Error("Error: Missing Attribute(s)"));
+      return;
+    }
+
     callback();
   });
 
@@ -98,7 +104,11 @@ var StepDef = function () {
       for (var i in this.last_response){
          cnt++;
       }
-      if(cnt < minkey) callback.fail(new Error("Failed - " + cnt +  " keys found"));
+      if(cnt < minkey) 
+      {
+        callback.fail(new Error(">> Error: Didn't contain enough key - " + cnt +  " keys found"));
+        return;
+      }
       callback();
   });
 
@@ -112,7 +122,10 @@ var StepDef = function () {
        var object = roots[rootkey];
        object = object[attribute_name];
        var result = check_attributes(table, object);
-       if(!result) callback.fail(new Error("Failed - Attribute Check for: " + attribute_name));
+       if(!result){
+        callback.fail(new Error("Failed - Attribute Check for: " + attribute_name));
+        return;
+       }
        cnt++;
     }
 
@@ -124,7 +137,10 @@ var StepDef = function () {
                          this.last_response,
                          0);
        var result = check_attributes(table, object);
-       if(!result) callback.fail(new Error("Failed - Attribute Check for: " + attribute_name));
+       if(!result){
+          callback.fail(new Error("Failed - Attribute Check for: " + attribute_name));
+          return;
+       }
        callback();
   });
 
@@ -181,7 +197,10 @@ var StepDef = function () {
   this.Then(/^the response contains at least the following information:$/, function (table, callback) {
     var object = this.last_response;
     var result = check_attributes(table, object);
-    if(!result) callback.fail(new Error("Failed - Attribute Check"));
+    if(!result){
+      callback.fail(new Error("Failed - Attribute Check"));
+      return;
+    }
 
     callback();
   });
@@ -193,6 +212,7 @@ var StepDef = function () {
 
     if(Number(object.length) < Number(min_children)){
       callback.fail(new Error("The property " + attribute + " must be iterable and have " + min_children + " or more children."));
+      return;
     }
     callback();
   });
@@ -204,6 +224,7 @@ var StepDef = function () {
 
     if(Number(object.length) != Number(exact_children)){
       callback.fail(new Error("The property " + attribute + " must be iterable and have exactly "  + exact_children + " children."));
+      return;
     }
     callback();
   });
@@ -216,6 +237,7 @@ var StepDef = function () {
          var result = check_attributes(table, this.last_response[key]);
          if(!result){
             callback.fail(new Error("Missing attribute(s)"));
+            return;
          }
      }
      callback();
@@ -224,6 +246,7 @@ var StepDef = function () {
   this.Then(/^each item has just the following information:$/, function (table,callback) {
      if(this.last_response === undefined){
        callback.fail(new Error("No response from previous step"));
+       return;
      }
 
      for(var key in this.last_response){
@@ -231,9 +254,11 @@ var StepDef = function () {
          var result = check_attributes(table, dut);
          if(!result){
             callback.fail(new Error("Missing attribute(s)"));
+            return;
          }
          if(Object.keys(dut).length != table.rows().length){
           callback.fail(new Error("Too many attribute(s)! Looked for " + table.rows().length + " but got " + Object.keys(dut).length));
+          return;
          }
      }
 
@@ -254,10 +279,12 @@ var StepDef = function () {
       var result = check_attributes(table, dut);
       if(!result){
           callback.fail(new Error("Missing attribute(s)"));
+          return;
       }
       //check that there is just this and nothign else
       if(Object.keys(dut).length != table.rows().length){
           callback.fail(new Error("Too many attribute(s)! Looked for " + table.rows().length + " but got " + Object.keys(dut).length));
+          return;
       }
 
       if(++testcount == fields.length){
@@ -286,24 +313,23 @@ var StepDef = function () {
 
 
   this.Then(/^each item in "([^"]*)" has at least the following information:$/, function (this_key, table, callback) {
-    //TODO: need to match that greedy regex ^
-    if(this.last_response == null) console.log("Error: last response is null")
+    if(this.last_response == null){
+      console.log("Error: last response is null. Test will stop")
+      callback.fail(new Error("Fetal error! "));
+      return;
+    }
     var root = this.last_response[this_key];
 
-    this.previous_step = {};
-    var fallthrough = 0;
     for(key in root){
 	    var iterable = root[key];
- 	    this.previous_step[key] = iterable;
 	    var result = check_attributes(table, iterable);
       if(!result){
-            console.log(iterable);
+            // console.log(iterable);
             callback.fail(new Error("Missing attribute(s)"));
             return;
       }
- 	    fallthrough++;
     }
-   console.log(fallthrough);
+
    callback();
 
  });
@@ -316,6 +342,7 @@ var StepDef = function () {
            var result = check_attributes(table, iterable);
            if(!result){
             callback.fail(new Error("Missing attribute(s)"));
+            return;
            }
     }
     callback();

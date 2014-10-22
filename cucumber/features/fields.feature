@@ -17,27 +17,24 @@
 
 Feature: Get Fields with and without view
 
-  Scenario: Go to fields bookmark endpoint with no view parameter
-    Retrieves the boundary coordinates of all fields in this oada cloud
+  Scenario: Fields bookmark with NO view parameter
     Given the client is authorized
     When the client requests the "fields" bookmark without view parameter
-    And the response is a "configuration"
-    And each item has just the following information:
+    And the response contains at least the following information:
     | ATTRIBUTE     | DESCRIPTION                        |
     | _id           | id of the field resources          |
+    | fields        | Array of fields                    |
 
-  Scenario: Go to fields bookmarks finder endpoint with view GET parameter to expand responses
-    Retrieves the boundary coordinates of all fields in this oada cloud
+  Scenario: Fields bookmark WITH view parameter and follow its key
     Given the client is authorized
     When the client requests the "fields" bookmark with view parameter
-    And the response is a "configuration"
-    And each item has just the following information:
+    And each item in "fields" has at least the following information:
     | ATTRIBUTE     | DESCRIPTION                        |
     | _id           | id of the field resources          |
     | boundary      | bounding coordinates               |
     | name          | human-readable field name          |
     | crop          |                                    |
-    And each item in "boundary" has at least the following information:
+    And the "boundary" of each item in "fields" contains at least the following information:
     | ATTRIBUTE     | DESCRIPTION    |
     | coordinates   |                |
     | type          |                |
