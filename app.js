@@ -44,7 +44,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', _toplevel);
 app.use('/resources/', _resources);
-app.use('/bookmarks/', configurations);
+app.use('/bookmarks/', _bookmarks);
 
 /// catch 404 and forward to error handler
 app.use(function(req, res, next) {
