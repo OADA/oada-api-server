@@ -23,15 +23,16 @@ var jsonPath = require('JSONPath');
  *  @param {Object} object: object to be tested
 */
 function check_attributes(table, object){
-   var pass = true;
+   var pass = {passed: true, missing: [], E: null};
    for(var idx in table.rows()){
       var look_for = table.rows()[idx][0];
 
 	    if(object[look_for] === undefined){
-         console.log(">> Missing attribute: " + look_for);
-         pass = false;
+         pass.missing.push(look_for);
+         pass.passed = false;
       }
    }
+   pass.E = new Error("Error - Missing Attribute: " + pass.missing.join(", "));
    return pass;
 }
 
@@ -89,8 +90,8 @@ var StepDef = function () {
                          this.last_response);
     var result = check_attributes(table, object);
 
-    if(!result) {
-      callback.fail(new Error("Error: Missing Attribute(s)"));
+    if(!result.passed) {
+      callback.fail(result.E);
       return;
     }
 
@@ -122,8 +123,8 @@ var StepDef = function () {
        var object = roots[rootkey];
        object = object[attribute_name];
        var result = check_attributes(table, object);
-       if(!result){
-        callback.fail(new Error("Failed - Attribute Check for: " + attribute_name));
+       if(!result.passed){
+        callback.fail(result.E);
         return;
        }
        cnt++;
@@ -137,8 +138,8 @@ var StepDef = function () {
                          this.last_response,
                          0);
        var result = check_attributes(table, object);
-       if(!result){
-          callback.fail(new Error("Failed - Attribute Check for: " + attribute_name));
+       if(!result.passed){
+          callback.fail(result.E);
           return;
        }
        callback();
@@ -197,8 +198,8 @@ var StepDef = function () {
   this.Then(/^the response contains at least the following information:$/, function (table, callback) {
     var object = this.last_response;
     var result = check_attributes(table, object);
-    if(!result){
-      callback.fail(new Error("Failed - Attribute Check"));
+    if(!result.passed){
+      callback.fail(result.E);
       return;
     }
 
@@ -235,8 +236,8 @@ var StepDef = function () {
      }
      for(var key in this.last_response){
          var result = check_attributes(table, this.last_response[key]);
-         if(!result){
-            callback.fail(new Error("Missing attribute(s)"));
+         if(!result.passed){
+            callback.fail(result.E);
             return;
          }
      }
@@ -252,8 +253,8 @@ var StepDef = function () {
      for(var key in this.last_response){
          var dut = this.last_response[key];
          var result = check_attributes(table, dut);
-         if(!result){
-            callback.fail(new Error("Missing attribute(s)"));
+         if(!result.passed){
+            callback.fail(result.E);
             return;
          }
          if(Object.keys(dut).length != table.rows().length){
@@ -277,8 +278,8 @@ var StepDef = function () {
     var CustomCallback = function(){
       var dut = context.last_response;
       var result = check_attributes(table, dut);
-      if(!result){
-          callback.fail(new Error("Missing attribute(s)"));
+      if(!result.passed){
+          callback.fail(result.E);
           return;
       }
       //check that there is just this and nothign else
@@ -323,9 +324,8 @@ var StepDef = function () {
     for(key in root){
 	    var iterable = root[key];
 	    var result = check_attributes(table, iterable);
-      if(!result){
-            // console.log(iterable);
-            callback.fail(new Error("Missing attribute(s)"));
+      if(!result.passed){
+            callback.fail(result.E);
             return;
       }
     }
@@ -340,8 +340,8 @@ var StepDef = function () {
            var iterable = iter[key][inner];
            //console.log(iterable);
            var result = check_attributes(table, iterable);
-           if(!result){
-            callback.fail(new Error("Missing attribute(s)"));
+           if(!result.passed){
+            callback.fail(result.E);
             return;
            }
     }
