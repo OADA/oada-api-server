@@ -344,8 +344,6 @@ var StepDef = function () {
     console.log("Fetching " + field_url);
     context.get(field_url, context.get_token(), FirstCallback);
 
-
-
   });
 
 

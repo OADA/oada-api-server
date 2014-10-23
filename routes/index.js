@@ -56,11 +56,13 @@ router.post('/compliance/go/', function(req, res) {
 
 	//Write _web_client config file so that the cucumber test knows that user is running from web
 	//temporary solution
-	fs.writeFileSync(config_buffer, JSON.stringify({
+	var setting_file = {
 	    root: req.body.endpoint,
 	    finder: "bookmarks/machines/harvesters",
 	    token_key: req.body.token
-	}));
+	};
+	fs.writeFileSync(config_buffer, JSON.stringify(setting_file));
+	console.log(setting_file);
 
 	//run the test
 	var raw = execSync("cucumber-js -f pretty cucumber/features/ | egrep -v '(\s+(at)\s).*'");
