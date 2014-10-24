@@ -20,6 +20,7 @@ var configurations = require('./_auto_config');
 var stream_keys = require('./SSK.json');
 var models = require('./known_words');
 var request = require('superagent')
+var utils = require('./utils')
 
 var World = function World(callback) {
     this._lastResponse = null;
@@ -29,7 +30,18 @@ var World = function World(callback) {
     this.finder_path = configurations.server.finder;
     this.token = configurations.server.token_key;
     this.last_response  = null;
+    this.utils = utils;
     this.stream_keys = stream_keys;
+
+    this.memory = null;
+
+    this.remember = function(what){
+        this.memory = what;
+    }
+
+    this.recall = function(){
+        return this.memory;
+    }
     
     this.get = function(uri, token, callback) {
         var r = request.get(uri).set('Authorization', 'Bearer ' + this.token).buffer(true);
@@ -38,7 +50,8 @@ var World = function World(callback) {
             if (res.error) { 
                 //callback.fail(new Error(res.error));
                 console.log("^^^^^ Failed. Unable to fetch URL. "  + uri);
-                return null;
+                callback.fail(new Error(res.text));
+                return;
             }
             context._lastResponse = res;
             context.last_response = JSON.parse(res.text);

@@ -1,38 +1,65 @@
-# Feature: Get resources WITH various view parameters
-#   Scenario: Get the moisture stream (1240) with filtering changeId > 0
-#     Given the client is authorized
-#     When the client requests a "moisture" stream for harvester with identifier "4727" with view parameter A
-#     And the response contains at least the following information:
-#     |    ATTRIBUTE       |     DESCRIPTION            |
-#     |       units        |                            |
-#     |       moisture     |                            |
-#     And each item in "moisture" has at least the following information:
-#     |     ATTRIBUTE      |
-#     |       _meta        |
-#     |       moisture     |
-#     |       t            |
-#     And the "moisture" attribute contains 1 or more item
-#     And the "_meta" of each item in "moisture" contains at least the following information:
-#     | ATTRIBUTE                | DESCRIPTION                         |
-#     |   _changeId              | What revision are these data        |
+Feature: Get resources WITH various view parameters
+  Scenario: Get the MOISTURE stream with filtering changeId > 0, changeId > max -1
+    Given the client is authorized
+    When the client requests a "moisture" stream for harvester with identifier "4727" with view parameter A 
+    Then the response contains at least the following information:
+    |    ATTRIBUTE       |     DESCRIPTION            |
+    |       units        |                            |
+    |       moistures    |                            |
+    And the "moistures" attribute contains 1 or more item
+    And each item in "moistures" has at least the following information:
+    |     ATTRIBUTE      |
+    |       _meta        |
+    |       moisture     |
+    |       t            |
+    And the "_meta" of each item in "moistures" contains at least the following information:
+    | ATTRIBUTE                | DESCRIPTION                         |
+    |   _changeId              | What revision are these data        |
+    And remember the maximum value of "$.*._meta._changeId" for every items in "moistures"
+    And check the "moisture" stream again, this time with view parameter MAXCHG
+    And all values of "$.moistures.*._meta._changeId" are equals to the previously remembered value
 
-  # Scenario: Get the moisture stream (1240) with filtering changeId > max - 1
-  #   Given the client is authorized
-  #   When the client requests a "moisture" stream for harvester with identifier "4727" with view parameter B
-  #   And the response contains at least the following information:
-  #   |    ATTRIBUTE       |     DESCRIPTION            |
-  #   |       units        |                            |
-  #   |       moisture     |                            |
-  #   And the "moisture" attribute contains 1 or more item
-  #   And each item in "moisture" has at least the following information:
-  #   |     ATTRIBUTE      |
-  #   |       _meta        |
-  #   |       moisture     |
-  #   |       t            |
-  #   And the "_meta" of each item in "moisture" contains at least the following information:
-  #   | ATTRIBUTE                | DESCRIPTION                         |
-  #   |   _changeId              | What revision are these data        |
+  Scenario: Get the LOCATION stream with filtering changeId > 0, changeId > max -1
+    Given the client is authorized
+    When the client requests a "location" stream for harvester with identifier "4727" with view parameter A 
+    And the response contains at least the following information:
+    | ATTRIBUTE                | DESCRIPTION                |
+    |   coordinate_system      | what coordinate system     |
+    |   locations              | action data array          |
+    And the "locations" attribute contains 1 or more item
+    And each item in "locations" has at least the following information:
+    | ATTRIBUTE            |
+    |     _meta            |
+    |     t                |
+    |     lat              |
+    |     lon              |
+    |     alt              |
+    And the "_meta" of each item in "locations" contains at least the following information:
+    | ATTRIBUTE                | DESCRIPTION                         |
+    |   _changeId              | What revision are these data        |
+    And remember the maximum value of "$.*._meta._changeId" for every items in "locations"
+    And check the "locations" stream again, this time with view parameter MAXCHG
+    And all values of "$.locations.*._meta._changeId" are equals to the previously remembered value
 
+  Scenario: Get the SWATH WIDTH stream with filtering changeId > 0, changeId > max -1
+    Given the client is authorized
+    When the client requests a "swath_width" stream for harvester with identifier "4727" with view parameter A
+    And the response contains at least the following information:
+    | ATTRIBUTE  | DESCRIPTION          |
+    |  units     | unit stream          |
+    |  widths    | width stream         |
+    And the "widths" attribute contains 1 or more item
+    And each item in "widths" has at least the following information:
+    | ATTRIBUTE  | DESCRIPTION          |
+    |  _meta     | meta                 |
+    |  t         | timestamp            |
+    |  width     | width                |
+    And the "_meta" of each item in "widths" contains at least the following information:
+    | ATTRIBUTE                | DESCRIPTION                         |
+    |   _changeId              | What revision are these data        |
+    And remember the maximum value of "$.*._meta._changeId" for every items in "widths"
+    And check the "widths" stream again, this time with view parameter MAXCHG
+    And all values of "$.widths.*._meta._changeId" are equals to the previously remembered value
 
   # Scenario: Get geofence stream (1241) and verify that the data make sense
   #   Retrieves the geofence data with view and check for enter/exit pairs.

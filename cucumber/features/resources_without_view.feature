@@ -52,7 +52,7 @@ Feature: Get resources with NO view parameters
     And the response contains at least the following information:
     |     ATTRIBUTE        | DESCRIPTION                |
     |      status          | Array                      |
-    And each item in "positions" has at least the following information:
+    And each item in "status" has at least the following information:
     |      ATTRIBUTE     |
     |        _id         |
     |        t           |

@@ -1,6 +1,6 @@
 {
   "geofence": "locations",
-  "moisture": "moisture",
+  "moisture": "moistures",
   "work_status": "status",
   "geofence": "locations",
   "wet_mass_flow": "flows",

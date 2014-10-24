@@ -20,14 +20,20 @@ Feature: Get Fields with and without view
   Scenario: Fields bookmark with NO view parameter
     Given the client is authorized
     When the client requests the "fields" bookmark without view parameter
-    And the response contains at least the following information:
+    Then the response contains at least the following information:
     | ATTRIBUTE     | DESCRIPTION                        |
-    | _id           | id of the field resources          |
     | fields        | Array of fields                    |
+    And the "fields" attribute contains 1 or more item
+    And each key in "fields" has a valid resource with just the following information when requested without view parameter:
+    | ATTRIBUTE     | DESCRIPTION                        |
+    | boundary      | bounding coordinates               |
+    | name          | human-readable field name          |
+    | crop          |                                    |
 
-  Scenario: Fields bookmark WITH view parameter and follow its key
+  Scenario: Fields bookmark WITH view parameter
     Given the client is authorized
     When the client requests the "fields" bookmark with view parameter
+    And the "fields" attribute contains 1 or more item
     And each item in "fields" has at least the following information:
     | ATTRIBUTE     | DESCRIPTION                        |
     | _id           | id of the field resources          |
@@ -38,8 +44,3 @@ Feature: Get Fields with and without view
     | ATTRIBUTE     | DESCRIPTION    |
     | coordinates   |                |
     | type          |                |
-    And each key in "fields" has a valid resource with just the following information:
-    | ATTRIBUTE     | DESCRIPTION                        |
-    | boundary      | bounding coordinates               |
-    | name          | human-readable field name          |
-    | crop          |                                    |

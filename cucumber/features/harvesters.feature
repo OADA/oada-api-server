@@ -5,7 +5,7 @@ Feature: Get harvesters bookmark
 
     Given the client is authorized
     When the client requests the "machines/harvesters" bookmark without view parameter
-    And each item has just the following information:
+    Then each item has just the following information:
     | ATTRIBUTE     | DESCRIPTION                        |
     | _id           | id of the field resources          |
 
@@ -14,7 +14,7 @@ Feature: Get harvesters bookmark
 
     Given the client is authorized
     When the client requests for the harvester with identifier "4727"
-    And the response contains at least the following information:
+    Then the response contains at least the following information:
     | ATTRIBUTE      | DESCRIPTION                        |
     | serial_number  | Serial number of the vehicle       |
     | model_year     | Model Year                         |

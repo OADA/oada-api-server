@@ -1,6 +1,6 @@
 {
   "units": "percent water",
-  "moisture": [
+  "moistures": [
     {
       "_meta": {
         "_changeId": 6

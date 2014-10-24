@@ -2,7 +2,7 @@
   "<use_SSK>": {
     "$each": {
        "_meta": {
-         "_changeId": { "$gt": "<max-1>" }
+         "_changeId": { "$gt": "<last_remembered>" }
        }
     }
   }

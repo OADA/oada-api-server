@@ -23,9 +23,14 @@ var jsonPath = require('JSONPath');
  *  @param {Object} object: object to be tested
 */
 function check_attributes(table, object){
+  // console.log(object);
+   
    var pass = {passed: true, missing: [], E: null};
+
    for(var idx in table.rows()){
       var look_for = table.rows()[idx][0];
+      //the thing we are looking for cannot be undefined (sometimes [Function] is part of rows())
+      if(look_for == undefined) continue; 
 
 	    if(object[look_for] === undefined){
          pass.missing.push(look_for);
@@ -69,10 +74,12 @@ var StepDef = function () {
      var VIEW_PARAM = {"$each":{"$expand":true}};
 
      this.current_url = this.root_url + "/bookmarks/" +  bk_name;
-     if(has_view_parameter)
+     if(has_view_parameter){
       this.current_url += "?view=" + encodeURIComponent(JSON.stringify(VIEW_PARAM));
-     var that = this;
+     }
      console.log("Fetching " + this.current_url);
+
+     var that = this;
      this.get(this.current_url, this.get_token(), callback);
   });
 
@@ -103,6 +110,7 @@ var StepDef = function () {
       var cnt = 0;
       this.last_response = this.last_response;
       for (var i in this.last_response){
+         if(this.last_response[i] === undefined) continue;
          cnt++;
       }
       if(cnt < minkey) 
@@ -120,6 +128,7 @@ var StepDef = function () {
             this.current_model.vocabularies[parent_key].jsonpath);
     var cnt = 0;
     for(var rootkey in roots){
+       if(this.roots[rootkey] === undefined) continue;
        var object = roots[rootkey];
        object = object[attribute_name];
        var result = check_attributes(table, object);
@@ -159,13 +168,13 @@ var StepDef = function () {
      });
   });
 
-  this.When(/^the client requests a "([^"]*)" stream for harvester with identifier "([^"]*)" ([^"]*) view parameter ([A-Za-z0-9_])?$/,
+  this.When(/^the client requests a "([^"]*)" stream for harvester with identifier "([^"]*)" ([^"]*) view parameter ([A-Za-z0-9_]+)$/,
       function (what_stream, vin, view_state, parameter_filename, callback) {
 
     var has_view_parameter = (view_state == "with" ? 1 : 0);
     var use_SSK = this.stream_keys[what_stream]; //stream specific key
     var _json_param = JSON.stringify(require("../support/view_parameters/" + parameter_filename +  ".json")).replace("<use_SSK>", use_SSK);
-    var VIEW_PARAM = JSON.parse(_json_param);
+    var VIEW_PARAM = JSON.parse(_json_param); //TODO: redundant, to be removed
     //navigate to finder
     this.current_url = this.root_url + "/" + this.finder_path;
 
@@ -184,11 +193,13 @@ var StepDef = function () {
             var resourceobj = that.last_response;
             var datalink = that.root_url + "/resources/" + resourceobj.streams[what_stream]._id;
             //load that stream
+            var just_data_url = datalink;
             if(has_view_parameter)
               datalink += "?view=" + encodeURIComponent(JSON.stringify(VIEW_PARAM));
 
-            console.log("Fetching: " + datalink);
+            console.log("Fetching final resource: " + datalink);
 
+            that.current_url = just_data_url;  
 	          that.get(datalink, that.get_token(), kallback);
       });
     });
@@ -268,81 +279,58 @@ var StepDef = function () {
   });
 
 
-  this.When(/^each key in "([^"]*)" has a valid resource with just the following information:$/, function (subkey,table, callback) {
+  this.When(/^each key in "([^"]*)" has a valid resource with just the following information when requested ([^"]+) view parameter:$/, function (subkey, view_state, table, callback) {
     var fields = Object.keys(this.last_response[subkey]);
+    var has_view_parameter = (view_state == "with" ? 1 : 0);
+    var view_param = encodeURIComponent(JSON.stringify({"$each":{"$expand":true}}));
 
     var root = this.root_url;
     var context = this;
 
-    var testcount = 0;
-    var failcount = 0;
-
-    var CustomCallback = function(){
-      var dut = context.last_response;
+    var checker = function(dut){
       var result = check_attributes(table, dut);
+      //check that the returned resource contains stuff we need
       if(!result.passed){
           callback.fail(result.E);
           return;
       }
-      //check that there is just this and nothign else
+      //check that there is just this and nothing else
       if(Object.keys(dut).length != table.rows().length){
-          callback.fail(new Error("Too many attribute(s)! Looked for " + table.rows().length + " but got " + Object.keys(dut).length));
+          var EMES = "Too many attribute(s)! Looked for " + table.rows().length + " but got " + Object.keys(dut).length + ".. Skipping ahead.";
+          callback.fail(new Error(EMES));
           return;
-      }
-
-      if(++testcount == fields.length){
-        //do callback if we are done checking all the fields
-        callback();
       }
     }
 
-    CustomCallback.pending = function(){
-       callback.pending();
+
+    var async_check_callback = function(){
+       checker(context.last_response);  
+       callback();   
     }
 
-    CustomCallback.fail = function(e){
-       failcount++;
-       callback.fail(new Error(e));
-    }
 
-    var FirstCallback = function(){
+    var done_first_item_cb = function(){
+      checker(context.last_response);
 
-      var dut = context.last_response;
-      var result = check_attributes(table, dut);
-      if(!result.passed){
-          callback.fail(result.E);
-          return;
-      }
-      //check that there is just this and nothign else
-      if(Object.keys(dut).length != table.rows().length){
-          callback.fail(new Error("Too many attribute(s)! Looked for " + table.rows().length +
-           " but got " + Object.keys(dut).length) + ".. Skipping ahead.");
-          return;
-      }
-
-      if(++testcount == fields.length){
-        //check the rest
-        for(var i = 1; i < fields.length ; i++ ){
+      //check the rest entries
+      for(var i = 1; i < fields.length ; i++ ){
           var fid = fields[i];
-          var field_url = root + "/resources/" +  fid;
+          var field_url = root + "/resources/" +  fid + (has_view_parameter ? "?view=" + view_param : "");
           console.log("Fetching " + field_url);
-          context.get(field_url, context.get_token(), CustomCallback);
-          //TODO: create a get auto-queue instead of getting everything at the same time
-        }
+          context.get(field_url, context.get_token(), async_check_callback);
+          //TODO: maybe create a queue instead of getting everything at the same time (in World.js)
+          //aka. limit to only few concurrent GET request at a time
       }
-
-      
     }
 
-    FirstCallback.fail = CustomCallback.fail;
-    FirstCallback.pending = CustomCallback.pending;
+    done_first_item_cb.fail = function(){ callback.fail(new Error("Unknown Error.")); }
+    async_check_callback.fail = function(){ callback.fail(new Error("Unknown Error.")); }
 
-
-    //check the first one separately so we can skip the rest if the first is wrong
     var fid = fields[0];
-    var field_url = root + "/resources/" +  fid;
+    var field_url = root + "/resources/" +  fid + (has_view_parameter ? "?view=" + view_param : "");
     console.log("Fetching " + field_url);
-    context.get(field_url, context.get_token(), FirstCallback);
+
+    context.get(field_url, context.get_token(), done_first_item_cb);
 
   });
 
@@ -353,33 +341,109 @@ var StepDef = function () {
       callback.fail(new Error("Fetal error! "));
       return;
     }
-    var root = this.last_response[this_key];
 
-    for(key in root){
+    var root = this.last_response[this_key];
+    var nonskip = 0;
+    for(var key in root){
 	    var iterable = root[key];
+      if(iterable == undefined) continue;
 	    var result = check_attributes(table, iterable);
       if(!result.passed){
             callback.fail(result.E);
             return;
       }
+      nonskip++;
     }
 
+   if(nonskip == 0){
+    callback.fail(new Error("The" + inner + " attribute is empty!")  );
+    return;
+   }
    callback();
 
  });
 
   this.Then(/^the "([^"]*)" of each item in "([^"]*)" contains at least the following information:$/, function (inner, outer, table, callback) {
     var iter = this.last_response[outer];
-    for(key in iter){
+    if(iter === undefined) {
+      callback.fail(new Error("The " + outer + " attribute does not exist in response!"))
+      return;
+    }
+      
+    var nonskip = 0;
+
+    for(var key =0; key < iter.length; key++){
            var iterable = iter[key][inner];
-           //console.log(iterable);
+           if(iterable == undefined) continue;
            var result = check_attributes(table, iterable);
            if(!result.passed){
             callback.fail(result.E);
             return;
            }
+           nonskip++;
+    }
+    if(nonskip == 0){
+      callback.fail(new Error("The " + inner + " attribute is empty or does not exist!") );
+      return;
     }
     callback();
+});
+
+this.When(/^remember the maximum value of "([^"]*)" for every items in "([^"]*)"$/, function (jsonpath, placekey, callback) {
+
+  var dataset = this.last_response[placekey];
+  A = jsonPath.eval(dataset, jsonpath)
+
+  console.log("Number of records: " + A.length);
+
+
+  this.utils.quicksort(A,0, A.length);
+  var maxval = A[A.length - 1];
+  this.remember(Number(maxval));
+
+  console.log("Max _changeId: " + maxval);
+
+  callback();
+
+});
+
+this.Then(/^check the "([^"]+)" stream again, this time with view parameter ([^"]+)$/, function (what_stream, view_param_doc, callback) {
+  var use_SSK = this.stream_keys[what_stream]; 
+ 
+  var recalled = this.recall();
+
+  if(recalled == null){
+    callback.fail(new Error("Fetal Error: Unable to recall saved variable."));
+    return;
+  }
+
+  //TODO: make a generic view doc parser, it should be able to throw error if this.recall is null as well
+  var view_GET = JSON.stringify(require("../support/view_parameters/" + view_param_doc +  ".json")).replace("<use_SSK>", use_SSK).replace("<last_remembered>", recalled); 
+
+  //Form the new URL we need to fetch
+  var full_url = this.current_url + "/?view=" + encodeURIComponent(view_GET);
+
+  this.get(full_url, this.get_token(), callback);
+});
+
+
+this.When(/^all values of "([^"]*)" are equals to the previously remembered value$/, function (jsonpath, callback) {
+  var A = jsonPath.eval(this.last_response, jsonpath);
+  var N = this.recall();
+
+  if(N == null){
+    callback.fail(new Error("Fetal Error: Unable to recall saved variable."));
+    return;
+  }
+
+  for(var index = 0; index < A.length; index++){
+    var e_mesg = "Response contains record with incorrect changeId! (looking for " + this.recall() + " but found " + A[index] + ")";
+    if(Number(A[index]) != Number(N)){
+      callback.fail(new Error(e_mesg));
+      return;
+    }
+  }
+  callback();
 });
 
 

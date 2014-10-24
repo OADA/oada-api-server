@@ -59,10 +59,7 @@ router.get('/*', function(req, res) {
     }catch(exp){
         //Send out error message for unsupported Resource ID
         console.log(exp);
-        res.json({
-            "error": "unsupported resource",
-            "reason": exp.message
-        });
+        res.status(404).send('No document ' + '../documents/' + id + '_' + view_param_hash + '.json');
     }
     
     res_object = mParser.parseTokens(res_object);
