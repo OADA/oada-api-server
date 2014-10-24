@@ -20,9 +20,52 @@ var docparser = require('../parser');
 var express = require('express');
 var router = express.Router();
 
+router.get('/resources/*', function(req, res) {
+
+    var rest_path = req.params[0].split("/");
+    var id = rest_path.shift();
+
+    var mParser = new docparser(req.headers.host);
+    var res_object = {};
+    // Pull up document format template
+    try{
+        var normal = require('../documents/' + id + '.json');
+        res_object = normal;
+
+        if("view" in req.query){
+            var view_param_hash = md5(req.query.view);
+            console.log("vp hash: " + view_param_hash);
+            // var search = jsonPath.eval(view_param, '$.*.*._meta._changeId');
+            res_object = require('../documents/' + id + '_' + view_param_hash + '.json');
+        }
+
+
+        //walk through the requested REST Path
+        for(var idx in rest_path){
+            var child = rest_path[idx];
+            if(child == ""){
+                continue;
+            }
+            if(!res_object.hasOwnProperty(child)){
+                throw {"message": "The resource you requested does not exist."};
+            }
+            res_object = res_object[child];
+        }
+        //TODO: Actually putting data into the placeholder
+    }catch(exp){
+        //Send out error message for unsupported Resource ID
+        console.log(exp);
+        res.status(404).send('No document ' + '../documents/' + id + '_' + view_param_hash + '.json');
+    }
+    
+    res_object = mParser.parseTokens(res_object);
+    res.json(res_object);
+});
+
+
 //TODO: Need a way to elegantly generate config responses
 
-router.get('/machines/harvesters(/?)', function(req, res) {
+router.get('/bookmarks/machines/harvesters(/?)', function(req, res) {
 
     // TODO: Check the Authentication Bearer
     var rest_path = req.params[0].split("/");
@@ -60,7 +103,7 @@ router.get('/machines/harvesters(/?)', function(req, res) {
     res.json(res_object);
 });
 
-router.get('/fields(/?)', function(req, res) {
+router.get('/bookmarks/fields(/?)', function(req, res) {
 
     // TODO: Check the Authentication Bearer
     var rest_path = req.params[0].split("/");

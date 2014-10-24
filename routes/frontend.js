@@ -85,8 +85,6 @@ router.post('/compliance/go/', function(req, res) {
 			    }
 
 			});
-
-
 	    
 	  });
 	});
