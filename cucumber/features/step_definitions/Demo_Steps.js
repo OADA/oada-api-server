@@ -422,7 +422,7 @@ this.Then(/^check the "([^"]+)" stream again, this time with view parameter ([^"
 
   //Form the new URL we need to fetch
   var full_url = this.current_url + "/?view=" + encodeURIComponent(view_GET);
-
+  console.log("Fetching " + full_url);
   this.get(full_url, this.get_token(), callback);
 });
 
@@ -431,11 +431,16 @@ this.When(/^all values of "([^"]*)" are equals to the previously remembered valu
   var A = jsonPath.eval(this.last_response, jsonpath);
   var N = this.recall();
 
+  if(A === undefined || A.length == 0){
+     callback.fail(new Error("The stream did not return any valid value."));
+    return;
+  }
   if(N == null){
     callback.fail(new Error("Fetal Error: Unable to recall saved variable."));
     return;
   }
 
+  console.log("Verifying all _changeId = " + N);
   for(var index = 0; index < A.length; index++){
     var e_mesg = "Response contains record with incorrect changeId! (looking for " + this.recall() + " but found " + A[index] + ")";
     if(Number(A[index]) != Number(N)){

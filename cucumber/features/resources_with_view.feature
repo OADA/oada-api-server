@@ -61,6 +61,28 @@ Feature: Get resources WITH various view parameters
     And check the "widths" stream again, this time with view parameter MAXCHG
     And all values of "$.widths.*._meta._changeId" are equals to the previously remembered value
 
+
+  Scenario: Get the WORK STATUS stream with filtering changeId > 0, changeId > max -1
+    Given the client is authorized
+    When the client requests a "work_status" stream for harvester with identifier "4727" with view parameter A
+    And the response contains at least the following information:
+    |     ATTRIBUTE        | DESCRIPTION                |
+    |      status          | Array                      |
+    And the "status" attribute contains 1 or more item
+    And each item in "status" has at least the following information:
+    |      ATTRIBUTE     |
+    |        _meta       |
+    |        t           |
+    |        case        |
+    And the "_meta" of each item in "status" contains at least the following information:
+    | ATTRIBUTE                | DESCRIPTION                         |
+    |   _changeId              | What revision are these data        |
+    And remember the maximum value of "$.*._meta._changeId" for every items in "status"
+    And check the "work_status" stream again, this time with view parameter MAXCHG
+    And all values of "$.status.*._meta._changeId" are equals to the previously remembered value
+
+
+
   # Scenario: Get geofence stream (1241) and verify that the data make sense
   #   Retrieves the geofence data with view and check for enter/exit pairs.
 
