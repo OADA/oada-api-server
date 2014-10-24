@@ -26,6 +26,7 @@ var _toplevel = require('./routes/index');
 var _resources = require('./routes/resources');
 var _bookmarks =  require('./routes/bookmarks.js')
 
+
 var app = express();
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
@@ -45,6 +46,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', _toplevel);
 app.use('/resources/', _resources);
 app.use('/bookmarks/', _bookmarks);
+
 
 /// catch 404 and forward to error handler
 app.use(function(req, res, next) {

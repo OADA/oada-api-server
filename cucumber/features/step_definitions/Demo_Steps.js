@@ -178,7 +178,6 @@ var StepDef = function () {
     //navigate to finder
     this.current_url = this.root_url + "/" + this.finder_path;
 
-
     var that = this;
 
     var kallback = callback;
@@ -409,7 +408,6 @@ this.When(/^remember the maximum value of "([^"]*)" for every items in "([^"]*)"
 
 this.Then(/^check the "([^"]+)" stream again, this time with view parameter ([^"]+)$/, function (what_stream, view_param_doc, callback) {
   var use_SSK = this.stream_keys[what_stream]; 
- 
   var recalled = this.recall();
 
   if(recalled == null){

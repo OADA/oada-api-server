@@ -1,0 +1,229 @@
+<pre>
+Feature: Get Fields with and without view
+
+
+
+  <strong>> Scenario</strong>: Fields bookmark with NO view parameter                                                                           # cucumber/features/fields.feature:20
+    Given the client is authorized                                                                                           # cucumber/features/fields.feature:21
+Fetching http://oada-test.herokuapp.com/bookmarks/fields
+    When the client requests the "fields" bookmark without view parameter                                                    # cucumber/features/fields.feature:22
+    Then the response contains
+      | ATTRIBUTE | DESCRIPTION     |
+      | fields    | Array of fields |
+    And the "fields" attribute contains 1 or more item                                                                       # cucumber/features/fields.feature:26
+Fetching http://oada-test.herokuapp.com/resources/1250
+Fetching http://oada-test.herokuapp.com/resources/1251
+    And each key in "fields" has a valid resource with just the following information when requested without view parameter: # cucumber/features/fields.feature:27
+      | ATTRIBUTE | DESCRIPTION               |
+      | boundary  | bounding coordinates      |
+      | name      | human-readable field name |
+      | crop      |                           |
+
+
+  <strong>> Scenario</strong>: Fields bookmark WITH view parameter                                              # cucumber/features/fields.feature:33
+    Given the client is authorized                                                           # cucumber/features/fields.feature:34
+Fetching http://oada-test.herokuapp.com/bookmarks/fields?view=%7B%22%24each%22%3A%7B%22%24expand%22%3Atrue%7D%7D
+    When the client requests the "fields" bookmark with view parameter                       # cucumber/features/fields.feature:35
+    And the "fields" attribute contains 1 or more item                                       # cucumber/features/fields.feature:36
+    And each item in "fields" has
+      | ATTRIBUTE | DESCRIPTION               |
+      | _id       | id of the field resources |
+      | boundary  | bounding coordinates      |
+      | name      | human-readable field name |
+      | crop      |                           |
+    And the "boundary" of each item in "fields" contains
+      | ATTRIBUTE   | DESCRIPTION |
+      | coordinates |             |
+      | type        |             |
+      <span style='color:#FF0000'><strong>Error</strong></span>: The boundary attribute is empty or does not exist!
+
+
+
+Feature: Get harvesters bookmark
+
+
+
+  <strong>> Scenario</strong>: Go to harvesters bookmarks endpoint with no view parameter                 # cucumber/features/harvesters.feature:3
+    Given the client is authorized                                                     # cucumber/features/harvesters.feature:6
+Fetching http://oada-test.herokuapp.com/bookmarks/machines/harvesters
+    When the client requests the "machines/harvesters" bookmark without view parameter # cucumber/features/harvesters.feature:7
+    Then each item has just the following information:                                 # cucumber/features/harvesters.feature:8
+      | ATTRIBUTE | DESCRIPTION               |
+      | _id       | id of the field resources |
+
+
+  <strong>> Scenario</strong>: Go to the harvesters bookmarks endpoint                    # cucumber/features/harvesters.feature:12
+    Given the client is authorized                                     # cucumber/features/harvesters.feature:15
+Fetching http://oada-test.herokuapp.com/bookmarks/machines/harvesters
+    When the client requests for the harvester with identifier "4727"  # cucumber/features/harvesters.feature:16
+    Then the response contains
+      | ATTRIBUTE     | DESCRIPTION                  |
+      | serial_number | Serial number of the vehicle |
+      | model_year    | Model Year                   |
+      | model         | Model Name                   |
+      | name          | Name of the harvester        |
+      | streams       | Stream of useful data        |
+Expecting a configuration back
+    And the response is a "configuration"                              # cucumber/features/harvesters.feature:24
+    And each item in "streams" has
+      | ATTRIBUTE | DESCRIPTION         |
+      | _id       | link to data stream |
+
+
+Feature: Get resources WITH various view parameters
+
+
+
+  <strong>> Scenario</strong>: Get the LOCATION stream with filtering changeId > 0, changeId > max -1                          # cucumber/features/resources_with_view.feature:22
+    Given the client is authorized                                                                          # cucumber/features/resources_with_view.feature:23
+Fetching http://oada-test.herokuapp.com/resources/1300
+Fetching final resource: http://oada-test.herokuapp.com/resources/1237?view=%7B%22locations%22%3A%7B%22%24each%22%3A%7B%22_meta%22%3A%7B%22_changeId%22%3A%7B%22%24gt%22%3A0%7D%7D%7D%7D%7D
+^^^^^ Failed. Unable to fetch URL. http://oada-test.herokuapp.com/resources/1237?view=%7B%22locations%22%3A%7B%22%24each%22%3A%7B%22_meta%22%3A%7B%22_changeId%22%3A%7B%22%24gt%22%3A0%7D%7D%7D%7D%7D
+    When the client requests a "location" stream for harvester with identifier "4727" with view parameter A # cucumber/features/resources_with_view.feature:24
+      <span style='color:#FF0000'><strong>Error</strong></span>: No document ../documents/1237_ab06374adc9e2f4ddc11b6c7a9c354c5.json
+
+    And the response contains
+      | ATTRIBUTE         | DESCRIPTION            |
+      | coordinate_system | what coordinate system |
+      | locations         | action data array      |
+    And the "locations" attribute contains 1 or more item                                                   # cucumber/features/resources_with_view.feature:29
+    And each item in "locations" has
+      | ATTRIBUTE |
+      | _meta     |
+      | t         |
+      | lat       |
+      | lon       |
+      | alt       |
+    And the "_meta" of each item in "locations" contains
+      | ATTRIBUTE | DESCRIPTION                  |
+      | _changeId | What revision are these data |
+    And remember the maximum value of "$.*._meta._changeId" for every items in "locations"                  # cucumber/features/resources_with_view.feature:40
+    And check the "locations" stream again, this time with view parameter MAXCHG                            # cucumber/features/resources_with_view.feature:41
+    And all values of "$.locations.*._meta._changeId" are equals to the previously remembered value         # cucumber/features/resources_with_view.feature:42
+
+
+Feature: Get resources with NO view parameters
+
+
+
+  <strong>> Scenario</strong>: Get geofence stream without view                                                                   # cucumber/features/resources_without_view.feature:3
+    Given the client is authorized                                                                             # cucumber/features/resources_without_view.feature:6
+Fetching http://oada-test.herokuapp.com/resources/1300
+Fetching final resource: http://oada-test.herokuapp.com/resources/1241
+    When the client requests a "geofence" stream for harvester with identifier "4727" without view parameter A # cucumber/features/resources_without_view.feature:7
+    And the "events" attribute contains 1 or more item                                                         # cucumber/features/resources_without_view.feature:8
+    And each item in "events" has
+      | ATTRIBUTE | DESCRIPTION         |
+      | t         | timestamp of stream |
+      | field     | field information   |
+    And the "field" of each item in "events" contains
+      | ATTRIBUTE | DESCRIPTION                      |
+      | _id       | ..                               |
+      | name      | human-readable name of the field |
+
+
+  <strong>> Scenario</strong>: Get location stream without view                                                                   # cucumber/features/resources_without_view.feature:18
+    Given the client is authorized                                                                             # cucumber/features/resources_without_view.feature:19
+Fetching http://oada-test.herokuapp.com/resources/1300
+Fetching final resource: http://oada-test.herokuapp.com/resources/1237
+    When the client requests a "location" stream for harvester with identifier "4727" without view parameter A # cucumber/features/resources_without_view.feature:20
+    And the response contains
+      | ATTRIBUTE         | DESCRIPTION            |
+      | coordinate_system | what coordinate system |
+      | locations         | action data array      |
+    And the "locations" attribute contains 1 or more item                                                      # cucumber/features/resources_without_view.feature:25
+    And each item in "locations" has
+      | ATTRIBUTE |
+      | _id       |
+      | t         |
+      | lat       |
+      | lon       |
+      | alt       |
+
+
+  <strong>> Scenario</strong>: Get swath width stream without view                                                                   # cucumber/features/resources_without_view.feature:34
+    Given the client is authorized                                                                                # cucumber/features/resources_without_view.feature:35
+Fetching http://oada-test.herokuapp.com/resources/1300
+Fetching final resource: http://oada-test.herokuapp.com/resources/1236
+    When the client requests a "swath_width" stream for harvester with identifier "4727" without view parameter A # cucumber/features/resources_without_view.feature:36
+    And the response contains
+      | ATTRIBUTE | DESCRIPTION  |
+      | units     | unit stream  |
+      | widths    | width stream |
+    And the "widths" attribute contains 1 or more item                                                            # cucumber/features/resources_without_view.feature:41
+    And each item in "widths" has
+      | ATTRIBUTE | DESCRIPTION |
+      | _id       | id          |
+      | t         | timestamp   |
+      | width     | width       |
+      <span style='color:#FF0000'><strong>Error</strong></span>: Missing Attribute: _id
+
+
+
+  <strong>> Scenario</strong>: Get work status stream without view                                                                   # cucumber/features/resources_without_view.feature:48
+    Given the client is authorized                                                                                # cucumber/features/resources_without_view.feature:49
+Fetching http://oada-test.herokuapp.com/resources/1300
+Fetching final resource: http://oada-test.herokuapp.com/resources/1238
+    When the client requests a "work_status" stream for harvester with identifier "4727" without view parameter A # cucumber/features/resources_without_view.feature:50
+    And the "status" attribute contains 1 or more item                                                            # cucumber/features/resources_without_view.feature:51
+    And the response contains
+      | ATTRIBUTE | DESCRIPTION |
+      | status    | Array       |
+    And each item in "status" has
+      | ATTRIBUTE |
+      | _id       |
+      | t         |
+      | case      |
+
+
+  <strong>> Scenario</strong>: Get wet_mass_flow stream without view                                                                   # cucumber/features/resources_without_view.feature:61
+    Given the client is authorized                                                                                  # cucumber/features/resources_without_view.feature:62
+Fetching http://oada-test.herokuapp.com/resources/1300
+Fetching final resource: http://oada-test.herokuapp.com/resources/1239
+    When the client requests a "wet_mass_flow" stream for harvester with identifier "4727" without view parameter A # cucumber/features/resources_without_view.feature:63
+    And the response contains
+      | ATTRIBUTE | DESCRIPTION |
+      | units     |             |
+      | flows     |             |
+    And each item in "flows" has
+      | ATTRIBUTE |
+      | _id       |
+      | t         |
+      | flow      |
+
+
+  <strong>> Scenario</strong>: Get the moisture stream without view                                                               # cucumber/features/resources_without_view.feature:74
+    Given the client is authorized                                                                             # cucumber/features/resources_without_view.feature:75
+Fetching http://oada-test.herokuapp.com/resources/1300
+Fetching final resource: http://oada-test.herokuapp.com/resources/1240
+    When the client requests a "moisture" stream for harvester with identifier "4727" without view parameter A # cucumber/features/resources_without_view.feature:76
+    And the response contains
+      | ATTRIBUTE | DESCRIPTION |
+      | units     |             |
+      | moistures |             |
+    And each item in "moistures" has
+      | ATTRIBUTE |
+      | _id       |
+      | moisture  |
+      | t         |
+
+
+(::) <span style='color:#FF0000'><strong>failed</strong></span> steps (::)
+
+<span style='color:#FF0000'><strong>Error</strong></span>: The boundary attribute is empty or does not exist!
+
+
+<span style='color:#FF0000'><strong>Error</strong></span>: No document ../documents/1237_ab06374adc9e2f4ddc11b6c7a9c354c5.json
+
+
+<span style='color:#FF0000'><strong>Error</strong></span>: Missing Attribute: _id
+
+
+<span style='color:#FF0000'><strong>Failing scenarios</strong></span>:
+/Users/ssabpisa/oada-test/cucumber/features/fields.feature:33 # <strong>> Scenario</strong>: Fields bookmark WITH view parameter
+/Users/ssabpisa/oada-test/cucumber/features/resources_with_view.feature:22 # <strong>> Scenario</strong>: Get the LOCATION stream with filtering changeId > 0, changeId > max -1
+/Users/ssabpisa/oada-test/cucumber/features/resources_without_view.feature:34 # <strong>> Scenario</strong>: Get swath width stream without view
+
+11 scenarios (3 <span style='color:#FF0000'><strong>failed</strong></span>, 8 <span style='color:#1BAE1C'><strong>passed</strong></span>)
+55 steps (3 <span style='color:#FF0000'><strong>failed</strong></span>, 7 skipped, 45 <span style='color:#1BAE1C'><strong>passed</strong></span>)
+</pre>

@@ -4,5 +4,6 @@
   "work_status": "status",
   "geofence": "locations",
   "wet_mass_flow": "flows",
-  "swath_width": "widths"
+  "swath_width": "widths",
+  "location": "locations"
 }
