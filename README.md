@@ -2,7 +2,7 @@
 
 Notice: ***All codes in repository are currently in pre-release alpha and are subject to changes.***
 
-There is an mock server running [here](http://oada-test.herokuapp.com). A good staring place is the harvesters configuration [/bookmarks/machines/harvesters](http://oada-test.herokuapp.com/bookmarks/machines/harvesters)
+ There is an mock server running [here](http://oada-test.herokuapp.com). A good staring place is the harvesters configuration [/bookmarks/machines/harvesters](http://oada-test.herokuapp.com/bookmarks/machines/harvesters)
 
 If you wish to run the API back-end on your own machine or server, you must install all the required packages by doing:
     

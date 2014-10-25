@@ -12,7 +12,7 @@
   <body>
     <div class="container">
       <div class="header">
-        <h3 class="text-muted">Automated <a href="http://openag.io">OADA</a> Test</h3>
+        <h3 class="text-muted"><a href="http://openag.io">OADA</a> Compliance Test</h3>
       </div>
 
       <div class="jumbotron">
@@ -27,14 +27,46 @@
 		  <input type="text" name="token" class="form-control" placeholder="123456789" value="123456789">
 		</div>
 		<br>
-        <p class="lead" style="font-size:16px">Enter your endpoint above to check the API responses for correctness, or see it on <a href="https://github.com/OADA/oada-test">Github</a>.</p>
-        <p><input type="submit" class="btn btn-lg btn-success" role="button" value="Start Test"></p>
+        <div style="font-size:14px">Enter your endpoint above to check the API responses for correctness. The server will give you back a <a href="http://cukes.info/reports.html">Cucumber report</a>.
+          <div class="checkbox">
+            <label>
+              <input type="checkbox" value="">
+              Fields Bookmark Tests
+            </label>
+          </div>
+          <div class="checkbox">
+            <label>
+              <input type="checkbox" value="">
+              Harvesters Bookmark Tests
+            </label>
+          </div>
+          <div class="checkbox">
+            <label>
+              <input type="checkbox" value="">
+              Stream Resources Test (<strong>without</strong> view parameter)
+            </label>
+          </div>
+          <div class="checkbox">
+            <label>
+              <input type="checkbox" value="">
+              Stream Resources Test (<strong>with</strong> view parameter)
+            </label>
+          </div>
+        </div>
+        <p><br>
+          <input type="submit" class="btn btn-lg btn-success" role="button" value="Perform Selected Tests">
+
+          </p>
         </form>
       </div>
 
       <div class="footer">
-      	<small><strong>Revised Date: Oct 22, 2014</strong> 
-        <p>© 2014 Open Ag Data Alliance</p></small>
+      	<table>
+          <tr><td><img src="http://openag.io/img/oada-logo.svg" width="80px"> </td>
+          <td style="padding-left:15px"><small><strong>Revised Date: Oct 22, 2014</strong><p>
+          <a href="http://github.com/OADA/oada-test">Clone it on <strong>Github</strong></a>
+        </p>© 2014 Open Ag Data Alliance</p></small></td></tr>
+        </table>
       </div>
 
     </div>
