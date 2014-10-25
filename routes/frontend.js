@@ -44,7 +44,7 @@ function toHtml(output_text){
 }
 
 router.get('/', function(req, res) {
-  res.redirect("/bookmarks/machines/harvesters/");
+  res.redirect("/compliance");
 });
 
 
