@@ -370,8 +370,9 @@ var StepDef = function () {
     }
       
     var nonskip = 0;
-
-    for(var key =0; key < iter.length; key++){
+    var keylist = Object.keys(iter); //{} is not iterable by key
+    for(var i in keylist){
+           var key = keylist[i];
            var iterable = iter[key][inner];
            if(iterable == undefined) continue;
            var result = check_attributes(table, iterable);
@@ -381,6 +382,7 @@ var StepDef = function () {
            }
            nonskip++;
     }
+
     if(nonskip == 0){
       callback.fail(new Error("The " + inner + " attribute is empty or does not exist!") );
       return;
