@@ -10,7 +10,7 @@
 
       socket.on('response_report', function(msg){
         if(msg == 'error'){
-          alert("An error occurred..");
+          console.error("An error occurred..");
         }else if(msg != 'error'){
           document.write(msg);
         }

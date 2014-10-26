@@ -83,13 +83,14 @@ router.post('/compliance/go/', function(req, res) {
 			  	var slim_output = stdout.replace(/\[\d+m/g,"").replace(/(\s+(at)\s).*/g,"");
 			    // fs.writeFileSync(report_path, toHtml(slim_output));
 
-			    // fs.unlinkSync(config_buffer);
+			    fs.unlinkSync(config_buffer);
 			    console.log("Test done");
 				io.emit('response_report', toHtml(slim_output));
 
 			    if (error !== null) {
 			      console.log('exec error: ' + error);
 			      io.emit('response_report', "error");
+			      return;
 			    }
 
 			});
