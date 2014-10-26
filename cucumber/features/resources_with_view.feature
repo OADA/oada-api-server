@@ -87,7 +87,7 @@ Feature: Get resources WITH various view parameters
     Retrieves the geofence data with view and check for enter/exit pairs.
 
     Given the client is authorized
-    When the client requests a "geofence" stream for harvester with identifier "4727" with view parameter 1
+    When the client requests a "geofence" stream for harvester with identifier "4727" with view parameter A
     And the "events" attribute contains 1 or more item
     And the 1st event for any particular field in this sorted array is an "enter" event
     And the 2nd event (if any exit) for a particular field is an "exit" event

@@ -49,6 +49,7 @@ router.get('/', function(req, res) {
 
 
 router.post('/compliance/go/', function(req, res) {
+	var testcases = req.body.testcases.join(" ").replace(/[;\n]+/g,";echo"); //prevent hijack
 	var io = req.app.get('io');
 	var appDir = path.dirname(require.main.filename).split("/");
 	appDir.pop();
@@ -67,7 +68,7 @@ router.post('/compliance/go/', function(req, res) {
 			    token_key: req.body.token
 			}));
 
-			var child = exec("cucumber-js -f pretty cucumber/features/ | egrep -v '(\s+(at)\s).*'",
+			var child = exec("cucumber-js -f pretty " + testcases + " | egrep -v '(\s+(at)\s).*'",
 			  { 
 			  	maxBuffer: 1073741824
 			  },
