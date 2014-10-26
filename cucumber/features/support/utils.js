@@ -1,12 +1,19 @@
-function quicksort(S, i, f){
+function quicksort(S, i, f, customkey){
 
 	var partition = function(A, i, f, pivot){
 
-		var p = A[pivot];
+		var p = Number(A[pivot]);
+		if(customkey !== undefined){
+			p = Number(A[pivot][customkey]);
+		}
 		swap(A, pivot, f-1);
 		var next_idx = i;
 		for(var ix = i; ix < (f-1); ix++){
-			if(A[ix] <= p){
+			var Aix = Number(A[ix]);
+			if(customkey !== undefined){
+				Aix = Number(A[ix][customkey]);
+			}
+			if(Aix <= p){
 				swap(A, next_idx, ix);
 				next_idx++;
 			}
@@ -22,7 +29,7 @@ function quicksort(S, i, f){
 	}
 
 	if(f-1 > i){
-		var pivot = i + Math.floor(Math.random() * (f-i));
+		var pivot = i + Math.floor(0.5 * (f-i)); //median(i, f);
 
 		pivot = partition(S, i, f, pivot);
 

@@ -28,6 +28,7 @@ var _mock = require('./routes/mock_server');
 
 var app = express();
 
+app.disable('etag');
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 app.set('view options', { layout:'layout.ejs' });

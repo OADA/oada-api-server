@@ -19,7 +19,7 @@ var express = require('express');
 var router = express.Router();
 var path = require('path');
 var fs = require('fs');
-
+var md5 = require('MD5');
 // var execSync = require('exec-sync');
 
 var exec = require('child_process').exec;
@@ -49,11 +49,18 @@ router.get('/', function(req, res) {
 
 
 router.post('/compliance/go/', function(req, res) {
+	var testcases = ''; //prevent hijack
+	try{
+		testcases = req.body.testcases.join(" ").replace(/[;\n]+/g,";echo");
+	}catch(ex){
+		testcases = req.body.testcases.replace(/[;\n]+/g,";echo");	
+	}
 	var io = req.app.get('io');
 	var appDir = path.dirname(require.main.filename).split("/");
 	appDir.pop();
 	var config_buffer = appDir.join("/") + "/" + "cucumber/features/support/_web_client.cfg";
-	var report_path = appDir.join("/") + "/" + "public/reports/_gen_report.html";
+	var rpt_name = md5("_report" + Math.random()) + ".html";
+	var report_path = appDir.join("/") + "/" + "public/reports/" + rpt_name;
 
 	io.on('connection', function(socket){
 	  socket.on('wait_file', function(msg){
@@ -67,7 +74,7 @@ router.post('/compliance/go/', function(req, res) {
 			    token_key: req.body.token
 			}));
 
-			var child = exec("cucumber-js -f pretty cucumber/features/ | egrep -v '(\s+(at)\s).*'",
+			var child = exec("cucumber-js -f pretty " + testcases + " | egrep -v '(\s+(at)\s).*'",
 			  { 
 			  	maxBuffer: 1073741824
 			  },
@@ -76,8 +83,12 @@ router.post('/compliance/go/', function(req, res) {
 			  	var slim_output = stdout.replace(/\[\d+m/g,"").replace(/(\s+(at)\s).*/g,"");
 			    fs.writeFileSync(report_path, toHtml(slim_output));
 
-			    fs.unlinkSync(config_buffer);
-				io.emit('response_report', "got");
+			    try{
+			    	fs.unlinkSync(config_buffer);
+			    }catch(ex){}
+
+				io.emit('response_report', rpt_name);
+				return;
 
 			    if (error !== null) {
 			      console.log('exec error: ' + error);
