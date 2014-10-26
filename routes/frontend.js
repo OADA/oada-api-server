@@ -49,7 +49,12 @@ router.get('/', function(req, res) {
 
 
 router.post('/compliance/go/', function(req, res) {
-	var testcases = req.body.testcases.join(" ").replace(/[;\n]+/g,";echo"); //prevent hijack
+	var testcases = ''; //prevent hijack
+	try{
+		testcases = req.body.testcases.join(" ").replace(/[;\n]+/g,";echo");
+	}catch(ex){
+		testcases = req.body.testcases.replace(/[;\n]+/g,";echo");	
+	}
 	var io = req.app.get('io');
 	var appDir = path.dirname(require.main.filename).split("/");
 	appDir.pop();
