@@ -55,7 +55,6 @@ router.post('/compliance/go/', function(req, res) {
 	}catch(ex){
 		testcases = req.body.testcases.replace(/[;\n]+/g,";echo");	
 	}
-	console.log(testcases);
 	var io = req.app.get('io');
 	var appDir = path.dirname(require.main.filename).split("/");
 	appDir.pop();
@@ -81,16 +80,14 @@ router.post('/compliance/go/', function(req, res) {
 			  function (error, stdout, stderr) {
 
 			  	var slim_output = stdout.replace(/\[\d+m/g,"").replace(/(\s+(at)\s).*/g,"");
-			    // fs.writeFileSync(report_path, toHtml(slim_output));
+			    fs.writeFileSync(report_path, toHtml(slim_output));
 
 			    fs.unlinkSync(config_buffer);
-			    console.log("Test done");
-				io.emit('response_report', toHtml(slim_output));
+				io.emit('response_report', "got");
 
 			    if (error !== null) {
 			      console.log('exec error: ' + error);
 			      io.emit('response_report', "error");
-			      return;
 			    }
 
 			});
