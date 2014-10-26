@@ -5,14 +5,14 @@ Feature: Get Fields with and without view
 
   <strong>> Scenario</strong>: Fields bookmark with NO view parameter                                                                           # cucumber/features/fields.feature:20
     Given the client is authorized                                                                                           # cucumber/features/fields.feature:21
-Fetching http://oada-test.herokuapp.com//bookmarks/fields
+Fetching http://oada-test.herokuapp.com/bookmarks/fields
     When the client requests the "fields" bookmark without view parameter                                                    # cucumber/features/fields.feature:22
     Then the response contains
       | ATTRIBUTE | DESCRIPTION     |
       | fields    | Array of fields |
     And the "fields" attribute contains 1 or more item                                                                       # cucumber/features/fields.feature:26
-Fetching http://oada-test.herokuapp.com//resources/1250
-Fetching http://oada-test.herokuapp.com//resources/1251
+Fetching http://oada-test.herokuapp.com/resources/1250
+Fetching http://oada-test.herokuapp.com/resources/1251
     And each key in "fields" has a valid resource with just the following information when requested without view parameter: # cucumber/features/fields.feature:27
       | ATTRIBUTE | DESCRIPTION               |
       | boundary  | bounding coordinates      |
@@ -22,7 +22,7 @@ Fetching http://oada-test.herokuapp.com//resources/1251
 
   <strong>> Scenario</strong>: Fields bookmark WITH view parameter                                              # cucumber/features/fields.feature:33
     Given the client is authorized                                                           # cucumber/features/fields.feature:34
-Fetching http://oada-test.herokuapp.com//bookmarks/fields?view=%7B%22%24each%22%3A%7B%22%24expand%22%3Atrue%7D%7D
+Fetching http://oada-test.herokuapp.com/bookmarks/fields?view=%7B%22%24each%22%3A%7B%22%24expand%22%3Atrue%7D%7D
     When the client requests the "fields" bookmark with view parameter                       # cucumber/features/fields.feature:35
     And the "fields" attribute contains 1 or more item                                       # cucumber/features/fields.feature:36
     And each item in "fields" has
@@ -45,7 +45,7 @@ Feature: Get harvesters bookmark
 
   <strong>> Scenario</strong>: Go to harvesters bookmarks endpoint with no view parameter                 # cucumber/features/harvesters.feature:3
     Given the client is authorized                                                     # cucumber/features/harvesters.feature:6
-Fetching http://oada-test.herokuapp.com//bookmarks/machines/harvesters
+Fetching http://oada-test.herokuapp.com/bookmarks/machines/harvesters
     When the client requests the "machines/harvesters" bookmark without view parameter # cucumber/features/harvesters.feature:7
     Then each item has just the following information:                                 # cucumber/features/harvesters.feature:8
       | ATTRIBUTE | DESCRIPTION               |
@@ -54,7 +54,7 @@ Fetching http://oada-test.herokuapp.com//bookmarks/machines/harvesters
 
   <strong>> Scenario</strong>: Go to the harvesters bookmarks endpoint                    # cucumber/features/harvesters.feature:12
     Given the client is authorized                                     # cucumber/features/harvesters.feature:15
-Fetching http://oada-test.herokuapp.com//bookmarks/machines/harvesters
+Fetching http://oada-test.herokuapp.com/bookmarks/machines/harvesters
     When the client requests for the harvester with identifier "4727"  # cucumber/features/harvesters.feature:16
     Then the response contains
       | ATTRIBUTE     | DESCRIPTION                  |
@@ -76,8 +76,8 @@ Feature: Get resources WITH various view parameters
 
   <strong>> Scenario</strong>: Get the MOISTURE stream with filtering changeId > 0, changeId > max -1                          # cucumber/features/resources_with_view.feature:2
     Given the client is authorized                                                                          # cucumber/features/resources_with_view.feature:3
-Fetching http://oada-test.herokuapp.com//resources/1300
-Fetching final resource: http://oada-test.herokuapp.com//resources/1240?view=%7B%22moistures%22%3A%7B%22%24each%22%3A%7B%22_meta%22%3A%7B%22_changeId%22%3A%7B%22%24gt%22%3A0%7D%7D%7D%7D%7D
+Fetching http://oada-test.herokuapp.com/resources/1300
+Fetching final resource: http://oada-test.herokuapp.com/resources/1240?view=%7B%22moistures%22%3A%7B%22%24each%22%3A%7B%22_meta%22%3A%7B%22_changeId%22%3A%7B%22%24gt%22%3A0%7D%7D%7D%7D%7D
     When the client requests a "moisture" stream for harvester with identifier "4727" with view parameter A # cucumber/features/resources_with_view.feature:4
     Then the response contains
       | ATTRIBUTE | DESCRIPTION |
@@ -95,7 +95,7 @@ Fetching final resource: http://oada-test.herokuapp.com//resources/1240?view=%7B
 Number of records: 7
 Max _changeId: 334535
     And remember the maximum value of "$.*._meta._changeId" for every items in "moistures"                  # cucumber/features/resources_with_view.feature:18
-Fetching http://oada-test.herokuapp.com//resources/1240/?view=%7B%22moistures%22%3A%7B%22%24each%22%3A%7B%22_meta%22%3A%7B%22_changeId%22%3A%7B%22%24gt%22%3A%22334535%22%7D%7D%7D%7D%7D
+Fetching http://oada-test.herokuapp.com/resources/1240/?view=%7B%22moistures%22%3A%7B%22%24each%22%3A%7B%22_meta%22%3A%7B%22_changeId%22%3A%7B%22%24gt%22%3A%22334535%22%7D%7D%7D%7D%7D
     And check the "moisture" stream again, this time with view parameter MAXCHG                             # cucumber/features/resources_with_view.feature:19
 Verifying all _changeId = 334535
     And all values of "$.moistures.*._meta._changeId" are equals to the previously remembered value         # cucumber/features/resources_with_view.feature:20
@@ -103,8 +103,8 @@ Verifying all _changeId = 334535
 
   <strong>> Scenario</strong>: Get the LOCATION stream with filtering changeId > 0, changeId > max -1                          # cucumber/features/resources_with_view.feature:22
     Given the client is authorized                                                                          # cucumber/features/resources_with_view.feature:23
-Fetching http://oada-test.herokuapp.com//resources/1300
-Fetching final resource: http://oada-test.herokuapp.com//resources/1237?view=%7B%22locations%22%3A%7B%22%24each%22%3A%7B%22_meta%22%3A%7B%22_changeId%22%3A%7B%22%24gt%22%3A0%7D%7D%7D%7D%7D
+Fetching http://oada-test.herokuapp.com/resources/1300
+Fetching final resource: http://oada-test.herokuapp.com/resources/1237?view=%7B%22locations%22%3A%7B%22%24each%22%3A%7B%22_meta%22%3A%7B%22_changeId%22%3A%7B%22%24gt%22%3A0%7D%7D%7D%7D%7D
     When the client requests a "location" stream for harvester with identifier "4727" with view parameter A # cucumber/features/resources_with_view.feature:24
     And the response contains
       | ATTRIBUTE         | DESCRIPTION            |
@@ -124,7 +124,7 @@ Fetching final resource: http://oada-test.herokuapp.com//resources/1237?view=%7B
 Number of records: 1
 Max _changeId: 1534
     And remember the maximum value of "$.*._meta._changeId" for every items in "locations"                  # cucumber/features/resources_with_view.feature:40
-Fetching http://oada-test.herokuapp.com//resources/1237/?view=%7B%22undefined%22%3A%7B%22%24each%22%3A%7B%22_meta%22%3A%7B%22_changeId%22%3A%7B%22%24gt%22%3A%221534%22%7D%7D%7D%7D%7D
+Fetching http://oada-test.herokuapp.com/resources/1237/?view=%7B%22undefined%22%3A%7B%22%24each%22%3A%7B%22_meta%22%3A%7B%22_changeId%22%3A%7B%22%24gt%22%3A%221534%22%7D%7D%7D%7D%7D
     And check the "locations" stream again, this time with view parameter MAXCHG                            # cucumber/features/resources_with_view.feature:41
 Verifying all _changeId = 1534
     And all values of "$.locations.*._meta._changeId" are equals to the previously remembered value         # cucumber/features/resources_with_view.feature:42
@@ -132,8 +132,8 @@ Verifying all _changeId = 1534
 
   <strong>> Scenario</strong>: Get the SWATH WIDTH stream with filtering changeId > 0, changeId > max -1                          # cucumber/features/resources_with_view.feature:44
     Given the client is authorized                                                                             # cucumber/features/resources_with_view.feature:45
-Fetching http://oada-test.herokuapp.com//resources/1300
-Fetching final resource: http://oada-test.herokuapp.com//resources/1236?view=%7B%22widths%22%3A%7B%22%24each%22%3A%7B%22_meta%22%3A%7B%22_changeId%22%3A%7B%22%24gt%22%3A0%7D%7D%7D%7D%7D
+Fetching http://oada-test.herokuapp.com/resources/1300
+Fetching final resource: http://oada-test.herokuapp.com/resources/1236?view=%7B%22widths%22%3A%7B%22%24each%22%3A%7B%22_meta%22%3A%7B%22_changeId%22%3A%7B%22%24gt%22%3A0%7D%7D%7D%7D%7D
     When the client requests a "swath_width" stream for harvester with identifier "4727" with view parameter A # cucumber/features/resources_with_view.feature:46
     And the response contains
       | ATTRIBUTE | DESCRIPTION  |
@@ -151,7 +151,7 @@ Fetching final resource: http://oada-test.herokuapp.com//resources/1236?view=%7B
 Number of records: 3
 Max _changeId: 2432
     And remember the maximum value of "$.*._meta._changeId" for every items in "widths"                        # cucumber/features/resources_with_view.feature:60
-Fetching http://oada-test.herokuapp.com//resources/1236/?view=%7B%22undefined%22%3A%7B%22%24each%22%3A%7B%22_meta%22%3A%7B%22_changeId%22%3A%7B%22%24gt%22%3A%222432%22%7D%7D%7D%7D%7D
+Fetching http://oada-test.herokuapp.com/resources/1236/?view=%7B%22undefined%22%3A%7B%22%24each%22%3A%7B%22_meta%22%3A%7B%22_changeId%22%3A%7B%22%24gt%22%3A%222432%22%7D%7D%7D%7D%7D
     And check the "widths" stream again, this time with view parameter MAXCHG                                  # cucumber/features/resources_with_view.feature:61
 Verifying all _changeId = 2432
     And all values of "$.widths.*._meta._changeId" are equals to the previously remembered value               # cucumber/features/resources_with_view.feature:62
@@ -159,8 +159,8 @@ Verifying all _changeId = 2432
 
   <strong>> Scenario</strong>: Get the WORK STATUS stream with filtering changeId > 0, changeId > max -1                          # cucumber/features/resources_with_view.feature:65
     Given the client is authorized                                                                             # cucumber/features/resources_with_view.feature:66
-Fetching http://oada-test.herokuapp.com//resources/1300
-Fetching final resource: http://oada-test.herokuapp.com//resources/1238?view=%7B%22status%22%3A%7B%22%24each%22%3A%7B%22_meta%22%3A%7B%22_changeId%22%3A%7B%22%24gt%22%3A0%7D%7D%7D%7D%7D
+Fetching http://oada-test.herokuapp.com/resources/1300
+Fetching final resource: http://oada-test.herokuapp.com/resources/1238?view=%7B%22status%22%3A%7B%22%24each%22%3A%7B%22_meta%22%3A%7B%22_changeId%22%3A%7B%22%24gt%22%3A0%7D%7D%7D%7D%7D
     When the client requests a "work_status" stream for harvester with identifier "4727" with view parameter A # cucumber/features/resources_with_view.feature:67
     And the response contains
       | ATTRIBUTE | DESCRIPTION |
@@ -177,7 +177,7 @@ Fetching final resource: http://oada-test.herokuapp.com//resources/1238?view=%7B
 Number of records: 3
 Max _changeId: 4545243214
     And remember the maximum value of "$.*._meta._changeId" for every items in "status"                        # cucumber/features/resources_with_view.feature:80
-Fetching http://oada-test.herokuapp.com//resources/1238/?view=%7B%22status%22%3A%7B%22%24each%22%3A%7B%22_meta%22%3A%7B%22_changeId%22%3A%7B%22%24gt%22%3A%224545243214%22%7D%7D%7D%7D%7D
+Fetching http://oada-test.herokuapp.com/resources/1238/?view=%7B%22status%22%3A%7B%22%24each%22%3A%7B%22_meta%22%3A%7B%22_changeId%22%3A%7B%22%24gt%22%3A%224545243214%22%7D%7D%7D%7D%7D
     And check the "work_status" stream again, this time with view parameter MAXCHG                             # cucumber/features/resources_with_view.feature:81
 Verifying all _changeId = 4545243214
     And all values of "$.status.*._meta._changeId" are equals to the previously remembered value               # cucumber/features/resources_with_view.feature:82
@@ -185,8 +185,8 @@ Verifying all _changeId = 4545243214
 
   <strong>> Scenario</strong>: Get geofence stream (1241) and verify that the data make sense                                  # cucumber/features/resources_with_view.feature:86
     Given the client is authorized                                                                          # cucumber/features/resources_with_view.feature:89
-Fetching http://oada-test.herokuapp.com//resources/1300
-Fetching final resource: http://oada-test.herokuapp.com//resources/1241?view=%7B%22locations%22%3A%7B%22%24each%22%3A%7B%22_meta%22%3A%7B%22_changeId%22%3A%7B%22%24gt%22%3A0%7D%7D%7D%7D%7D
+Fetching http://oada-test.herokuapp.com/resources/1300
+Fetching final resource: http://oada-test.herokuapp.com/resources/1241?view=%7B%22locations%22%3A%7B%22%24each%22%3A%7B%22_meta%22%3A%7B%22_changeId%22%3A%7B%22%24gt%22%3A0%7D%7D%7D%7D%7D
     When the client requests a "geofence" stream for harvester with identifier "4727" with view parameter A # cucumber/features/resources_with_view.feature:90
     And the "events" attribute contains 1 or more item                                                      # cucumber/features/resources_with_view.feature:91
     And the 1st event for any particular field in this sorted array is an "enter" event                     # cucumber/features/resources_with_view.feature:92
@@ -209,8 +209,8 @@ Feature: Get resources with NO view parameters
 
   <strong>> Scenario</strong>: Get geofence stream without view                                                                   # cucumber/features/resources_without_view.feature:3
     Given the client is authorized                                                                             # cucumber/features/resources_without_view.feature:6
-Fetching http://oada-test.herokuapp.com//resources/1300
-Fetching final resource: http://oada-test.herokuapp.com//resources/1241
+Fetching http://oada-test.herokuapp.com/resources/1300
+Fetching final resource: http://oada-test.herokuapp.com/resources/1241
     When the client requests a "geofence" stream for harvester with identifier "4727" without view parameter A # cucumber/features/resources_without_view.feature:7
     And the "events" attribute contains 1 or more item                                                         # cucumber/features/resources_without_view.feature:8
     And each item in "events" has
@@ -225,8 +225,8 @@ Fetching final resource: http://oada-test.herokuapp.com//resources/1241
 
   <strong>> Scenario</strong>: Get location stream without view                                                                   # cucumber/features/resources_without_view.feature:18
     Given the client is authorized                                                                             # cucumber/features/resources_without_view.feature:19
-Fetching http://oada-test.herokuapp.com//resources/1300
-Fetching final resource: http://oada-test.herokuapp.com//resources/1237
+Fetching http://oada-test.herokuapp.com/resources/1300
+Fetching final resource: http://oada-test.herokuapp.com/resources/1237
     When the client requests a "location" stream for harvester with identifier "4727" without view parameter A # cucumber/features/resources_without_view.feature:20
     And the response contains
       | ATTRIBUTE         | DESCRIPTION            |
@@ -244,8 +244,8 @@ Fetching final resource: http://oada-test.herokuapp.com//resources/1237
 
   <strong>> Scenario</strong>: Get swath width stream without view                                                                   # cucumber/features/resources_without_view.feature:34
     Given the client is authorized                                                                                # cucumber/features/resources_without_view.feature:35
-Fetching http://oada-test.herokuapp.com//resources/1300
-Fetching final resource: http://oada-test.herokuapp.com//resources/1236
+Fetching http://oada-test.herokuapp.com/resources/1300
+Fetching final resource: http://oada-test.herokuapp.com/resources/1236
     When the client requests a "swath_width" stream for harvester with identifier "4727" without view parameter A # cucumber/features/resources_without_view.feature:36
     And the response contains
       | ATTRIBUTE | DESCRIPTION  |
@@ -263,8 +263,8 @@ Fetching final resource: http://oada-test.herokuapp.com//resources/1236
 
   <strong>> Scenario</strong>: Get work status stream without view                                                                   # cucumber/features/resources_without_view.feature:48
     Given the client is authorized                                                                                # cucumber/features/resources_without_view.feature:49
-Fetching http://oada-test.herokuapp.com//resources/1300
-Fetching final resource: http://oada-test.herokuapp.com//resources/1238
+Fetching http://oada-test.herokuapp.com/resources/1300
+Fetching final resource: http://oada-test.herokuapp.com/resources/1238
     When the client requests a "work_status" stream for harvester with identifier "4727" without view parameter A # cucumber/features/resources_without_view.feature:50
     And the "status" attribute contains 1 or more item                                                            # cucumber/features/resources_without_view.feature:51
     And the response contains
@@ -279,8 +279,8 @@ Fetching final resource: http://oada-test.herokuapp.com//resources/1238
 
   <strong>> Scenario</strong>: Get wet_mass_flow stream without view                                                                   # cucumber/features/resources_without_view.feature:61
     Given the client is authorized                                                                                  # cucumber/features/resources_without_view.feature:62
-Fetching http://oada-test.herokuapp.com//resources/1300
-Fetching final resource: http://oada-test.herokuapp.com//resources/1239
+Fetching http://oada-test.herokuapp.com/resources/1300
+Fetching final resource: http://oada-test.herokuapp.com/resources/1239
     When the client requests a "wet_mass_flow" stream for harvester with identifier "4727" without view parameter A # cucumber/features/resources_without_view.feature:63
     And the response contains
       | ATTRIBUTE | DESCRIPTION |
@@ -295,8 +295,8 @@ Fetching final resource: http://oada-test.herokuapp.com//resources/1239
 
   <strong>> Scenario</strong>: Get the moisture stream without view                                                               # cucumber/features/resources_without_view.feature:74
     Given the client is authorized                                                                             # cucumber/features/resources_without_view.feature:75
-Fetching http://oada-test.herokuapp.com//resources/1300
-Fetching final resource: http://oada-test.herokuapp.com//resources/1240
+Fetching http://oada-test.herokuapp.com/resources/1300
+Fetching final resource: http://oada-test.herokuapp.com/resources/1240
     When the client requests a "moisture" stream for harvester with identifier "4727" without view parameter A # cucumber/features/resources_without_view.feature:76
     And the response contains
       | ATTRIBUTE | DESCRIPTION |
