@@ -9,8 +9,9 @@
       socket.emit('wait_file', "_gen_report");
 
       socket.on('response_report', function(msg){
+        console.log(msg)
         if(msg != 'error'){
-          window.location = "/reports/" + msg;
+          document.body.innerHTML += msg;
         }else{
           alert("An error occurred..");
         }
