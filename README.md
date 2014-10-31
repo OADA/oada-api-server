@@ -40,7 +40,7 @@ If you do not change this parameter, the test will try to run against the local 
 
 **Performing the tests**
 
-    cucumber-js cucumber
+    cucumber-js -f pretty cucumber
 
 When you do this, it will perform all the tests located in `/cucumber/features` directory.
 
