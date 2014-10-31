@@ -40,3 +40,7 @@ If you do not change this parameter, the test will run against our [mock server]
     cucumber-js cucumber
 
 When you do this, it will perform all the tests located in `/cucumber/features` directory.
+
+NOTE: if this fails with an error message about "superagent", try manually installing superagent with npm:
+
+   npm install superagent
