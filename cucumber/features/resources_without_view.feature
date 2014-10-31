@@ -7,13 +7,13 @@ Feature: Get resources with NO view parameters
     When the client requests a "geofence" stream for harvester with identifier "4727" without view parameter A
     And the "events" attribute contains 1 or more item
     And each item in "events" has at least the following information:
-    | ATTRIBUTE  | DESCRIPTION                            |
-    |      t     | timestamp of stream                    |
-    |    field   | field information                      |
+    | ATTRIBUTE  | DESCRIPTION                             |
+    |      t     | timestamp of stream                     |
+    |    field   | field information                       |
+    |    event   | whether this was enter or exit          |
     And the "field" of each item in "events" contains at least the following information:
-    | ATTRIBUTE  | DESCRIPTION                            |
-    |   _id      | ..                                     |
-    |    name    | human-readable name of the field       |
+    | ATTRIBUTE  | DESCRIPTION                             |
+    |    _id     | id of the field resource that is remote |
 
   Scenario: Get location stream without view
     Given the client is authorized
@@ -25,7 +25,6 @@ Feature: Get resources with NO view parameters
     And the "locations" attribute contains 1 or more item
     And each item in "locations" has at least the following information:
     | ATTRIBUTE            |
-    |  _id                 |
     |  t                   |
     |  lat                 |
     |  lon                 |
@@ -41,7 +40,6 @@ Feature: Get resources with NO view parameters
     And the "widths" attribute contains 1 or more item
     And each item in "widths" has at least the following information:
     | ATTRIBUTE  | DESCRIPTION   			  |
-    |  _id       | id                         |
     |  t         | timestamp 			 	  |
     |  width     | width  			          |
 
@@ -54,7 +52,6 @@ Feature: Get resources with NO view parameters
     |      status          | Array                      |
     And each item in "status" has at least the following information:
     |      ATTRIBUTE     |
-    |        _id         |
     |        t           |
     |        case        |
 
@@ -67,7 +64,6 @@ Feature: Get resources with NO view parameters
     |  flows             |                            |
     And each item in "flows" has at least the following information:
     |     ATTRIBUTE      |
-    |       _id          |
     |        t           |
     |      flow          |
 
@@ -80,7 +76,6 @@ Feature: Get resources with NO view parameters
     |       moistures    |                            |
     And each item in "moistures" has at least the following information:
     |     ATTRIBUTE      |
-    |       _id          |
     |       moisture     |
     |       t            |
 

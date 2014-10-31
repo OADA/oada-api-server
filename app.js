@@ -15,6 +15,8 @@
 
 */
 
+// This is the main script for the API server. 
+
 var express = require('express');
 var path = require('path');
 var favicon = require('static-favicon');
