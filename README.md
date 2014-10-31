@@ -23,17 +23,20 @@ You may perform the OADA compliance check via [this web client](http://oada-test
 
 You may clone, modify the tests and run them on your machine.
 
-You must have [cucumber-js](https://github.com/cucumber/cucumber-js) installed.
+You must have [cucumber-js](https://github.com/cucumber/cucumber-js) installed:
+
+   npm install -g cucumber
+
 All the dependencies for the tests are located inside [/cucumber](https://github.com/ssabpisa/oada-test/tree/master/cucumber).
 
-If you wish to run the test against a different server, modify the server hostname value under 'root' here: `cucumber/support/config.js`
+If you wish to run the test against a different server, modify the server hostname value under 'root' here: `cucumber/features/support/config.js`
    
     exports.server = {
       root: "http://oada.yourhostname.com",
-      finder: "bookmarks/machines/harvesters"
+      bookmark: "bookmarks/machines/harvesters"
     }; 
 
-If you do not change this parameter, the test will run against our [mock server](http://oada-test.herokuapp.com). 
+If you do not change this parameter, the test will try to run against the local test server which you can start with the instructions above (npm start).
 
 **Performing the tests**
 
