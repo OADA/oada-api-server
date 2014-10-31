@@ -2,7 +2,8 @@
   "coordinate_system": {
       "name": "WGS84"
    },
-  "locations": [
+   "stream_type": "location",
+   "stream": [
     {
       "t": "20193284926.1342",
       "lat": "40.34983",

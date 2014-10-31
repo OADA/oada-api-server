@@ -57,6 +57,11 @@ function getNode(jsonpath, root, opt){
 var StepDef = function () {
   this.World = require("../support/world.js").World;
 
+
+  ///////////////////////////////////////////
+  // Setup stuff
+  ///////////////////////////////////////////
+
   var context = this;
   this.Given(/^the client is logged in$/, function (callback) {
     //TODO: Obtain the token from wherever
@@ -90,6 +95,14 @@ var StepDef = function () {
     console.log("Expecting a " + model_name + " back");
     callback();
   });
+
+  this.When(/^the "([^"]*)" attribute is "([^"]*)"$/, function (attr, val, callback) {
+    if (this.last_response[attr] !== val) {
+      callback.fail(new Error("The "+attr+" attribute should be equal to "+val+".  It is "+this.last_response[attr]+" instead."));
+    }
+    callback();
+  });
+
 
   this.Then(/^each "([^"]*)" has the following attributes:$/, function (item_key, table, callback) {
 

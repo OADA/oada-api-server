@@ -1,6 +1,7 @@
 {
   "units": "feet",
-  "widths": [
+  "stream_type": "swath width",
+  "stream": [
     {
       "t": 1411765237,
       "width": 0

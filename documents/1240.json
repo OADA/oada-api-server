@@ -1,6 +1,7 @@
 {
   "units": "percent water",
-  "moistures": [
+  "stream_type": "moisture",
+  "stream": [
     {
       "t": 1411765237,
       "moisture": 0

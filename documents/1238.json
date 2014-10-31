@@ -1,5 +1,6 @@
 {
-  "status": [
+  "stream_type": "work status",
+  "stream": [
     {
       "t": 20193284926.1345,
       "case": "working"
