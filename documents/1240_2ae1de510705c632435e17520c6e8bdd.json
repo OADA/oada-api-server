@@ -1,0 +1,38 @@
+{
+  "_meta": 0,
+  "units": "%",
+  "moistures": [
+    {
+      "t": 1411750837.000,
+      "_id": "MOS4727/moistures/1",
+      "moisture": "0.0000000000",
+      "_meta": {
+        "_changeId": 11736
+      }
+    },
+    {
+      "t": 1411750842.000,
+      "_id": "MOS4727/moistures/1",
+      "moisture": "13.5000000000",
+      "_meta": {
+        "_changeId": 11736
+      }
+    },
+    {
+      "t": 1411750907.000,
+      "_id": "MOS4727/moistures/1",
+      "moisture": "13.5000000000",
+      "_meta": {
+        "_changeId": 11736
+      }
+    },
+    {
+      "t": 1411751072.000,
+      "_id": "MOS4727/moistures/1",
+      "moisture": "13.5000000000",
+      "_meta": {
+        "_changeId": 11736
+      }
+    }
+  ]
+}

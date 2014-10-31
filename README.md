@@ -2,7 +2,7 @@
 
 Notice: ***All codes in repository are currently in pre-release alpha and are subject to changes.***
 
-There is an example server running [here](http://oada-test.herokuapp.com). A good staring place is the harvesters configuration [/bookmarks/machines/harvesters](http://oada-test.herokuapp.com/bookmarks/machines/harvesters)
+ There is an mock server running [here](http://oada-test.herokuapp.com). A good staring place is the harvesters configuration [/bookmarks/machines/harvesters](http://oada-test.herokuapp.com/bookmarks/machines/harvesters)
 
 If you wish to run the API back-end on your own machine or server, you must install all the required packages by doing:
     
@@ -15,7 +15,15 @@ To start the API server:
 
 #API Testing#
 
-To perform the tests, you must have [cucumber-js](https://github.com/cucumber/cucumber-js) installed.
+### Option A
+
+You may perform the OADA compliance check via [this web client](http://oada-test.herokuapp.com/compliance) by simply give it your API endpoint. The automated tester will test your API with the latest OADA specifications and report on the results. It takes about 5 seconds.
+
+### Option B
+
+You may clone, modify the tests and run them on your machine.
+
+You must have [cucumber-js](https://github.com/cucumber/cucumber-js) installed.
 All the dependencies for the tests are located inside [/cucumber](https://github.com/ssabpisa/oada-test/tree/master/cucumber).
 
 If you wish to run the test against a different server, modify the server hostname value under 'root' here: `cucumber/support/config.js`
@@ -25,7 +33,7 @@ If you wish to run the test against a different server, modify the server hostna
       finder: "bookmarks/machines/harvesters"
     }; 
 
-If you do not change this parameter, the test will run against our [test server](http://oada-test.herokuapp.com). 
+If you do not change this parameter, the test will run against our [mock server](http://oada-test.herokuapp.com). 
 
 **Performing the tests**
 

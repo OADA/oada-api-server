@@ -16,9 +16,11 @@
 */
 
 //Initialize your parameters here
-var configurations = require('./config');
+var configurations = require('./_auto_config');
+var stream_keys = require('./SSK.json');
 var models = require('./known_words');
 var request = require('superagent')
+var utils = require('./utils')
 
 var World = function World(callback) {
     this._lastResponse = null;
@@ -26,22 +28,40 @@ var World = function World(callback) {
     this.models = models;
     this.root_url = configurations.server.root;
     this.finder_path = configurations.server.finder;
-    this.get = function(uri, token, callback) {
-        var r = request.get(uri);
+    this.token = configurations.server.token_key;
+    this.last_response  = null;
+    this.utils = utils;
+    this.stream_keys = stream_keys;
 
-        if(token !== null){
-            r.set('Authentication', 'Bearer ' + token);
-        }
+    this.memory = null;
+
+    this.remember = function(what){
+        this.memory = what;
+    }
+
+    this.recall = function(){
+        return this.memory;
+    }
+    
+    this.get = function(uri, token, callback) {
+        var r = request.get(uri).set('Authorization', 'Bearer ' + this.token).buffer(true);
 
         r.end(function(res) {
-            if (res.error) { return callback.fail(new Error(res.error)); }
+            if (res.error) { 
+                //callback.fail(new Error(res.error));
+                console.log("^^^^^ Failed. Unable to fetch URL. "  + uri);
+                callback.fail(new Error(res.text));
+                return;
+            }
             context._lastResponse = res;
+            context.last_response = JSON.parse(res.text);
+            //TODO: Experiencing this -- https://github.com/visionmedia/superagent/issues/270
             callback();
         });
     }
 
     this.get_token = function(){
-        return "123456";
+        return this.token;
     }
 
     this.post = function(uri, token, callback){

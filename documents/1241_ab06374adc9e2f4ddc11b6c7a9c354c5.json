@@ -1,0 +1,29 @@
+{
+  "events": [
+    { 
+      "t": "20193284955.1342", 
+      "field":  { 
+        "_id": "1250",
+        "name": "Smith30"
+      },
+      "event": "exit"
+    },
+    { 
+      "t": "20193.1448", 
+      "field":  { 
+        "_id": "1250",
+        "name": "Smith30"
+      },
+      "event": "enter"
+    },
+    { 
+      "t": "30193284955", 
+      "field":  { 
+        "_id": "1999",
+        "name": "InnerSmith35"
+      },
+      "event": "enter"
+    }
+  ]
+}
+

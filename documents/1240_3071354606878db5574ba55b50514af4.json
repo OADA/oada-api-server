@@ -1,0 +1,19 @@
+{
+  "units": "percent water",
+  "moistures": [
+    {
+      "_meta": {
+        "_changeId": 6
+      },
+      "t": 1411765237,
+      "moisture": 0
+    },
+    {
+      "_meta": {
+        "_changeId": 6
+      },
+      "t": 2343243.234,
+      "moisture": 15.9834
+    }
+  ]
+}
