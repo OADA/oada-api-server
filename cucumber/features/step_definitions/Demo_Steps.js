@@ -217,6 +217,72 @@ var StepDef = function () {
   });
 
 
+  
+  this.When(/^the items in "([^"]*)" has enter\-exit pair, if any exit\.$/, function (path_to_array, callback) {
+      try{
+        var matches = jsonPath.eval(this.last_response, path_to_array);
+      }catch(ex){
+        callback.fail(new Error("Unable to walk the JSON"));
+        return; 
+      }
+      var fieldnames = [];
+      var assoc = {};
+      var walk = matches[0];
+
+      var ENTER = "enter";
+      var EXIT = "exit";
+
+      //sort the walk
+      this.utils.quicksort(walk ,0, walk.length, 't');
+
+      //obtain list of fieldnames
+      fieldnames = jsonPath.eval(walk, "$.*.field.name");
+      for(var i in fieldnames){
+        assoc[fieldnames[i]] = 0;
+      }
+
+      //check that $.event first item is enter
+      if(jsonPath.eval(walk, "$.*.event").length == 0){
+        callback.fail(new Error("Missing event attribute for each item in " + path_to_array));
+        return; 
+        //cannot continue
+      }
+
+      //check that first of any field is enter
+      if(walk[0]["event"] != ENTER){
+        console.log(walk["event"])
+        return;
+        callback.fail(new Error("$.event first item is NOT enter event"));
+        //can continue
+      }
+
+      //check that every field has a matching pair in order (if any exit)
+      for(var i in walk){
+          var ev = walk[i];
+          var fn = ev["field"]["name"];
+          var xor_factor = 0;
+
+          if(ev["event"] == EXIT){
+            xor_factor = 0;
+          }else if(ev["event"] == ENTER){
+            xor_factor = 1;
+          }
+
+          assoc[fn] = (assoc[fn] ^ xor_factor); 
+      }
+
+      //final check
+      for(var key in assoc){
+          var valid = assoc[key];
+          if(!valid){
+            callback.fail(new Error("Field `" + key + "` or its preceeding Field does not have valid ENTER-EXIT matching pair"));
+          }
+      }
+
+      callback();
+  });
+
+
   this.Then(/^the "([^"]*)" attribute contains (\d+) or more item$/, function (attribute, min_children, callback) {
     // var object = jsonPath.eval(this.last_response,this.current_model.vocabularies[attribute].jsonpath );
     var object = this.last_response[attribute];
