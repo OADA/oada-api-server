@@ -59,12 +59,12 @@ router.post('/compliance/go/', function(req, res) {
 	var appDir = path.dirname(require.main.filename).split("/");
 	appDir.pop();
 	var config_buffer = appDir.join("/") + "/" + "cucumber/features/support/_web_client.cfg";
-	var rpt_name = md5("_report" + Math.random()) + ".html";
-	var report_path = appDir.join("/") + "/" + "public/reports/" + rpt_name;
 
 	io.on('connection', function(socket){
 	  socket.on('wait_file', function(msg){
-			
+	  		var rpt_name = md5(Math.random() + testcases) + ".html";
+			var report_path = appDir.join("/") + "/" + "public/reports/" + rpt_name;
+	
 			//Write _web_client config file so that the cucumber
 			//test knows that user is running from web temporary solution
 
@@ -81,15 +81,14 @@ router.post('/compliance/go/', function(req, res) {
 			  function (error, stdout, stderr) {
 
 			  	var slim_output = stdout.replace(/\[\d+m/g,"").replace(/(\s+(at)\s).*/g,"");
-			    fs.writeFileSync(report_path, toHtml(slim_output));
+			    // fs.writeFileSync(report_path, toHtml(slim_output));
 
 			    try{
 			    	fs.unlinkSync(config_buffer);
 			    }catch(ex){}
 
-				io.emit('response_report', rpt_name);
-				return;
-
+				io.emit('response_report', toHtml(slim_output));
+			
 			    if (error !== null) {
 			      console.log('exec error: ' + error);
 			      io.emit('response_report', "error");
