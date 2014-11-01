@@ -48,7 +48,6 @@ module.exports = function () {
       function (what_stream, vin, view_state, parameter_filename, callback) {
 
     var has_view_parameter = (view_state == "with" ? 1 : 0);
-    var use_SSK = this.stream_keys[what_stream]; //stream specific key
     //navigate to finder
     this.current_url = this.root_url + "/" + this.finder_path;
 
@@ -68,7 +67,7 @@ module.exports = function () {
             //load that stream
             var just_data_url = datalink;
             if(has_view_parameter){
-              var VIEW_PARAM = JSON.stringify(require("../support/view_parameters/" + parameter_filename +  ".json")).replace("<use_SSK>", use_SSK);
+              var VIEW_PARAM = JSON.stringify(require("../support/view_parameters/" + parameter_filename +  ".json"));
               datalink += "?view=" + encodeURIComponent(VIEW_PARAM);
             }
 

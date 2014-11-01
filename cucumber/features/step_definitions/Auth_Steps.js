@@ -331,54 +331,8 @@ module.exports = function () {
 
  });
 
-  this.Then(/^the "([^"]*)" of each item in "([^"]*)" contains at least the following information:$/, function (inner, outer, table, callback) {
-    var iter = this.last_response[outer];
-    if(iter === undefined) {
-      callback.fail(new Error("The " + outer + " attribute does not exist in response!"))
-      return;
-    }
-      
-    var nonskip = 0;
-    var keylist = Object.keys(iter); //{} is not iterable by key
-    for(var i in keylist){
-           var key = keylist[i];
-           var iterable = iter[key][inner];
-           if(iterable == undefined) continue;
-           var result = this.check_attr(table, iterable);
-           if(!result.passed){
-            callback.fail(result.E);
-            return;
-           }
-           nonskip++;
-    }
-
-    if(nonskip == 0){
-      callback.fail(new Error("The " + inner + " attribute is empty or does not exist!") );
-      return;
-    }
-    callback();
-});
-
-this.Then(/^remember the maximum value of "([^"]*)" for every items in "([^"]*)"$/, function (jsonpath, placekey, callback) {
-
-  var dataset = this.last_response[placekey];
-  A = this.walker.eval(dataset, jsonpath)
-
-  console.log("Number of records: " + A.length);
-
-
-  this.utils.quicksort(A,0, A.length);
-  var maxval = A[A.length - 1];
-  this.remember(Number(maxval));
-
-  console.log("Max _changeId: " + maxval);
-
-  callback();
-
-});
 
 this.Then(/^check the "([^"]+)" stream again, this time with view parameter ([^"]+)$/, function (what_stream, view_param_doc, callback) {
-  var use_SSK = this.stream_keys[what_stream]; 
   var recalled = this.recall();
 
   if(recalled == null){
@@ -387,7 +341,7 @@ this.Then(/^check the "([^"]+)" stream again, this time with view parameter ([^"
   }
 
   //TODO: make a generic view doc parser, it should be able to throw error if this.recall is null as well
-  var view_GET = JSON.stringify(require("../support/view_parameters/" + view_param_doc +  ".json")).replace("<use_SSK>", use_SSK).replace("<last_remembered>", recalled); 
+  var view_GET = JSON.stringify(require("../support/view_parameters/" + view_param_doc +  ".json")).replace("<last_remembered>", recalled); 
 
   //Form the new URL we need to fetch
   var full_url = this.current_url + "/?view=" + encodeURIComponent(view_GET);
@@ -400,8 +354,9 @@ this.Then(/^all values of "([^"]*)" are equals to the previously remembered valu
   var A = this.walker.eval(this.last_response, jsonpath);
   var N = this.recall();
 
+
   if(A === undefined || A.length == 0){
-     callback.fail(new Error("The stream did not return any valid value."));
+     callback.fail(new Error("The stream structure is invalid, cannot walk to " + jsonpath));
     return;
   }
   if(N == null){
@@ -410,7 +365,13 @@ this.Then(/^all values of "([^"]*)" are equals to the previously remembered valu
   }
 
   console.log("Verifying all _changeId = " + N);
-  for(var index = 0; index < A.length; index++){
+
+  this.utils.quicksort(A ,0, A.length);
+
+  var x = [0, A.length - 1]; //these are the indeces we will check (first and last)
+  
+  for(var i = 0; i < x.length; i++){
+    var index = x[i];
     var e_mesg = "Response contains record with incorrect changeId! (looking for " + this.recall() + " but found " + A[index] + ")";
     if(Number(A[index]) != Number(N)){
       callback.fail(new Error(e_mesg));

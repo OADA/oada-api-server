@@ -19,10 +19,6 @@ module.exports = function () {
 
 
 
-
-
-
-
   this.Then(/^the "([^"]*)" attribute of each item contains at least the following information:$/, function (what_attribute, table, callback) {
     var jspath = "$.*." + what_attribute;
     var iter = this.walker.eval(this.last_response, jspath);
@@ -38,12 +34,6 @@ module.exports = function () {
     }
     callback();
   });
-
-
-
-
-
-
 
 
 
@@ -121,43 +111,39 @@ module.exports = function () {
 
 
 
+  // this.Then(/^the "([^"]*)" attribute of each "([^"]*)" contains at least the following information:$/,
+  //     function (attribute_name, parent_key, table, callback) {
+
+  //   var roots = this.walker.eval(this.last_response,
+  //           this.current_model.vocabularies[parent_key].jsonpath);
+  //   var cnt = 0;
+  //   for(var rootkey in roots){
+  //      if(this.roots[rootkey] === undefined) continue;
+  //      var object = roots[rootkey];
+  //      object = object[attribute_name];
+  //      var result = this.check_attr(table, object);
+  //      if(!result.passed){
+  //       callback.fail(result.E);
+  //       return;
+  //      }
+  //      cnt++;
+  //   }
+
+  //   callback();
+  // });
 
 
 
+  this.Then(/^the "([^"]*)" attribute contains at least the following information:$/, function (attr, table, callback) {
 
-  this.Then(/^the "([^"]*)" attribute of each "([^"]*)" contains at least the following information:$/,
-      function (attribute_name, parent_key, table, callback) {
-
-    var roots = this.walker.eval(this.last_response,
-            this.current_model.vocabularies[parent_key].jsonpath);
-    var cnt = 0;
-    for(var rootkey in roots){
-       if(this.roots[rootkey] === undefined) continue;
-       var object = roots[rootkey];
-       object = object[attribute_name];
-       var result = this.check_attr(table, object);
-       if(!result.passed){
-        callback.fail(result.E);
-        return;
+       var jpath = "$." + attr;
+       var object = this.walker.eval(this.last_response, jpath)[0];
+       if(object === undefined){
+          callback.fail(new Error("No attribute " + attr + " in the response"));
+          return;
        }
-       cnt++;
-    }
-
-    callback();
-  });
-
-
-
-
-
-
-
-
-  this.Then(/^the "([^"]*)" attribute contains at least the following information:$/, function (attribute_name, table, callback) {
-       var object = getNode(this.current_model.vocabularies[attribute_name].jsonpath,
-                         this.last_response,
-                         0);
        var result = this.check_attr(table, object);
+
        if(!result.passed){
           callback.fail(result.E);
           return;
@@ -165,6 +151,31 @@ module.exports = function () {
        callback();
   });
 
+
+
+
+  this.Then(/^the "([^"]*)" attribute of each item in "([^"]*)" contains at least the following information:$/, 
+    function (inner, outer, table, callback) {
+
+    var jsonpath = "$." + outer + ".*." + inner;
+    var iter = this.walker.eval(this.last_response, jsonpath);//this.last_response[outer];
+ 
+    if(iter.length == 0) {
+      callback.fail(new Error("The " + jsonpath + " attribute does not exist in response!"))
+      return;
+    }
+
+    for(var i = 0; i < iter.length; i++){
+       var result = this.check_attr(table, iter[i]);
+       if(!result.passed){
+        callback.fail(result.E);
+        return;
+       }
+    }
+
+
+    callback();
+});
 
 
 }
