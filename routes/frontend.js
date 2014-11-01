@@ -70,7 +70,7 @@ router.post('/compliance/go/', function(req, res) {
 
 			fs.writeFileSync(config_buffer, JSON.stringify({
 			    root: req.body.endpoint,
-			    finder: "bookmarks/machines/harvesters",
+			    bookmark: "bookmarks/machines/harvesters",
 			    token_key: req.body.token
 			}));
 

@@ -1,23 +1,20 @@
 {
   "units": "percent water",
-  "moistures": [
+  "stream_type": "moisture",
+  "stream": [
     {
-      "_id" : 4343,
       "t": 1411765237,
       "moisture": 0
     },
     {
-      "_id" : 4343,
       "t": 2344324.234,
       "moisture": 15.9834
     },
     {
-      "_id" : 4343,
       "t": 2343243.234,
       "moisture": 15.9834
     },
     {
-      "_id" : 4343,
       "t": 3243243222.1345,
       "moisture": 15.9834
     }

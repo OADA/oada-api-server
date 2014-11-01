@@ -1,17 +1,15 @@
 {
-  "status": [
+  "stream_type": "work status",
+  "stream": [
     {
-      "_id": 345345, 
       "t": 20193284926.1345,
       "case": "working"
     },
     { 
-      "_id": 4534543, 
       "t": 20193284927.1345, 
       "case": "not working" 
     },
     { 
-      "_id": 34345, 
       "t": 20193284928.1346, 
       "case": "road" 
     }
