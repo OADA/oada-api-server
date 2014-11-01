@@ -32,6 +32,8 @@ module.exports = function () {
      if(has_view_parameter){
         var VIEW_PARAM = JSON.stringify(require("../support/view_parameters/" + parameter_filename +  ".json"));
         this.current_url += "?view=" + encodeURIComponent(VIEW_PARAM);
+        console.log("Using View: " + VIEW_PARAM);
+
      }
 
      console.log("Fetching " + this.current_url);
@@ -69,6 +71,7 @@ module.exports = function () {
             if(has_view_parameter){
               var VIEW_PARAM = JSON.stringify(require("../support/view_parameters/" + parameter_filename +  ".json"));
               datalink += "?view=" + encodeURIComponent(VIEW_PARAM);
+              console.log("Using View: " + VIEW_PARAM);
             }
 
             console.log("Fetching final resource: " + datalink);

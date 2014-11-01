@@ -80,7 +80,7 @@ router.post('/compliance/go/', function(req, res) {
 			  },
 			  function (error, stdout, stderr) {
 
-			  	var slim_output = stdout.replace(/\[\d+m/g,"").replace(/(\s+(at)\s).*/g,"");
+			  	var slim_output = stdout.replace(/\[32m/g,"<span style='color:#00bc0c'>").replace(/\[0m/g, "</span>").replace(/\[31m/g, "<span style='color:red'>").replace(/\[36m/g, "<span style='color:#2db9db'>").replace(/(\s+(at)\s).*/g,"");
 			    // fs.writeFileSync(report_path, toHtml(slim_output));
 
 			    try{

@@ -238,67 +238,67 @@ module.exports = function () {
   });
 
 
-  this.When(/^each key in "([^"]*)" has a valid resource with just the following information when requested ([^"]+) view parameter:$/, 
-    function (subkey, view_state, table, callback) {
+  // this.When(/^each key in "([^"]*)" has a valid resource with just the following information when requested ([^"]+) view parameter:$/, 
+  //   function (subkey, view_state, table, callback) {
 
-    var jsonpath = "$." + subkey;
-    var target = this.walker.eval(this.last_response, jsonpath);
-    console.log(target);
-    return;
-    var fields = Object.keys(target);
-    var has_view_parameter = (view_state == "with" ? 1 : 0);
-    var view_param = encodeURIComponent(JSON.stringify({"$each":{"$expand":true}}));
+  //   var jsonpath = "$." + subkey;
+  //   var target = this.walker.eval(this.last_response, jsonpath);
+  //   // console.log(target);
+  //   // return;
+  //   var fields = Object.keys(target);
+  //   var has_view_parameter = (view_state == "with" ? 1 : 0);
+  //   var view_param = encodeURIComponent(JSON.stringify({"$each":{"$expand":true}}));
 
-    var root = this.root_url;
-    var context = this;
+  //   var root = this.root_url;
+  //   var context = this;
 
-    var checker = function(dut){
-      var result = this.check_attr(table, dut);
-      //check that the returned resource contains stuff we need
-      if(!result.passed){
-          callback.fail(result.E);
-          return;
-      }
-      //check that there is just this and nothing else
-      if(Object.keys(dut).length != table.rows().length){
-          var EMES = "Too many attribute(s)! Looked for " + table.rows().length + " but got " + Object.keys(dut).length + ".. Skipping ahead.";
-          callback.fail(new Error(EMES));
-          return;
-      }
-    }
-
-
-
-    var async_check_callback = function(){
-       checker(context.last_response);  
-       callback();   
-    }
+  //   var checker = function(dut){
+  //     var result = this.check_attr(table, dut);
+  //     //check that the returned resource contains stuff we need
+  //     if(!result.passed){
+  //         callback.fail(result.E);
+  //         return;
+  //     }
+  //     //check that there is just this and nothing else
+  //     if(Object.keys(dut).length != table.rows().length){
+  //         var EMES = "Too many attribute(s)! Looked for " + table.rows().length + " but got " + Object.keys(dut).length + ".. Skipping ahead.";
+  //         callback.fail(new Error(EMES));
+  //         return;
+  //     }
+  //   }
 
 
-    var done_first_item_cb = function(){
-      checker(context.last_response);
 
-      //check the rest entries
-      for(var i = 1; i < fields.length ; i++ ){
-          var fid = fields[i];
-          var field_url = root + "/resources/" +  fid + (has_view_parameter ? "?view=" + view_param : "");
-          console.log("Fetching " + field_url);
-          context.get(field_url, context.get_token(), async_check_callback);
-          //TODO: maybe create a queue instead of getting everything at the same time (in World.js)
-          //aka. limit to only few concurrent GET request at a time
-      }
-    }
+  //   var async_check_callback = function(){
+  //      checker(context.last_response);  
+  //      callback();   
+  //   }
 
-    done_first_item_cb.fail = function(){ callback.fail(new Error("Unknown Error.")); }
-    async_check_callback.fail = function(){ callback.fail(new Error("Unknown Error.")); }
 
-    var fid = fields[0];
-    var field_url = root + "/resources/" +  fid + (has_view_parameter ? "?view=" + view_param : "");
-    console.log("Fetching " + field_url);
+  //   var done_first_item_cb = function(){
+  //     checker(context.last_response);
 
-    context.get(field_url, context.get_token(), done_first_item_cb);
+  //     //check the rest entries
+  //     for(var i = 1; i < fields.length ; i++ ){
+  //         var fid = fields[i];
+  //         var field_url = root + "/resources/" +  fid + (has_view_parameter ? "?view=" + view_param : "");
+  //         console.log("Fetching " + field_url);
+  //         context.get(field_url, context.get_token(), async_check_callback);
+  //         //TODO: maybe create a queue instead of getting everything at the same time (in World.js)
+  //         //aka. limit to only few concurrent GET request at a time
+  //     }
+  //   }
 
-  });
+  //   done_first_item_cb.fail = function(){ callback.fail(new Error("Unknown Error.")); }
+  //   async_check_callback.fail = function(){ callback.fail(new Error("Unknown Error.")); }
+
+  //   var fid = fields[0];
+  //   var field_url = root + "/resources/" +  fid + (has_view_parameter ? "?view=" + view_param : "");
+  //   console.log("Fetching " + field_url);
+
+  //   context.get(field_url, context.get_token(), done_first_item_cb);
+
+  // });
 
 
 
@@ -340,8 +340,8 @@ this.Then(/^check the "([^"]+)" stream again, this time with view parameter ([^"
     return;
   }
 
-  //TODO: make a generic view doc parser, it should be able to throw error if this.recall is null as well
   var view_GET = JSON.stringify(require("../support/view_parameters/" + view_param_doc +  ".json")).replace("<last_remembered>", recalled); 
+  console.log("Using View: " + view_GET);
 
   //Form the new URL we need to fetch
   var full_url = this.current_url + "/?view=" + encodeURIComponent(view_GET);
@@ -369,7 +369,7 @@ this.Then(/^all values of "([^"]*)" are equals to the previously remembered valu
   this.utils.quicksort(A ,0, A.length);
 
   var x = [0, A.length - 1]; //these are the indeces we will check (first and last)
-  
+
   for(var i = 0; i < x.length; i++){
     var index = x[i];
     var e_mesg = "Response contains record with incorrect changeId! (looking for " + this.recall() + " but found " + A[index] + ")";

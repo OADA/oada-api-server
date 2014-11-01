@@ -55,7 +55,8 @@ module.exports = function () {
     //obtain the keys for what we just walked to
     var fields = Object.keys(target);
     var has_view_parameter = (view_state == "with" ? 1 : 0);
-    var view_param = encodeURIComponent(JSON.stringify({"$each":{"$expand":true}}));
+
+    var view_param = encodeURIComponent(JSON.stringify({"$each":{"$expand":true}})); //TODO: replace with proper
 
     var root = this.root_url;
     var context = this;
@@ -111,27 +112,26 @@ module.exports = function () {
 
 
 
-  // this.Then(/^the "([^"]*)" attribute of each "([^"]*)" contains at least the following information:$/,
-  //     function (attribute_name, parent_key, table, callback) {
+  this.Then(/^the "([^"]*)" attribute of each "([^"]*)" contains at least the following information:$/,
+      function (attribute_name, parent_key, table, callback) {
 
-  //   var roots = this.walker.eval(this.last_response,
-  //           this.current_model.vocabularies[parent_key].jsonpath);
-  //   var cnt = 0;
-  //   for(var rootkey in roots){
-  //      if(this.roots[rootkey] === undefined) continue;
-  //      var object = roots[rootkey];
-  //      object = object[attribute_name];
-  //      var result = this.check_attr(table, object);
-  //      if(!result.passed){
-  //       callback.fail(result.E);
-  //       return;
-  //      }
-  //      cnt++;
-  //   }
+    var roots = this.walker.eval(this.last_response,
+            this.current_model.vocabularies[parent_key].jsonpath);
+    var cnt = 0;
+    for(var rootkey in roots){
+       if(this.roots[rootkey] === undefined) continue;
+       var object = roots[rootkey];
+       object = object[attribute_name];
+       var result = this.check_attr(table, object);
+       if(!result.passed){
+        callback.fail(result.E);
+        return;
+       }
+       cnt++;
+    }
 
-  //   callback();
-  // });
-
+    callback();
+  });
 
 
   this.Then(/^the "([^"]*)" attribute contains at least the following information:$/, function (attr, table, callback) {

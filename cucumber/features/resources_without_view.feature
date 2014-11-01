@@ -17,7 +17,7 @@ Feature: Get resources with NO view parameters
     |      t     | timestamp of stream                     |
     |    field   | field information                       |
     |    event   | whether this was enter or exit          |
-    And the "field" of each item in "stream" contains at least the following information:
+    And the "field" attribute of each item in "stream" contains at least the following information:
     | ATTRIBUTE  | DESCRIPTION                             |
     |    _id     | id of the field resource that is remote |
 
