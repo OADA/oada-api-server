@@ -1,0 +1,23 @@
+{
+  "_meta": {
+    "_changeId": 15
+  },
+  "units": "% water",
+  "stream_type": "moisture",
+  "stream": [
+    {
+      "_meta": {
+        "_changeId": 15
+      },
+      "t": 1411765237,
+      "moisture": 0
+    },
+    {
+      "_meta": {
+        "_changeId": 15
+      },
+      "t": 2344324.234,
+      "moisture": 15.9834
+    }
+  ]
+}
