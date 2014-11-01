@@ -74,7 +74,7 @@ router.get('/bookmarks/machines/harvesters(/?)', function(req, res) {
     var res_object = {};
 
     try{
-        res_object = require('../documents/finder.json');
+        res_object = require('../documents/bookmark.json');
 
         if(rest_path.length > 1 || req.query['_expand'] == '2'){
             //if expansion is on, we expand
@@ -93,7 +93,7 @@ router.get('/bookmarks/machines/harvesters(/?)', function(req, res) {
             res_object = res_object[child];
         }
     }catch(exp){
-        res.json({
+        res.status(404).json({
             "error": "unsupported resource",
             "reason": exp.message
         });
@@ -113,17 +113,19 @@ router.get('/bookmarks/fields(/?)', function(req, res) {
 
     try{
         var normal = require('../documents/fields.json');
-        var expand = require('../documents/fields_expanded.json');
         res_object = normal;
-        
+
         if("view" in req.query){
-            res_object = expand;
+            var view_param_hash = md5(req.query.view);
+            console.log("vp hash: " + view_param_hash);
+            res_object = require('../documents/fields' + '_' + view_param_hash + '.json');
         }
 
-        if(rest_path.length > 1 || req.query['_expand'] == '2'){
-            //if expansion is on, we expand
-            var resource = require('../documents/1300.json');
-        }
+
+        // if(rest_path.length > 1 || req.query['_expand'] == '2'){
+        //     //if expansion is on, we expand
+        //     var resource = require('../documents/1300.json');
+        // }
 
         //walk through the requested REST Path
         for(var idx in rest_path){
@@ -136,8 +138,9 @@ router.get('/bookmarks/fields(/?)', function(req, res) {
             }
             res_object = res_object[child];
         }
+
     }catch(exp){
-        res.json({
+        res.status(404).json({
             "error": "unsupported resource",
             "reason": exp.message
         });
