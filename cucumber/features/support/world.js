@@ -21,6 +21,7 @@ var stream_keys = require('./SSK.json');
 var models = require('./known_words');
 var request = require('superagent')
 var utils = require('./utils')
+var jsonPath = require('JSONPath');
 
 var World = function World(callback) {
     this._lastResponse = null;
@@ -32,6 +33,7 @@ var World = function World(callback) {
     this.last_response  = null;
     this.utils = utils;
     this.stream_keys = stream_keys;
+    this.walker = jsonPath;
 
     this.memory = null;
 
@@ -76,6 +78,29 @@ var World = function World(callback) {
 
             callback();
         });
+    }
+
+    /**
+     *  check if all attributes specified in table exists in object
+     *  @param {Object} table : attribute table passed  via cucumber
+     *  @param {Object} object: object to be tested
+    */
+    this.check_attr = function(table, object){
+       
+       var pass = {passed: true, missing: [], E: null};
+
+       for(var idx in table.rows()){
+          var look_for = table.rows()[idx][0];
+          //the thing we are looking for cannot be undefined (sometimes [Function] is part of rows())
+          if(look_for == undefined) continue; 
+
+            if(object[look_for] === undefined){
+             pass.missing.push(look_for);
+             pass.passed = false;
+          }
+       }
+       pass.E = new Error("Missing Attribute: " + pass.missing.join(", "));
+       return pass;
     }
 
     callback();
