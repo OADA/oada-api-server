@@ -19,12 +19,9 @@ Feature: Get Fields with and without view
 
   Scenario: Fields bookmark with NO view parameter
     Given the client is authorized
-    When the client requests the "fields" bookmark without view parameter
-    Then the response contains at least the following information:
-    | ATTRIBUTE     | DESCRIPTION                        |
-    | fields        | Array of fields                    |
-    And the "fields" attribute contains 1 or more item
-    And each key in "fields" has a valid resource with just the following information when requested without view parameter:
+    When the client requests the "fields" bookmark without view parameter whatsoever
+    Then the response contains 1 or more items
+    And each key in response has a valid resource with just the following information when requested without view parameter:
     | ATTRIBUTE     | DESCRIPTION                        |
     | boundary      | bounding coordinates               |
     | name          | human-readable field name          |
@@ -32,15 +29,15 @@ Feature: Get Fields with and without view
 
   Scenario: Fields bookmark WITH view parameter
     Given the client is authorized
-    When the client requests the "fields" bookmark with view parameter
-    And the "fields" attribute contains 1 or more item
-    And each item in "fields" has at least the following information:
+    When the client requests the "fields" bookmark with view parameter t1_field
+    Then the response contains 1 or more items
+    And each item has at least the following information:
     | ATTRIBUTE     | DESCRIPTION                        |
     | _id           | id of the field resources          |
     | boundary      | bounding coordinates               |
     | name          | human-readable field name          |
     | crop          |                                    |
-    And the "boundary" of each item in "fields" contains at least the following information:
+    And the "boundary" attribute of each item contains at least the following information:
     | ATTRIBUTE     | DESCRIPTION    |
     | coordinates   |                |
     | type          |                |
