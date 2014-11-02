@@ -1,6 +1,6 @@
 #OADA-Compliant API Server#
 
-[![Build Status](https://travis-ci.org/ssabpisa/oada-test.svg)](https://travis-ci.org/ssabpisa/oada-test)
+[![Build Status](https://travis-ci.org/ssabpisa/oada-test.svg)](https://travis-ci.org/ssabpisa/oada-test?branch=master)
 
 Notice: ***All codes in repository are currently in pre-release alpha and are subject to changes.***
 
