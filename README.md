@@ -1,5 +1,7 @@
 #OADA-Compliant API Server#
 
+[![Build Status](https://travis-ci.org/ssabpisa/oada-test.svg)](https://travis-ci.org/ssabpisa/oada-test)
+
 Notice: ***All codes in repository are currently in pre-release alpha and are subject to changes.***
 
  There is an mock server running [here](http://oada-test.herokuapp.com). A good staring place is the harvesters configuration [/bookmarks/machines/harvesters](http://oada-test.herokuapp.com/bookmarks/machines/harvesters)
