@@ -1,0 +1,18 @@
+{
+  "_meta": {
+    "_changeId": 3
+  },
+  "coordinate_system": {
+      "name": "WGS84"
+   },
+   "stream_type": "location",
+   "stream": [
+    {
+      "_meta": { "_changeId": 3 },
+      "t": "20193284926.1342",
+      "lat": "40.34983",
+      "lon": "56.98392",
+      "alt": "4123.28392"
+    }
+  ]
+}

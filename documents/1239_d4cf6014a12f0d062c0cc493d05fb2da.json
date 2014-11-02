@@ -1,0 +1,19 @@
+{
+  "_meta": {
+    "_changeId": 6
+  },
+  "units": "uncalibrated",
+  "stream_type": "wet mass flow",
+  "stream": [
+    {
+      "_meta": { "_changeId": 1 },
+      "t": "20193284926.1345",
+      "flow": 1.23213
+    },
+    {
+      "_meta": { "_changeId": 6 },
+      "t": "20193284927.1345",
+      "flow": 1.53241
+    }
+  ]
+}
