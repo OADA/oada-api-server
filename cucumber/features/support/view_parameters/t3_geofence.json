@@ -1,0 +1,18 @@
+{
+  "_meta": {
+    "_changeId": true
+  },
+  "stream": {
+    "$each": {
+      "_meta": {
+        "_changeId": {
+          "$gt": 0
+        }
+      },
+      "field": {
+        "name": true,
+        "$others": false
+      }
+    }
+  }
+}

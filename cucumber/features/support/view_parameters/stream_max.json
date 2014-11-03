@@ -1,0 +1,10 @@
+{
+ "_meta": { "_changeId": true },
+  "stream": {
+    "$each": {
+       "_meta": {
+         "_changeId": { "$gt": "<last_remembered>" }
+       }
+    }
+  }
+}

@@ -1,6 +1,6 @@
 /* Server Config */
-//http://scalingwallhack.cloudapp.net:8888/
 exports.server = {
-    root: "http://oada-test.herokuapp.com",
-    finder: "bookmarks/machines/harvesters"
+  root: "http://localhost:3000",
+    bookmark: "bookmarks/machines/harvesters",
+    token_key: "123456789"
 };

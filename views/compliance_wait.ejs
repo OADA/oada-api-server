@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>OADA Compliance Test (dev alpha)</title>
+    <script src="https://cdn.socket.io/socket.io-1.1.0.js"></script>
+    <script>
+      var socket = io();
+      socket.emit('wait_file', "_gen_report");
+
+      socket.on('response_report', function(msg){
+        console.log(msg)
+        if(msg != 'error'){
+          document.body.innerHTML += msg;
+        }else{
+          alert("An error occurred..");
+        }
+      });
+
+    </script>
+
+  </head>
+  <body>
+    <div class="container">
+      Performing Test..
+    </div>
+
+  </body>
+</html>

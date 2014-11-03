@@ -1,20 +1,35 @@
 {
-  "units": "percent water",
+  "_meta": {
+    "_changeId": 15
+  },
+  "units": "% water",
   "stream_type": "moisture",
   "stream": [
     {
+      "_meta": {
+        "_changeId": 15
+      },
       "t": 1411765237,
       "moisture": 0
     },
     {
+      "_meta": {
+        "_changeId": 15
+      },
       "t": 2344324.234,
       "moisture": 15.9834
     },
     {
+      "_meta": {
+        "_changeId": 0
+      },
       "t": 2343243.234,
       "moisture": 15.9834
     },
     {
+      "_meta": {
+        "_changeId": 6
+      },
       "t": 3243243222.1345,
       "moisture": 15.9834
     }

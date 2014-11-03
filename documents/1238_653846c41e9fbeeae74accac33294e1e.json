@@ -1,0 +1,13 @@
+{
+  "_meta": {
+    "_changeId": 6
+  },
+  "stream_type": "work status",
+  "stream": [
+    { 
+       "_meta": { "_changeId": 6 },
+      "t": 20193284928.1346, 
+      "case": "road" 
+    }
+  ]
+}
