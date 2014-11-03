@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "./bin/www",
-    "test": "npm start &; cucumber-js -f pretty cucumber"
+    "test": "./bin/www & cucumber-js -f pretty cucumber"
   },
   "dependencies": {
     "body-parser": "~1.0.0",
