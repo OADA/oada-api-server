@@ -1,0 +1,10 @@
+{
+  "_meta": {
+    "_changeId": 2147483646
+  },
+  "coordinate_system": {
+      "name": "WGS84"
+   },
+   "stream_type": "location",
+   "stream": []
+}
