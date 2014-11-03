@@ -6,7 +6,14 @@
 
     <link href="/css/base.css" rel="stylesheet">
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
-  
+    <style>
+        .test_selector td{
+          padding:4px;
+        }
+        .test_selector{
+          margin-top:15px;
+        }
+    </style>
 
   </head>
   <body>
@@ -28,37 +35,45 @@
 		</div>
 		<br>
         <div style="font-size:14px">Enter your endpoint above to check the API responses for correctness. The server will give you back a <a href="http://cukes.info/reports.html">Cucumber report</a>.
-          <div class="checkbox">
-            <label>
-              <input type="checkbox" checked='checked' value='cucumber/features/fields_with_view.feature' name="testcases">
-              Fields Bookmark Tests (with view parameter)
-            </label>
-            <label>
-              <input type="checkbox" checked='checked' value='cucumber/features/fields_without_view.feature' name="testcases">
-              Fields Bookmark Tests (without view parameter)
-            </label>
-          </div>
-          <div class="checkbox">
-            <label>
-              <input type="checkbox" checked='checked' value='cucumber/features/harvesters_bookmark.feature' name="testcases">
-              Harvesters Bookmark Tests 
-            </label>
-            <label>
-              <input type="checkbox" checked='checked' value='cucumber/features/harvesters_resource.feature' name="testcases">
-              Harvesters Resource Tests <a href="#"> (?)</a>
-            </label>
-          </div>
-          <div class="checkbox">
-            <label>
-              <input type="checkbox" checked='checked' value='cucumber/features/resources_with_view.feature' name="testcases">
-              Stream Resources Test (with view parameter)
-            </label>
-            <label>
-              <input type="checkbox" checked='checked' value="cucumber/features/resources_without_view.feature" name="testcases">
-              Stream Resources Test (without view parameter)
-            </label>
-          </div>
+        <table class="test_selector">
+              <tr>
+                <td><strong>Field Bookmark Test</strong></td>
+                
+                <td>
+                  <input type="checkbox" checked='checked' value='cucumber/features/field_without_view.feature' name="testcases"> No View
+                </td>
+                <td>
+                  <input type="checkbox" checked='checked' value='cucumber/features/field_with_view.feature' name="testcases"> With View
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Harvester Bookmark Test</strong></td>
+                <td>
+                  <input type="checkbox" checked='checked' value='cucumber/features/harvesters_resource.feature' name="testcases"> No View
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Harvester Resource Test</strong></td>
+                <td>
+                  <input type="checkbox" checked='checked' value='cucumber/features/harvesters_bookmark.feature' name="testcases"> No View
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Stream Resources Test</strong></td>
+                
+                <td>
+                  <input type="checkbox" checked='checked' value='cucumber/features/streams_without_view.feature' name="testcases"> No View
+                </td>
+                <td>
+                  <input type="checkbox" checked='checked' value='cucumber/features/streams_with_view.feature' name="testcases"> With View
+                </td>
+              </tr>
+
+          </table>
+
         </div>
+
+
         <p><br>
           <input type="submit" class="btn btn-lg btn-success" role="button" value="Perform Selected Tests">
 

@@ -44,10 +44,6 @@ If you do not change this parameter, the test will try to run against the local 
 
 **Performing the tests**
 
-    npm test
-
-or equivalently, 
-
     cucumber-js -f pretty cucumber
 
 This will generate a color coded cucumber report, and a summary of passed/failed cases.
