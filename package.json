@@ -3,7 +3,8 @@
   "version": "0.0.2",
   "private": true,
   "scripts": {
-    "start": "./bin/www"
+    "start": "./bin/www",
+    "test": "echo 'hello world'"
   },
   "dependencies": {
     "body-parser": "~1.0.0",
