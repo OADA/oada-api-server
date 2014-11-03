@@ -47,8 +47,8 @@ If you do not change this parameter, the test will try to run against the local 
     cucumber-js -f pretty cucumber
 
 This will generate a color coded cucumber report, and a summary of passed/failed cases.
-When you do this, it will perform all the tests located in `/cucumber/features` directory.
+When you do this, it will perform all the tests located in `/cucumber/features` directory. Red for fail and green for pass.
 
 NOTE: if this fails with an error message about "superagent", try manually installing superagent with npm:
 
-   npm install superagent
+    npm install superagent
