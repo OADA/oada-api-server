@@ -333,14 +333,15 @@ module.exports = function () {
 
 
 this.Then(/^check the "([^"]+)" stream again, this time with view parameter ([^"]+)$/, function (what_stream, view_param_doc, callback) {
-  var recalled = this.recall();
+  // var recalled = this.recall();
 
-  if(recalled == null){
-    callback.fail(new Error("Fetal Error: Unable to recall saved variable."));
-    return;
-  }
+  // if(recalled == null){
+  //   callback.fail(new Error("Fetal Error: Unable to recall saved variable."));
+  //   return;
+  // }
 
-  var view_GET = JSON.stringify(require("../support/view_parameters/" + view_param_doc +  ".json")).replace("<last_remembered>", recalled); 
+  var view_GET = JSON.stringify(require("../support/view_parameters/" + view_param_doc +  ".json"));
+  //.replace("<last_remembered>", recalled); 
   console.log("Using View: " + view_GET);
 
   //Form the new URL we need to fetch

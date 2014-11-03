@@ -3,7 +3,8 @@
   "version": "0.0.2",
   "private": true,
   "scripts": {
-    "start": "./bin/www"
+    "start": "./bin/www",
+    "test": "./bin/www & cucumber-js -f pretty cucumber"
   },
   "dependencies": {
     "body-parser": "~1.0.0",
@@ -17,7 +18,6 @@
     "JSONPath": "~0.10.0",
     "socket.io": "*",
     "ejs": "~0.7.1",
-    "superagent": "~0.18.2",
-    "exec-sync": "*"
+    "superagent": "~0.18.2"
   }
 }

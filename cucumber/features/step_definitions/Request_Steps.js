@@ -23,8 +23,12 @@ module.exports = function () {
 
 
 
-  this.When(/^the client requests the "([^"]*)" bookmark ([A-Za-z]*) view parameter ([A-Za-z_0-9]*)$/, 
+  this.When(/^the client requests the "([^"]*)" bookmark ([A-Za-z]*) view parameter( ?[A-Za-z_0-9]*)?$/, 
     function (bk_name, view_state, parameter_filename, callback) {
+
+     if (typeof parameter_filename !== 'undefined') {
+       parameter_filename = parameter_filename.replace(" ",""); // strip any leading spaces
+     }
 
      var has_view_parameter = (view_state == "with" ? 1 : 0);
 
