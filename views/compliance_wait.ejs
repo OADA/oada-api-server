@@ -3,7 +3,14 @@
   <head>
     <meta charset="utf-8">
     <title>OADA Compliance Test (dev alpha)</title>
-    <script src="https://cdn.socket.io/socket.io-1.1.0.js"></script>
+    <script src="/socket-io/socket.io-1.1.0.js"></script>
+    
+
+  </head>
+  <body>
+    <div class="container">
+      Performing Test..
+    </div>
     <script>
       var socket = io();
       socket.emit('wait_file', "_gen_report");
@@ -18,12 +25,5 @@
       });
 
     </script>
-
-  </head>
-  <body>
-    <div class="container">
-      Performing Test..
-    </div>
-
   </body>
 </html>
