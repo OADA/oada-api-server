@@ -3,7 +3,7 @@
   "stream": {
     "$each": {
        "_meta": {
-         "_changeId": { "$gt": "<last_remembered>" }
+         "_changeId": { "$gt": 2147483646 }
        }
     }
   }

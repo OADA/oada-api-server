@@ -333,15 +333,15 @@ module.exports = function () {
 
 
 this.Then(/^check the "([^"]+)" stream again, this time with view parameter ([^"]+)$/, function (what_stream, view_param_doc, callback) {
-  // var recalled = this.recall();
+  var recalled = this.recall();
 
-  // if(recalled == null){
-  //   callback.fail(new Error("Fetal Error: Unable to recall saved variable."));
-  //   return;
-  // }
+  if(recalled == null){
+    callback.fail(new Error("Fetal Error: Unable to recall saved variable."));
+    return;
+  }
+  console.log(recalled)
 
-  var view_GET = JSON.stringify(require("../support/view_parameters/" + view_param_doc +  ".json"));
-  //.replace("<last_remembered>", recalled); 
+  var view_GET = JSON.stringify(require("../support/view_parameters/" + view_param_doc +  ".json")).replace("<last_remembered>", recalled); 
   console.log("Using View: " + view_GET);
 
   //Form the new URL we need to fetch
@@ -351,9 +351,9 @@ this.Then(/^check the "([^"]+)" stream again, this time with view parameter ([^"
 });
 
 
-this.Then(/^all values of "([^"]*)" are equals to the previously remembered value$/, function (jsonpath, callback) {
+this.Then(/^all values of "([^"]*)" are equals or greater than to the previously remembered value$/, function (jsonpath, callback) {
   var A = this.walker.eval(this.last_response, jsonpath);
-  var N = this.recall();
+  var N = this.recall() - 1;
 
 
   if(A === undefined || A.length == 0){
@@ -369,12 +369,10 @@ this.Then(/^all values of "([^"]*)" are equals to the previously remembered valu
 
   this.utils.quicksort(A ,0, A.length);
 
-  var x = [0, A.length - 1]; //these are the indeces we will check (first and last)
 
-  for(var i = 0; i < x.length; i++){
-    var index = x[i];
-    var e_mesg = "Response contains record with incorrect changeId! (looking for " + this.recall() + " but found " + A[index] + ")";
-    if(Number(A[index]) != Number(N)){
+  for(var i = 0; i < A.length; i++){
+    var e_mesg = "Response contains record with incorrect changeId! (looking for " + this.recall() + " but found " + A[i] + ")";
+    if(Number(A[i]) < Number(N)){
       callback.fail(new Error(e_mesg));
       return;
     }
