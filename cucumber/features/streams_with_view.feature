@@ -1,10 +1,12 @@
 Feature: Get resources WITH various view parameters
 
-  Scenario: Get the MOISTURE stream with filtering changeId 
-    Get moisture stream with changeId > 0, AND get moisture with changeId > VERY_LARGE_NUMBER (max int) - 1
+  Scenario: Get the moisture stream with big number and get max changeId, then filter for changeId > max -1
     Given the client is authorized
-    When the client requests a "moisture" stream for harvester with identifier "4727" with view parameter stream_gt_0
-    Then the response contains at least the following information:
+    When the client requests a "moisture" stream for harvester with identifier "4727" with view parameter stream_gt_big
+    Then remember "$._meta._changeId" 
+    And check the "moisture" stream again, this time with view parameter stream_max
+    And all values of "$.stream.*._meta._changeId" are equals or greater than to the previously remembered value
+    And the response contains at least the following information:
     |    ATTRIBUTE       |  
     |       units        |  
     |       stream       |  
@@ -23,14 +25,14 @@ Feature: Get resources WITH various view parameters
     And the "_meta" attribute of each item in "stream" contains at least the following information:
     | ATTRIBUTE                | DESCRIPTION                         |
     |   _changeId              | What version are these data         |
-    And check the "moisture" stream again, this time with view parameter stream_max
-    And the "stream" attribute contains only 0 item
 
 
-  Scenario: Get the LOCATION stream with filtering changeId
-    Get location stream with changeId > 0, AND get location with changeId > VERY_LARGE_NUMBER - 1
+  Scenario: Get the LOCATION stream with filtering changeId > 0, changeId > max -1
     Given the client is authorized
-    When the client requests a "location" stream for harvester with identifier "4727" with view parameter stream_gt_0
+    When the client requests a "location" stream for harvester with identifier "4727" with view parameter stream_gt_big
+    Then remember "$._meta._changeId" 
+    And check the "locations" stream again, this time with view parameter stream_max
+    And all values of "$.stream.*._meta._changeId" are equals or greater than to the previously remembered value
     And the response contains at least the following information:
     | ATTRIBUTE                | 
     |   coordinate_system      | 
@@ -51,13 +53,14 @@ Feature: Get resources WITH various view parameters
     And the "_meta" attribute of each item in "stream" contains at least the following information:
     | ATTRIBUTE                | DESCRIPTION                         |
     |   _changeId              | What revision are these data        |
-    And check the "locations" stream again, this time with view parameter stream_max
-    And the "stream" attribute contains only 0 item
 
 
   Scenario: Get the WORK STATUS stream with filtering changeId > 0, changeId > max -1
     Given the client is authorized
-    When the client requests a "work_status" stream for harvester with identifier "4727" with view parameter stream_gt_0
+    When the client requests a "work_status" stream for harvester with identifier "4727" with view parameter stream_gt_big
+    Then remember "$._meta._changeId" 
+    And check the "work_status" stream again, this time with view parameter stream_max
+    And all values of "$.stream.*._meta._changeId" are equals or greater than to the previously remembered value
     And the response contains at least the following information:
     |     ATTRIBUTE        | 
     |      stream          | 
@@ -72,14 +75,18 @@ Feature: Get resources WITH various view parameters
     And the "_meta" attribute of each item in "stream" contains at least the following information:
     | ATTRIBUTE                | DESCRIPTION                         |
     |   _changeId              | What revision are these data        |
-    And check the "work_status" stream again, this time with view parameter stream_max
-    And the "stream" attribute contains only 0 item
 
 
   Scenario: Get the WET MASS FLOW stream with filtering changeId > 0, changeId > max -1
     Given the client is authorized
-    When the client requests a "wet_mass_flow" stream for harvester with identifier "4727" with view parameter stream_gt_0
-    Then the response contains at least the following information:
+    When the client requests a "wet_mass_flow" stream for harvester with identifier "4727" with view parameter stream_gt_big
+    Then remember "$._meta._changeId" 
+    And check the "wet_mass_flow" stream again, this time with view parameter stream_max
+    And all values of "$.stream.*._meta._changeId" are equals or greater than to the previously remembered value
+    And the "_meta" attribute of each item in "stream" contains at least the following information:
+    | ATTRIBUTE                | DESCRIPTION                         |
+    |   _changeId              | What version  are these data        |
+    And the response contains at least the following information:
     |    ATTRIBUTE       |  
     |       units        |  
     |       stream       |  
@@ -95,10 +102,6 @@ Feature: Get resources WITH various view parameters
     |       _meta        |
     |       flow         |
     |       t            |
-    And the "_meta" attribute of each item in "stream" contains at least the following information:
-    | ATTRIBUTE                | DESCRIPTION                         |
-    |   _changeId              | What version  are these data        |
-    And check the "wet_mass_flow" stream again, this time with view parameter stream_max
 
 
   Scenario: Get geofence stream (1241) and verify that the data make sense
@@ -117,5 +120,3 @@ Feature: Get resources WITH various view parameters
     |   _id      | ..                                     |
     |    name    | human-readable name of the field       |
     And the items in "$.stream" has enter-exit pair, if any exit.
-
-    ## Additionally, also test swath_width

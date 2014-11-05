@@ -18,6 +18,15 @@
 module.exports = function () {
     this.World = require("../support/world.js").World;
 
+    this.When(/^remember "([^"]*)"$/, function (jsonpath, callback) {
+	  var V = this.walker.eval(this.last_response, jsonpath)[0]
+	  if(V === undefined){
+	  	callback.fail(new Error("Unable to map " + jsonpath));
+	  }
+	  this.remember(Number(V));
+	  callback();
+	});
+
 	this.Then(/^remember the maximum value of "([^"]*)" for every items in "([^"]*)"$/, function (jsonpath, placekey, callback) {
 
 	  var dataset = this.last_response[placekey];
