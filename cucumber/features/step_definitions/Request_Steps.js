@@ -20,9 +20,6 @@ module.exports = function () {
   this.World = require("../support/world.js").World;
 
 
-
-
-
   this.When(/^the client requests the "([^"]*)" bookmark ([A-Za-z]*) view parameter( ?[A-Za-z_0-9]*)?$/, 
     function (bk_name, view_state, parameter_filename, callback) {
 
@@ -44,8 +41,6 @@ module.exports = function () {
      var that = this;
      this.get(this.current_url, this.get_token(), callback);
   });
-
-
 
 
 
