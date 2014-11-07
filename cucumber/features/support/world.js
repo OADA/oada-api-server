@@ -15,11 +15,13 @@
 #
 */
 
-//Initialize your parameters here
+//Allow superagent to use fake certificate
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
+
 var configurations = require('./_auto_config');
 var models = require('./known_words');
-var request = require('superagent')
-var utils = require('./utils')
+var request = require('superagent');
+var utils = require('./utils');
 var jsonPath = require('JSONPath');
 
 var World = function World(callback) {
@@ -35,6 +37,7 @@ var World = function World(callback) {
 
     this.memory = null;
 
+
     this.remember = function(what){
         this.memory = what;
     }
@@ -44,6 +47,7 @@ var World = function World(callback) {
     }
     
     this.get = function(uri, token, callback) {
+
         var r = request.get(uri).set('Authorization', 'Bearer ' + this.token).buffer(true);
 
         r.end(function(res) {
@@ -54,8 +58,8 @@ var World = function World(callback) {
                 return;
             }
             context._lastResponse = res;
-            context.last_response = JSON.parse(res.text);
-            //TODO: Experiencing this -- https://github.com/visionmedia/superagent/issues/270
+            context.last_response = JSON.parse(res.text); //temp fix for issue https://github.com/visionmedia/superagent/issues/270
+            
             callback();
         });
     }

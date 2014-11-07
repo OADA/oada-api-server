@@ -177,5 +177,105 @@ module.exports = function () {
     callback();
 });
 
+  this.Then(/^the "([^"]*)" attribute contains (\d+) or more item$/, function (attribute, min_children, callback) {
+    var object = this.last_response[attribute];
+
+    if(Number(object.length) < Number(min_children)){
+      callback.fail(new Error("The property " + attribute + " must be iterable and have " + min_children + " or more children."));
+      return;
+    }
+    callback();
+  });
+
+  this.Then(/^the "([^"]*)" attribute contains only (\d+) item$/, function (attribute, exact_children, callback) {
+
+    // var object = this.walker.eval(this.last_response,this.current_model.vocabularies[attribute].jsonpath);
+    var object = this.last_response[attribute];
+
+    if(Number(object.length) != Number(exact_children)){
+      callback.fail(new Error("The property " + attribute + " must be iterable and have exactly "  + exact_children + " children."));
+      return;
+    }
+    callback();
+  });
+
+
+  this.Then(/^each item has at least the following information:$/, function (table,callback) {
+     if(this.last_response === undefined){
+       callback.fail(new Error("No response from previous step"));
+     }
+     for(var key in this.last_response){
+         var result = this.check_attr(table, this.last_response[key]);
+         if(!result.passed){
+            callback.fail(result.E);
+            return;
+         }
+     }
+     callback();
+  });
+
+  this.Then(/^each item has just the following information:$/, function (table,callback) {
+     if(this.last_response === undefined){
+       callback.fail(new Error("No response from previous step"));
+       return;
+     }
+
+     for(var key in this.last_response){
+         var dut = this.last_response[key];
+         var result = this.check_attr(table, dut);
+         if(!result.passed){
+            callback.fail(result.E);
+            return;
+         }
+         if(Object.keys(dut).length != table.rows().length){
+          callback.fail(new Error("Too many attribute(s)! Looked for " + table.rows().length + " but got " + Object.keys(dut).length));
+          return;
+         }
+     }
+
+
+     callback();
+  });
+
+  this.Then(/^the response contains at least the following information:$/, function (table, callback) {
+    var object = this.last_response;
+    var result = this.check_attr(table, object);
+    if(!result.passed){
+      callback.fail(result.E);
+      return;
+    }
+
+    callback();
+  });
+
+
+  this.Then(/^each item in "([^"]*)" has at least the following information:$/, function (this_key, table, callback) {
+    if(this.last_response == null){
+      console.log("Error: last response is null. Test will stop")
+      callback.fail(new Error("Fetal error! "));
+      return;
+    }
+
+    var root = this.last_response[this_key];
+    var nonskip = 0;
+    for(var key in root){
+      var iterable = root[key];
+      if(iterable == undefined) continue;
+      var result = this.check_attr(table, iterable);
+      if(!result.passed){
+            callback.fail(result.E);
+            return;
+      }
+      nonskip++;
+    }
+
+   if(nonskip == 0){
+    callback.fail(new Error("The" + inner + " attribute is empty!")  );
+    return;
+   }
+   callback();
+
+ });
+
 
 }

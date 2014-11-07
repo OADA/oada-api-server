@@ -1,6 +1,6 @@
 /* Server Config */
 exports.server = {
-  root: "http://localhost:3000",
+  root: "https://localhost:8443",
     bookmark: "bookmarks/machines/harvesters",
     token_key: "123456789"
 };

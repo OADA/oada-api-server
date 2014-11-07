@@ -1,15 +1,116 @@
 #!/usr/bin/env node
+/*
+Copyright 2014 Open Ag Data Alliance
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+*/
 var debug = require('debug')('oada-testkit');
 var app = require('../app');
 var http = require('http').Server(app);
+var md5 = require('MD5');
+var https = require('https');
+var fs = require('fs')
+var path = require('path');
+var exec = require('child_process').exec;
+
+//HTTPS stuff for mock server
+var privateKey  = fs.readFileSync('sslcerts/test.key', 'utf8');
+var certificate = fs.readFileSync('sslcerts/test.crt', 'utf8');
+var credentials = {key: privateKey, cert: certificate};
 
 app.set('port', process.env.PORT || 3000);
-
+app.set('sslport', process.env.SSLPORT || 8443);
 
 var server = app.listen(app.get('port'), function() {
 	debug('Express server listening on port ' + server.address().port);
 });
 
+var https_server = https.createServer(credentials, app);
+https_server.listen(app.get('sslport')); 
+
 io = require('socket.io').listen(server);
 
 app.set('io', io);
+
+
+io.on('connection', function(socket){
+  socket.on('wait_file', function(msg){
+  		var appDir = path.dirname(require.main.filename).split("/");
+  		var toHtml = function(output_text){
+				//TODO: move to helper func
+				var red = function(t){
+					return "<span style='color:#FF0000'>" + t  + "</span>";
+				}
+				var green = function(t){
+					return "<span style='color:#1BAE1C'>" + t  + "</span>";
+				}
+				var bold = function(t){
+					return "<strong>" + t + "</strong>";
+				}
+				return "<pre>" + output_text.replace(/Error/g,red(bold("Error")))
+											.replace(/Missing attribute/g, red(bold('Missing attribute')))
+											.replace(/Failing scenarios/g, red(bold("Failing scenarios")))
+											.replace(/failed/g, red(bold("failed")))
+											.replace(/Scenario/g, bold("> Scenario"))
+											.replace(/passed/g, green(bold("passed"))) + "</pre>";
+		}
+		
+		appDir.pop();
+		var config_buffer = appDir.join("/") + "/" + "cucumber/features/support/_web_client.cfg";
+
+  		var obj;
+  		try{
+  			console.log(msg)
+  			obj = JSON.parse(msg);
+  		}catch(ex){
+  			console.log("Unable to parse JSON request over socket");
+  			return;
+  		}
+
+  		var rpt_name = md5(Math.random() + obj.testcases) + ".html";
+		var report_path = appDir.join("/") + "/" + "public/reports/" + rpt_name;
+
+		//Write _web_client config file so that the cucumber
+		//test knows that user is running from web temporary solution
+
+		fs.writeFileSync(config_buffer, JSON.stringify({
+		    root: obj.endpoint,
+		    bookmark: "bookmarks/machines/harvesters",
+		    token_key: obj.token
+		}));
+
+		//req.body.endpoint, token
+
+		var child = exec("cucumber-js -f pretty " + obj.testcases + " | egrep -v '(\s+(at)\s).*'",
+		  { 
+		  	maxBuffer: 1073741824
+		  },
+		  function (error, stdout, stderr) {
+		  	var slim_output = stdout.replace(/\[32m/g,"<span style='color:#00bc0c'>").replace(/\[0m/g, "</span>").replace(/\[31m/g, "<span style='color:red'>").replace(/\[36m/g, "<span style='color:#2db9db'>").replace(/(\s+(at)\s).*/g,"");
+		    // fs.writeFileSync(report_path, toHtml(slim_output));
+
+		    try{
+		    	fs.unlinkSync(config_buffer);
+		    }catch(ex){}
+
+			io.emit('response_report', toHtml(slim_output));
+		    if (error !== null) {
+		      console.log('exec error: ' + error);
+		      io.emit('response_report', "error");
+		    }
+
+		});
+    
+  });
+});

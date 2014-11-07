@@ -27,7 +27,6 @@ var bodyParser = require('body-parser');
 var _front = require('./routes/frontend');
 var _mock = require('./routes/mock_server');
 
-
 var app = express();
 
 app.disable('etag');
@@ -43,6 +42,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', _front);
 app.use('/', _mock);
+
+
 
 
 module.exports = app;
