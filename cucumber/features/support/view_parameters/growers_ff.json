@@ -1,0 +1,11 @@
+{
+  "growers.$each": {
+    "$expand": true
+  },
+  "farms.$each": {
+    "$expand": true
+  },
+  "fields.$each": {
+    "$expand": true
+  }
+}

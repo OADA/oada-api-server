@@ -43,6 +43,10 @@ module.exports = function () {
   });
 
 
+  this.When(/^the client requests each resources with remembered IDs$/, function (callback) {
+    console.log(this.recall())
+    callback()
+  });
 
 
   this.When(/^the client requests a "([^"]*)" stream for harvester with identifier "([^"]*)" ([^"]*) view parameter ([A-Za-z0-9_]+)$/,

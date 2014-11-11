@@ -27,6 +27,17 @@ module.exports = function () {
 	  callback();
 	});
 
+    this.Then(/^remember all "([^"]*)"$/, function (jsonpath, callback) {
+      var target = this.walker.eval(this.last_response, jsonpath);
+      if(target === undefined || target == null){
+      	  callback.fail(new Error("Unable to map " + jsonpath));
+      }
+	  this.remember(target);
+	  callback();
+	});
+
+
+
 	this.Then(/^remember the maximum value of "([^"]*)" for every items in "([^"]*)"$/, function (jsonpath, placekey, callback) {
 
 	  var dataset = this.last_response[placekey];

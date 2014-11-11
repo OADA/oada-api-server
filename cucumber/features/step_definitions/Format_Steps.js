@@ -237,6 +237,11 @@ module.exports = function () {
      callback();
   });
 
+
+  this.Then(/^each response contains at least the following information:$/, function (table, callback) {
+    callback.pending();
+  });
+
   this.Then(/^the response contains at least the following information:$/, function (table, callback) {
     var object = this.last_response;
     var result = this.check_attr(table, object);
