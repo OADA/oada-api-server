@@ -15,9 +15,23 @@ Feature: Get clients bookmark (and check for Specification #10
     | ATTRIBUTE     | 
     | _id           | 
     | fields        | 
-    And remember all "$.*.bookmarks.fields._id" 
-    When the client requests each resources with remembered IDs 
-    Then each response contains at least the following information:
-    | ATTRIBUTE     		    | 
-    | version       		    | 
-    | managementSoftware        | 
+    When each resource document for with id "$.*.bookmarks.fields._id" contains at least the following information: 
+    | --------- FIELDS LIST DOC --------- | 
+    | $.version                           | 
+    | $.managementSoftware                |
+    | $.growers                           |
+    | $.farms                             |
+    | $.fields                            |
+    | $.managementSoftware.manufacturer   |
+    | $.managementSoftware.version        |
+    | $.growers.*._id                     |
+    | $.growers.*.name                    |
+    | $.farms.*._id                       |
+    | $.farms.*.name                      |
+    | $.farms.*.parent                    |
+    | $.fields.*._id                      |
+    | $.fields.*.name                     |
+    | $.fields.*.parent                   |
+    | $.fields.*.boundary                 |
+    | $.fields.*.boundary.type            |
+    | $.fields.*.boundary.coordinates     |

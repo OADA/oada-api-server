@@ -105,6 +105,27 @@ var World = function World(callback) {
        return pass;
     }
 
+    /**
+    * This uses jsonpath , the other one does not
+    * TODO: replace check_attr usage with check_jp_attr
+    */
+    this.check_jp_attr = function(table, object){
+       var pass = {passed: true, missing: [], E: null};
+
+       for(var idx in table.rows()){
+          
+          var fullpath = table.rows()[idx][0];
+          var target = this.walker.eval(object, fullpath)
+          
+          if(target === undefined || target.length == 0){
+             pass.missing.push(fullpath);
+             pass.passed = false;
+          }
+       }
+       pass.E = new Error("Missing Attribute: " + pass.missing.join(", "));
+       return pass;
+    }
+
     callback();
 };
 

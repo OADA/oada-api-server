@@ -19,6 +19,11 @@ module.exports = function () {
 
 
 
+  this.Then(/^each response has the following attributes:$/, function (table, callback) {
+    
+    this.check_jp_attr(table, this.last_response)
+  });
+
   this.Then(/^the "([^"]*)" attribute of each item contains at least the following information:$/, function (what_attribute, table, callback) {
     var jspath = "$.*." + what_attribute;
     var iter = this.walker.eval(this.last_response, jspath);
@@ -239,7 +244,8 @@ module.exports = function () {
 
 
   this.Then(/^each response contains at least the following information:$/, function (table, callback) {
-    callback.pending();
+    
+    callback();
   });
 
   this.Then(/^the response contains at least the following information:$/, function (table, callback) {

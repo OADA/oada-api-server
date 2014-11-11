@@ -43,9 +43,32 @@ module.exports = function () {
   });
 
 
-  this.When(/^the client requests each resources with remembered IDs$/, function (callback) {
-    console.log(this.recall())
-    callback()
+  this.Then(/^each resource document for with id "([^"]*)" contains at least the following information:$/, function (jsonpath, table, callback) {
+    
+    var target = this.walker.eval(this.last_response, jsonpath);
+    if(target === undefined || target == null){
+          callback.fail(new Error("Unable to map " + jsonpath));
+    }
+
+    var passcount = 0;
+    for(var i in target){
+        var _id = target[i];
+        var that = this;
+        this.current_url = this.root_url + "/" + "resources" + "/" + _id;
+        this.get(this.current_url, this.get_token(), function(){
+            var res = that.check_jp_attr(table, that.last_response);
+            if(!res.passed){
+              callback.fail(res.E);
+            }else{
+              passcount++;
+            }
+
+            if(passcount == target.length){
+              callback();
+            }
+        });
+    }
+    
   });
 
 
