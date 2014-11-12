@@ -126,7 +126,7 @@ module.exports = function () {
 
 
 	this.Then(/^check the "([^"]+)" stream again, this time with view parameter ([^"]+)$/, function (what_stream, view_param_doc, callback) {
-	  var recalled = this.recall();
+	  var recalled = this.recall() - 1;
 
 	  if(recalled == null){
 	    callback.fail(new Error("Fetal Error: Unable to recall saved variable."));
