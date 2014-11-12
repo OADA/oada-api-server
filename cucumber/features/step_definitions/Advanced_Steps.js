@@ -27,6 +27,17 @@ module.exports = function () {
 	  callback();
 	});
 
+    this.Then(/^remember all "([^"]*)"$/, function (jsonpath, callback) {
+      var target = this.walker.eval(this.last_response, jsonpath);
+      if(target === undefined || target == null){
+      	  callback.fail(new Error("Unable to map " + jsonpath));
+      }
+	  this.remember(target);
+	  callback();
+	});
+
+
+
 	this.Then(/^remember the maximum value of "([^"]*)" for every items in "([^"]*)"$/, function (jsonpath, placekey, callback) {
 
 	  var dataset = this.last_response[placekey];
@@ -107,6 +118,7 @@ module.exports = function () {
 	          var valid = assoc[key];
 	          if(!valid){
 	            callback.fail(new Error("Field `" + key + "` or its preceeding Field does not have valid ENTER-EXIT matching pair"));
+	            return;
 	          }
 	      }
 
@@ -115,7 +127,7 @@ module.exports = function () {
 
 
 	this.Then(/^check the "([^"]+)" stream again, this time with view parameter ([^"]+)$/, function (what_stream, view_param_doc, callback) {
-	  var recalled = this.recall();
+	  var recalled = this.recall() - 1;
 
 	  if(recalled == null){
 	    callback.fail(new Error("Fetal Error: Unable to recall saved variable."));

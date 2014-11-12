@@ -63,7 +63,6 @@ router.get('/resources/*', function(req, res) {
 });
 
 
-//TODO: Need a way to elegantly generate config responses
 
 router.get('/bookmarks/machines/harvesters(/?)', function(req, res) {
 
@@ -92,6 +91,7 @@ router.get('/bookmarks/machines/harvesters(/?)', function(req, res) {
             }
             res_object = res_object[child];
         }
+        
     }catch(exp){
         res.status(404).json({
             "error": "unsupported resource",
@@ -103,40 +103,20 @@ router.get('/bookmarks/machines/harvesters(/?)', function(req, res) {
     res.json(res_object);
 });
 
-router.get('/bookmarks/fields(/?)', function(req, res) {
+router.get('/bookmarks/*', function(req, res) {
 
-    // TODO: Check the Authentication Bearer
     var rest_path = req.params[0].split("/");
-
     var mParser = new docparser(req.headers.host);
     var res_object = {};
 
     try{
-        var normal = require('../documents/fields.json');
+        var normal = require('../documents/' + rest_path[0] + '.json');
         res_object = normal;
 
         if("view" in req.query){
             var view_param_hash = md5(req.query.view);
             console.log("vp hash: " + view_param_hash);
-            res_object = require('../documents/fields' + '_' + view_param_hash + '.json');
-        }
-
-
-        // if(rest_path.length > 1 || req.query['_expand'] == '2'){
-        //     //if expansion is on, we expand
-        //     var resource = require('../documents/1300.json');
-        // }
-
-        //walk through the requested REST Path
-        for(var idx in rest_path){
-            var child = rest_path[idx];
-            if(child == ""){
-                continue;
-            }
-            if(!res_object.hasOwnProperty(child)){
-                throw {"message": "The resource you requested does not exist."};
-            }
-            res_object = res_object[child];
+            res_object = require('../documents/' + rest_path[0] + '_' + view_param_hash + '.json');
         }
 
     }catch(exp){
