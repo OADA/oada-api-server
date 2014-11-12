@@ -8,10 +8,6 @@
         "_changeId": {
           "$gt": 0
         }
-      },
-      "field": {
-        "name": true,
-        "$others": false
       }
     }
   }

@@ -118,6 +118,7 @@ module.exports = function () {
 	          var valid = assoc[key];
 	          if(!valid){
 	            callback.fail(new Error("Field `" + key + "` or its preceeding Field does not have valid ENTER-EXIT matching pair"));
+	            return;
 	          }
 	      }
 
