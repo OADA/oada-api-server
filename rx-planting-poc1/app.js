@@ -75,15 +75,48 @@ app.post("/resources", function(req, res) {
     var generated_id = "02kdfj043";
     res.set("Location", "/resources/"+generated_id);
     res.set("x-oada-rev", "1-2389dfhd");
+    res.set("Etag", "aabbccddeeffgg");
     return res.send("");
   }
 
 });
 
 
+//////////////////////////////////////////////////////////////
+// Step 3: POST new resource link to the master list of prescriptions
+app.post("/bookmarks/planting/prescriptions/list", function(req, res) {
+  // Check bearer header:
+  if (!checkAuth(req)) {
+    return authError(res);
+  }
+
+  // Check content-type:
+  if (req.get("Content-Type") !== "application/vnd.oada.planting.prescription.1+json") {
+    return res.status(406).json({
+      "code": "406",
+      "status": "Not Acceptable",
+      "href": "https://drive.google.com/open?id=1Xz1jnfnTlubacFOh1qNjgJLSlcWMePyfmyPMfzYPbTw&authuser=0",
+      "title": "Invalid Content-Type",
+      "detail": "This POC only accepts resources with Content-Type application/vnd.oada.planting.prescription.1+json",
+      "userMessage": "Prescription upload failed."
+    });
+  }
+
+  if (config.verbatim) {
+    var generated_id = "02kdfj043";
+    res.set("Location", "/resources/02kdfj043/list/"+generated_id);
+    res.set("x-oada-rev", "5-89uhjdf9");
+    res.set("Etag", "aabbccddeeffgg");
+    return res.send("");
+  }
+
+});
+
 var server = app.listen(3000, function () {
   var host = server.address().address;
+  if (host === "::") host = "localhost";
   var port = server.address().port;
   console.log('Mock server listening at http://%s:%s', host, port);
+  console.log("CTRL-C to stop");
 });
 
