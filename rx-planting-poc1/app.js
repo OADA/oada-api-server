@@ -112,6 +112,65 @@ app.post("/bookmarks/planting/prescriptions/list", function(req, res) {
 
 });
 
+//////////////////////////////////////////////////////////////
+// Step 4: GET _rev on master prescription list to see if it has changed.
+// Note that for verbatim mode, it always responds as if it has changed.
+app.get("/bookmarks/planting/prescription/_rev", function(req, res) {
+  if (config.verbatim) {
+    res.set("Content-Type", "application/vnd.oada.planting.prescriptions.1+json");
+    res.set("Etag", "hhiijjkkllmmnnoopp");
+    res.json({
+      _rev: "6-5465asd2"
+    });
+    return;
+  }
+});
+
+//////////////////////////////////////////////////////////////
+// Step 5: GET the master prescription list back to see which
+// links have changed:
+app.get("/bookmarks/planting/prescription", function(req, res) {
+  if (config.verbatim) {
+    res.set("Content-Type", "application/vnd.oada.planting.prescriptions.1+json");
+    res.set("Etag", "hhiijjkkllmmnnoopp");
+    res.json({
+      _id: "kd85uklsfd",
+      _rev: "6-5465asd2",
+      _meta: { _metaid: "kd85uklsfd", _rev: "7-kldjf029i" },
+      name: "prescriptions",
+      list: {
+        "jf20kjd": { _id: "jf20kjd", _rev: "2-klsjdf02" },
+        "0fjdksl": { _id: "0fjdksl", _rev: "5-kldfj02d" },
+        "02kdfj043": { _id: "02kdfj043", _rev: "2-2df32432" }
+      }
+    });
+  }
+});
+
+////////////////////////////////////////////////////////////////
+// Step 6: GET the _meta document for the changed prescription
+// to check on field reconciliation and transfer status:
+app.get("/resources/02kdfj043/_meta", function(req, res) {
+  if(config.verbatim) {
+    res.set("Content-Type", "application/vnd.oada.planting.prescriptions.1+json");
+    res.set("Etag", "hhiijjkkllmmnnoopp");
+    res.json({
+      _metaid: "02kdfj043",
+      _rev: "3-kdjf2ojd",
+      fields: [
+        { _id: "d30fjrjsd", _rev: "1-dkflj20wi" }
+      ],
+      transfer_status: {
+        "02kdfjl93": {
+          machine: { _id: "02kdfjl93", _rev: "195-sklfj02d2" },
+          status: "PENDING"
+        }
+      }
+    });
+  }
+});
+
+
 var server = app.listen(3000, function () {
   var host = server.address().address;
   if (host === "::") host = "localhost";
