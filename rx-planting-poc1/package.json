@@ -4,7 +4,10 @@
   "description": "Mock server for the prescription planting proof-of-concept #1",
   "main": "app.js",
   "dependencies": {
-    "express": "^4.12.3"
+    "MD5": "^1.2.1",
+    "express": "^4.12.3",
+    "lodash": "^3.7.0",
+    "node-uuid": "^1.4.3"
   },
   "devDependencies": {},
   "scripts": {
