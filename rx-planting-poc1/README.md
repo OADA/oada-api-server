@@ -19,6 +19,15 @@ To run the mock server:
 npm run start
 ```
 
+To run the tests:
+```
+npm test
+```
+
+The config at the top of test/test-poc1.js currently points to localhost:3000, which is where the
+mock server starts up locally.  If you want to test a different URL, change the config object
+at the top of test/test-poc1.js to use the URL you want.
+
 The early version of this server will attempt to respond verbatim with that listed in the
 URL.  Later updates will make it a little smarter so that it responsed based on what
 you've uploaded.
