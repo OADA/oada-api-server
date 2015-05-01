@@ -8,6 +8,7 @@ var _ = require("lodash");
 var config = {
   verbatim: false,
   host: "http://localhost:3000",
+  oada_base_uri: "http://localhost:3000",
   auth_token: "SJKF9jf309",
 };
 
@@ -88,6 +89,7 @@ describe("Rx Planting POC", function() {
 
     it("should respond with a document that contains oada_base_uri", function() {
       expect(json_response).to.contain.keys("oada_base_uri");
+      config.oada_base_uri = json_response.oada_base_uri;
     });
     it("should have content-type = application/vnd.oada.oada-configuration.1+json", function() {
       helpers.compareContentType(headers, "application/vnd.oada.oada-configuration.1+json");
@@ -101,7 +103,7 @@ describe("Rx Planting POC", function() {
   describe("#step 2: POST new rx files to /resources", function() {
 
     var options = {
-      uri: config.host + "/resources",
+      uri: config.oada_base_uri + "/resources",
       method: "POST",
       headers: {
         "content-type": "application/vnd.oada.planting.prescription.1+json",
@@ -138,7 +140,7 @@ describe("Rx Planting POC", function() {
     before(function(done) {
       // We need to post a valid RX in order to get back a valid id:
       var post_rx_options = {
-        uri: config.host + "/resources",
+        uri: config.oada_base_uri + "/resources",
         method: "POST",
         headers: {
           "content-type": "application/vnd.oada.planting.prescription.1+json",
@@ -157,7 +159,7 @@ describe("Rx Planting POC", function() {
 
     it("should respond with code 406 if posting a link to a resource that doesn't exist", function(done) {
       var options = {
-        uri: config.host + "/bookmarks/planting/prescriptions/list",
+        uri: config.oada_base_uri + "/bookmarks/planting/prescriptions/list",
         method: "POST",
         headers: {
           "content-type": "application/vnd.oada.planting.prescriptions.1+json",
@@ -174,7 +176,7 @@ describe("Rx Planting POC", function() {
     });
 
     var options = {
-      uri: config.host + "/bookmarks/planting/prescriptions/list",
+      uri: config.oada_base_uri + "/bookmarks/planting/prescriptions/list",
       method: "POST",
       headers: {
         "content-type": "application/vnd.oada.planting.prescriptions.1+json",
@@ -209,7 +211,7 @@ describe("Rx Planting POC", function() {
     // _meta for the transfer status and field.
 
     var options = { 
-      uri: config.host + "/bookmarks/planting/prescriptions/_rev",
+      uri: config.oada_base_uri + "/bookmarks/planting/prescriptions/_rev",
       headers: {
         Authorization: "Bearer "+config.auth_token,
       },
@@ -229,13 +231,8 @@ describe("Rx Planting POC", function() {
 
     helpers.authTests(options);
 
-    it("should return a valid _rev object", function() {
-      try {
-        var rev_doc = JSON.parse(body);
-      } catch(e) {
-        expect(e).to.be.empty;
-      }
-      expect(rev_doc._rev).to.match(/[0-9]+-.+$/);
+    it("should return a valid _rev string", function() {
+      expect(body).to.match(/"[0-9]+-.+$/);
     });
 
     it("should return a document with the correct content-type", function() {
@@ -249,7 +246,7 @@ describe("Rx Planting POC", function() {
   // Step 5: get the master prescription list to see which links changed
   describe("#step 5: GET /bookmarks/planting/prescriptions", function() {
     var options = { 
-      uri: config.host + "/bookmarks/planting/prescriptions",
+      uri: config.oada_base_uri + "/bookmarks/planting/prescriptions",
       headers: {
         Authorization: "Bearer "+config.auth_token,
       },
@@ -300,7 +297,7 @@ describe("Rx Planting POC", function() {
   describe("#step 6: GET _meta for a prescription file", function() {
     var id_of_rx_posted;
     var options = {
-      uri: config.host + "/resources/dummy_id/_meta",
+      uri: config.oada_base_uri + "/meta/dummy_id",
       headers: {
         Authorization: "Bearer "+config.auth_token,
       },
@@ -312,7 +309,7 @@ describe("Rx Planting POC", function() {
     before(function(done) {
       // POST a new prescription in order to get an ID for it:
       var post_options = {
-        uri: config.host + "/resources",
+        uri: config.oada_base_uri+ "/resources",
         method: "POST",
         headers: {
           "content-type": "application/vnd.oada.planting.prescription.1+json",
@@ -326,7 +323,7 @@ describe("Rx Planting POC", function() {
       request(post_options).then(function(res) {
         id_of_rx_posted = res.headers["location"].replace("/resources/", "");
         // Now GET the _meta doc for that resource:
-        options.uri = config.host + "/resources/"+id_of_rx_posted+"/_meta";
+        options.uri = config.oada_base_uri + "/meta/"+id_of_rx_posted;
         // Get the _meta doc:
         request(options).then(function(res) {
           try {

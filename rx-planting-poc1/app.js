@@ -181,7 +181,7 @@ app.get("/.well-known/oada-configuration", function(req, res) {
   res.set("Content-Type", "application/vnd.oada.oada-configuration.1+json");
   // etag (weak etag) should be enabled by default
   res.json({
-    "oada_base_uri": req.headers.host
+    "oada_base_uri": "http://" + req.headers.host,
   });
 
 });
@@ -318,9 +318,7 @@ app.get("/bookmarks/planting/prescriptions/_rev", function(req, res) {
   }
   // Otherwise, return the real one:
   res.set("content-type", "application/vnd.oada.planting.prescriptions.1+json");
-  res.json({
-    _rev: resources_map[bookmarksid]._rev
-  });
+  res.send('"'+resources_map[bookmarksid]._rev+'"');
 
 });
 
@@ -358,8 +356,8 @@ app.get("/bookmarks/planting/prescriptions", function(req, res) {
 ////////////////////////////////////////////////////////////////
 // Step 6: GET the _meta document for the changed prescription
 // to check on field reconciliation and transfer status:
-app.get("/resources/:rid/_meta", function(req, res) {
-  console.log("GET /resources/:rid/_meta");
+app.get("/meta/:rid", function(req, res) {
+  console.log("GET /meta/:rid");
   if (!helpers.checkAuth(req)) {
     return helpers.authError(res);
   }
