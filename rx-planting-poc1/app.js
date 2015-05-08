@@ -11,18 +11,24 @@ var uuid = require("node-uuid");
 var md5 = require("MD5");
 var _ = require("lodash");
 var body_parser = require("body-parser");
+var bunyan = require("bunyan");
 
 ////////////////////////////////////////////////////////////////////
 // Configuration parameters:
 var config = {
-  verbatim: false, // set to true to get the exact documents returned as-written in the spec
   auth: {
     skip_auth_check: false, // set to false if you want to require auth
     token: "SJKF9jf309", // From the tech spec, hard-coded auth token
-  }
+  },
 };
 
+//////////////////////////////////////////////////////////////////
+// Setup the logger:
+var log = bunyan.createLogger({ name: "OADA Mock Server" });
 
+
+/////////////////////////////////////////////////////////////////
+// Setup express:
 var app = express();
 app.use(body_parser.raw({ 
   limit: "50mb",
@@ -33,7 +39,7 @@ app.use(body_parser.raw({
 }));
 // Generic error handler to catch body-parser JSON errors:
 app.use(function(err, req, res, next) {
-  console.log("req.statusCode = ", req.statusCode);
+  log.info("req.statusCode = ", req.statusCode);
 });
 
 // Make sure I know what the etag is suppossed to be so I can return it 
@@ -45,7 +51,6 @@ app.set('etag', function(body, encoding) {
 
 ///////////////////////////////////////////////////////////
 // Helpful functions:
-
 var helpers = {
   checkAuth: function(req) {
     if (config.auth.skip_auth_check) return true;
@@ -83,7 +88,8 @@ var helpers = {
     });
   },
 
-  populateRev: function(obj) {
+  updateRev: function(obj) {
+    var obj = _.cloneDeep(obj);
     obj._rev = obj._rev || "0-0";
     var rev_seq = obj._rev.split("-")[0];
     rev_seq = +rev_seq; // coerce to int
@@ -92,10 +98,17 @@ var helpers = {
     return obj;
   },
 
-  populateMeta: function(obj) {
-    obj._meta = obj._meta || { _metaid: obj._id };
-    obj._meta = helpers.populateRev(obj._meta);
-    return obj;
+  updateMeta: function(obj, metaobj) {
+    if (metaobj) metaobj = _.cloneDeep(metaobj);
+    else metaobj = { };
+
+    metaobj._metaid = obj._id; // same meta as main object
+    // should also have _mediaType in metaobj
+    metaobj = updateRev(metaobj);
+    // Put the document into _meta
+    meta_map[metaobj._metaid] = metaobj;
+    // Return the link for the object to this meta document:
+    return { _metaid: metaobj._metaid, _rev: metaobj._rev };
   },
 
   parseByMimeType: function(data, mime_type) {
@@ -143,6 +156,50 @@ var helpers = {
     });
   },
 
+  // Given a resource object, return an object that represents the link
+  resourceToVersionedLink: function(obj) {
+    return { _id: obj._id, _rev: obj._rev };
+  },
+
+
+  newResource: function(new_obj, new_meta) {
+    var obj = _.cloneDeep(new_obj); // Make a copy of the object
+    obj._id = uuid.v4();            // Get a new ID for this object
+
+    // Populate the meta document and then the doc's _rev:
+    obj._meta = helpers.updateMeta(obj, new_meta);
+    // Populate the _rev on obj now that it is complete:
+    obj._rev = helpers.updateRev(obj);
+
+    // Put the doc into memory:
+    resources_map[obj._id] = obj;
+
+    // Send the object back so they can get the _id:
+    return obj;
+  },
+
+  // This builds the bookmarks/planting/prescriptions endpoint.  Should move this into
+  // a separate "POC1 setup" of some kind eventually that will setup any oada-compliant
+  // server with the correct bookmarks
+  buildInitialBookmarksPOC1: function() {
+    var prescriptions = helpers.newResource({
+      name: "planting.prescriptions",
+      list: { }
+    }, { _mediaType: "application/vnd.oada.planting.prescriptions.1+json" });
+
+    var planting = helpers.newResource({
+      name: "planting",
+      prescriptions: helpers.resourceToVersionedLink(prescriptions);
+    }, { _mediaType: "application/vnd.oada.planting.1+json" });
+
+    var bookmarks = helpers.newResource({
+      name: "bookmarks",
+      planting: helpers.resourceToLink(planting);
+    }, { _mediaType: "application/vnd.oada.bookmarks.1+json" } );
+
+    return bookmarks;
+  },
+
 };
 
 ///////////////////////////////////////////////////////////
@@ -151,94 +208,89 @@ var resources_map = {};
 var meta_map = {};
 var etags = {};
 // Build the initial /bookmarks/planting/prescriptions
-var bookmarksid = uuid.v4();
-resources_map[bookmarksid] = helpers.populateRev(helpers.populateMeta({ 
-  _id: bookmarksid,
-  name: "planting.prescriptions",
-  list: { }
-}));
+var bookmarksid = helpers.buildInitialBookmarksPOC1();
 
+//////////////////////////////////////////////////////////
+// Setup the handlers:
+var handlers = {
+  resources: {
+    get:  function(req,res) {
+    }
+    put: function(req,res) {
+    }
+    post: function(req,res) {
+      log.info("POST ", res.baseUrl);
+      if (!helpers.checkAuth(req))        return helpers.authError(res);
+      if (!helpers.checkContentType(req)) return helpers.contentTypeError(res);
+
+/resources/123/list
+
+      var getObjFromUrl = function(url, parent_obj) {
+        // The URL is separated with forward slashes.  We need to keep taking
+        // things off the left side of the URL (and navigating the resource graph
+        // accordingly) until we get to the last one with no / after it, or 
+        // with ONLY a / after it (a trailing slash)
+        url = url.replace(/\/([^\/])+/); // take thing from left of slash off
+
+      }
+      var obj_to_change = getObjFromUrl(req.baseUrl, request_map);
+        
+
+      // Attempt to parse the object in question based on mime type:
+      var new_obj = helpers.parseByMimeType(req.body.toString(), req.headers["content-type"]);
+      if (!new_obj) return helpers.contentTypeError(res);
+
+      // Store the POSTed document in resources and meta
+      var obj = helpers.newResource(obj, { _mediaType: req.headers["content-type"] });
+
+      // Return the proper location, rev, and etag:
+      res.set("location", "/resources/"+obj._id);
+      res.set("x-oada-rev", obj._rev);
+      res.set("content-type", req.headers["content-type"]);
+      res.set("etag", md5(JSON.stringify(resources_map[obj._id])));
+      res.end();
+    },
+
+    delete: function(req,res) {
+    }
+  },
+  bookmarks: {
+    get: function(req,res) {
+    }
+    put: function(req,res) {
+    }
+    post: function(req,res) {
+    }
+    delete: function req,res() {
+    }
+ },
+}
 
 /////////////////////////////////////////////////////////
-// Step 1: GET oada-configuration
+//  GET oada-configuration
 app.get("/.well-known/oada-configuration", function(req, res) {
-  console.log("GET /.well-known/oada-configuration");
-
-  if (config.verbatim) {
-    res.set("Content-Type", "application/vnd.oada.oada-configuration.1+json");
-    res.set("etag", "aabbccddeeffgg");
-    res.json({
-      "authorization_endpoint": "https://oada.caseih.com/authorization",
-      "token_endpoint": "https://oada.caseih.com/token",
-      "oada_base_uri": "https://oada.caseih.com",
-      "registration_endpoint": "https://oada.caseih.com/register",
-      "token_endpoint_auth_signing_alg_values_supported": [ "RS256" ]
-    });
-    return;
-  }
+  log.info("GET /.well-known/oada-configuration");
 
   // Otherwise, respond intelligently:
   res.set("Content-Type", "application/vnd.oada.oada-configuration.1+json");
-  // etag (weak etag) should be enabled by default
   res.json({
     "oada_base_uri": "http://" + req.headers.host,
   });
-
 });
 
 
 /////////////////////////////////////////////////////////
-// Step 2: POST new rx maps as new resources:
-app.post("/resources", function(req, res) {
-  console.log("POST /resources");
-
-  // Check bearer header:
-  if (!helpers.checkAuth(req)) {
-    return helpers.authError(res);
-  }
-
-  // Check content-type:
-  if (!helpers.checkContentType(req)) {
-    return helpers.contentTypeError(res);
-  }
-
-  // Attempt to parse the object in question based on mime type:
-  var new_obj = helpers.parseByMimeType(req.body.toString(), req.headers["content-type"]);
-  if (!new_obj) {
-    return helpers.contentTypeError(res);
-  }
-
- 
-  if(config.verbatim) {
-    var generated_id = "02kdfj043";
-    res.set("location", "/resources/"+generated_id);
-    res.set("x-oada-rev", "1-2389dfhd");
-    res.set("content-type", "application/vnd.oada.planting.prescription.1+json");
-    res.set("etag", "aabbccddeeffgg");
-    res.send("");
-    return;
-  }
-  // Otherwise, respond intelligently: store the POSTed document in memory, generate an ID for it,
-  // a _rev, a _metaid, and return the proper location
-  var new_id = uuid.v4();
-  var obj = _.merge(new_obj, { _id: new_id, });
-  obj = helpers.populateRev(helpers.populateMeta(obj));
-  // Put the docs into their maps in memory:
-  resources_map[obj._id] = obj;
-  meta_map[obj._meta._metaid] = obj._meta;
-  // Return the proper location, rev, and etag:
-  res.set("location", "/resources/"+obj._id);
-  res.set("x-oada-rev", obj._rev);
-  res.set("content-type", req.headers["content-type"]);
-  res.set("etag", md5(JSON.stringify(resources_map[obj._id])));
-  res.send("");
-  return;
-});
-
+// resources route:
+app.route(/^\/resources(\/.*)/)
+  .post(handlers.resources.post)
+  .get(handlers.resources.get)
+  .put(handlers.resources.put)
+  .delete(handlers.resources.delete);
 
 //////////////////////////////////////////////////////////////
 // Step 3: POST new resource link to the master list of prescriptions
-app.post("/bookmarks/planting/prescriptions/list", function(req, res) {
+// app.post("/bookmarks/planting/prescriptions/list", function(req, res) {
+app.post(/^bookmarks(\/.*)?/, function(req, res) {
   console.log("POST /bookmarks/planting/prescriptions/list");
   // Check bearer header:
   if (!helpers.checkAuth(req)) {
@@ -287,7 +339,7 @@ app.post("/bookmarks/planting/prescriptions/list", function(req, res) {
   // Post it to the list:
   var new_id = uuid.v4();
   resources_map[bookmarksid].list[new_id] = link;
-  resources_map[bookmarksid] = helpers.populateRev(resources_map[bookmarksid]);
+  resources_map[bookmarksid] = helpers.updateRev(resources_map[bookmarksid]);
   // Respond with new location and rev:
   res.set("Location", "/resources/"+bookmarksid+"/list/"+new_id);
   res.set("x-oada-rev", resources_map[bookmarksid]._rev);
