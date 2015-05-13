@@ -9,7 +9,7 @@ the technical spec.
 
 To install:
 ```
-git clone git@github.com:OADA/oada-test.git
+git clone git@github.com:OADA/oada-demo-tests.git
 cd oada-test/rx-planting-poc1
 npm install
 ```
