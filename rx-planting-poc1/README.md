@@ -24,11 +24,13 @@ To run the tests:
 npm test
 ```
 
-The config at the top of test/test-poc1.js currently points to localhost:3000, which is where the
-mock server starts up locally.  If you want to test a different URL, change the config object
-at the top of test/test-poc1.js to use the URL you want.
+To run ONLY the bare-minimum tests for POC1:
+```
+mocha test/test-poc1.js
+```
 
-The early version of this server will attempt to respond verbatim with that listed in the
-URL.  Later updates will make it a little smarter so that it responsed based on what
-you've uploaded.
+The config for the tests are at test/config.json.  Edit the URL in there to point to the OADA
+implementation that you want to test.  other_configs has some alternate URL's that you can copy-paste
+there (like the OADA demo server oon EC2).
+
 
