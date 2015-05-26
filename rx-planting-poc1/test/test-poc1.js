@@ -217,7 +217,8 @@ describe("Rx Planting POC", function() {
         });
   
       });
-  
+console.log('STEPS 4-6 DISABLED FOR MINIMUM VIABLE POC1 TESTING');
+/*
       /////////////////////////////////////////////////////////////
       // Step 4: get the _rev on the master prescription list to see if it has changed
       describe("#step 4: GET /bookmarks/planting/prescriptions/_rev", function() {
@@ -386,6 +387,7 @@ describe("Rx Planting POC", function() {
         });
   
       });
+*/
     },
   };
 
