@@ -212,6 +212,7 @@ var _MemoryDb = {
   },
 
   remove: function(dbname, path) {
+    path = path || '';
     return Promise.try(function() {
       if (!path.match(/^\//)) path = '/' + path;
       if (!_.has(db, dbname)) {

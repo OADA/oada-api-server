@@ -15,8 +15,6 @@ describe('memory-db-resources-driver', function() {
   // GET tests
   /////////////////////////////////////////////////////////////////////////
 
-
-
   describe('.get', function() {
     var path1 = '/' + cur_resid++
     var linked_resourceid = cur_resid++;
@@ -143,7 +141,7 @@ describe('memory-db-resources-driver', function() {
         var opts = { _meta: { _mediaType: 'application/vnd.oada.TEST+json' } };
         return driver.put('/' + resourceid, val, opts)
         .then(function(info) {
-          expect(info.link._id).to.equal(resourceid);
+          expect(info._id).to.equal(resourceid);
           return checkResourceAndMeta(resourceid, val, opts._meta);
         });
       });
@@ -155,9 +153,10 @@ describe('memory-db-resources-driver', function() {
         var val = { };
         return driver.put(path, val, opts)
         .then(function(info) {
-          expect(info.link).to.be.defined;
-          expect(info.link._id).to.be.defined;
-          expect(info.link._rev).to.match(/.+-.+/);
+          expect(info).to.deep.equal({
+            _id: resourceid,
+            path: path,
+          });
         });
       });
 
@@ -168,7 +167,7 @@ describe('memory-db-resources-driver', function() {
         var opts = { _meta: { _mediaType: 'application/vnd.oada.TEST+json' } };
         return driver.put(path, val, opts)
         .then(function(info) {
-          expect(info.link._id).to.equal(resourceid);
+          expect(info._id).to.equal(resourceid);
           return checkResourceAndMeta(resourceid, { a: { b: val } }, opts._meta)
         });
       });
@@ -188,7 +187,7 @@ describe('memory-db-resources-driver', function() {
         };
         return driver.put(path, val, opts)
         .then(function(info) {
-          expect(info.link._id).to.equal(resourceid);
+          expect(info._id).to.equal(resourceid);
           return checkResourceAndMeta(resourceid, {}, opts._meta);
         }).then(function() {
           return driver.get(path);
@@ -198,7 +197,6 @@ describe('memory-db-resources-driver', function() {
           expect(info.val._meta).to.not.equal(val._meta);
         });
       });
-
 
     });
 
@@ -276,7 +274,9 @@ describe('memory-db-resources-driver', function() {
         // Then, record resource1's _rev and create reource 2.  resource2's link to resource1
         // should have it's _rev updated to the current _rev for resource1 after the put.
         .then(function(info) { 
-          rev1 = info.link._rev; 
+          return driver.get(path1 + '/_rev');
+        }).then(function(info) {
+          rev1 = info.val;
           return driver.put(path2, val2, opts);
         // Get resource 2 back and see if the link has been updated:
         }).then(function() {
@@ -301,7 +301,9 @@ describe('memory-db-resources-driver', function() {
         // Then, record resource1's _rev and create reource 2.  resource2's link to resource1
         // should have it's _rev updated to the current _rev for resource1 after the put.
         .then(function(info) { 
-          rev1 = info.link._rev; 
+          return driver.get(path1 + '/_rev');
+        }).then(function(info) {
+          rev1 = info.val;
           return driver.put(path2, val2, opts);
         // Now try to change the _rev on the document:
         }).then(function(info) {
@@ -502,21 +504,19 @@ describe('memory-db-resources-driver', function() {
         var opts = { _meta: { _mediaType: 'application/vnd.oada.TEST+json' } };
         return driver.post('/', val, opts)
         .then(function(info) {
-          expect(info.link).to.be.defined;
-          expect(info.link._id).to.be.defined;
-          expect(info.link._rev).to.match(/.+-.+/);
-          expect(info.path).to.equal('/' + info.link._id);
-          expect(info.key_created).to.equal(info.link._id);
+          expect(info._id).to.be.defined;
+          expect(info.path).to.equal('/' + info._id);
+          expect(info.key_created).to.equal(info._id);
         });
       });
 
      it('should create a valid empty resource if passed an empty object to POST', function() {
        var resourceid;
        var path;
-        var opts = { _meta: { _mediaType: 'application/vnd.oada.TEST+json' } };
+       var opts = { _meta: { _mediaType: 'application/vnd.oada.TEST+json' } };
        return driver.post('/', { }, opts)
        .then(function(info) {
-         resourceid = info.link._id;
+         resourceid = info._id;
          path = '/' + resourceid;
          return checkResourceAndMeta(resourceid, { }, opts._meta);
        });
@@ -527,7 +527,7 @@ describe('memory-db-resources-driver', function() {
         var opts = { _meta: { _mediaType: 'application/vnd.oada.TEST+json' } };
         return driver.post('/', val, opts)
         .then(function(info) {
-          return checkResourceAndMeta(info.link._id, val, opts._meta);
+          return checkResourceAndMeta(info._id, val, opts._meta);
         });
       });
 
@@ -538,7 +538,7 @@ describe('memory-db-resources-driver', function() {
         var opts = { _meta: { _mediaType: 'application/vnd.oada.TEST+json' } };
         return driver.post(path, val, opts)
         .then(function(info) {
-          expect(info.link._id).to.equal(resourceid);
+          expect(info._id).to.equal(resourceid);
           var expected_val = { a: { b: {}, }, };
           expected_val.a.b[info.key_created] = _.cloneDeep(val);
           return checkResourceAndMeta(resourceid, expected_val, opts._meta)
@@ -556,7 +556,7 @@ describe('memory-db-resources-driver', function() {
         };
         return driver.post(path, val, opts)
         .then(function(info) {
-          resourceid = info.link._id;
+          resourceid = info._id;
           return checkResourceAndMeta(resourceid, {}, opts._meta);
         }).then(function() {
           return driver.get(path+resourceid);
@@ -576,7 +576,7 @@ describe('memory-db-resources-driver', function() {
         var key_created;
         return driver.post('/', orig_val, opts)
         .then(function(info) {
-          resourceid = info.link._id;
+          resourceid = info._id;
           path = '/' + resourceid;
           return driver.post(path + '/key', new_val, opts);
         }).then(function(info) {
@@ -607,14 +607,16 @@ describe('memory-db-resources-driver', function() {
         // Then, record resource1's _rev and create reource 2.  resource2's link to resource1
         // should have it's _rev updated to the current _rev for resource1 after the put.
         .then(function(info) { 
-          resourceid1 = info.link._id;
-          rev1 = info.link._rev; 
+          resourceid1 = info._id;
+          return driver.get('/'+resourceid1+'/_rev');
+        }).then(function(info) {
+          rev1 = info.val; 
           path1 = '/' + resourceid1;
           val2.theversionedlink._id = resourceid1;
           return driver.post('/', val2, opts);
         // Get resource 2 back and see if the link has been updated:
         }).then(function(info) {
-          resourceid2 = info.link._id;
+          resourceid2 = info._id;
           path2 = '/' + resourceid2;
           return driver.get(path2);
         }).then(function(info) {
@@ -635,12 +637,12 @@ describe('memory-db-resources-driver', function() {
         var opts = { _meta: { _mediaType: 'application/vnd.oada.TEST+json' } };
         return driver.post('/', val2, opts) // creates the resource
         .then(function(info) {
-          resourceid2 = info.link._id;
+          resourceid2 = info._id;
           path2 = '/' + resourceid2;
           val1.thelink._id = resourceid2;
           return driver.post('/', val1, opts);
         }).then(function(info) {
-          resourceid1 = info.link._id;
+          resourceid1 = info._id;
           path1 = '/' + resourceid1;
           return driver.post(path1+'/thelink', val3, opts); // path ends with link to resource2
         }).then(function(info) {
@@ -666,13 +668,13 @@ describe('memory-db-resources-driver', function() {
         // First, create resource 1:
         return driver.post('/', val1, opts)
         .then(function(info) { 
-          resourceid1 = info.link._id;
+          resourceid1 = info._id;
           path1 = '/' + resourceid1;
           val2.theversionedlink._id = resourceid1;
           return driver.post('/', val2, opts);
         // Now try to change doc1 through the link in doc2:
         }).then(function(info) {
-          resourceid2 = info.link._id;
+          resourceid2 = info._id;
           path2 = '/' + resourceid2;
           return driver.post(path2 + '/theversionedlink/key2', new_val);
         // Now get the link back and make sure it's the same as it was in rev1:
@@ -692,7 +694,7 @@ describe('memory-db-resources-driver', function() {
         expected_val.versionedlink._rev = '0-0';
         return driver.post('/', val, opts)
         .then(function(info) {
-          return checkResourceAndMeta(info.link._id, expected_val, opts._meta);
+          return checkResourceAndMeta(info._id, expected_val, opts._meta);
         });
       });
 
@@ -711,7 +713,7 @@ describe('memory-db-resources-driver', function() {
         delete expected_val.thelink._rev;
         return driver.post('/', val, opts)
         .then(function(info) {
-          return checkResourceAndMeta(info.link._id, expected_val, opts._meta);
+          return checkResourceAndMeta(info._id, expected_val, opts._meta);
         });
       });
 
@@ -723,7 +725,7 @@ describe('memory-db-resources-driver', function() {
         var key_created;
         return driver.post('/', {}, opts)
         .then(function(info) {
-          resourceid = info.link._id;
+          resourceid = info._id;
           path = '/' + resourceid +'/_meta';
           return driver.post(path, val);
         }).then(function(info) {
@@ -747,7 +749,7 @@ describe('memory-db-resources-driver', function() {
         };
         return driver.post('/', val, opts) // create the resource
         .then(function(info) {
-          resourceid = info.link._id;
+          resourceid = info._id;
           path = '/' + resourceid;
           return checkResourceAndMeta(resourceid, { thenewkey: val.thenewkey }, opts._meta);
         }).then(function() {
@@ -769,9 +771,87 @@ describe('memory-db-resources-driver', function() {
   // DELETE tests
   /////////////////////////////////////////////////////////////////////////
 
-  describe('delete', function() {
-    it('should have the tests written', function() {
+  describe('.delete', function() {
+
+    describe('#simple resources', function() {
+
+      it('should delete a simple key from a resource', function() {
+        var resourceid = '' + cur_resid++;
+        var path = '/' + resourceid;
+        var opts = { _meta: { _mediaType: 'application/vnd.oada.TEST+json' } };
+        var val = { key1: 'val1', key2: 'val2' };
+        var expected_value = _.cloneDeep(val);
+        return driver.put(path, val, opts)
+        .then(function(info) {
+          delete expected_value.key1;
+          return driver.delete(path + '/key1')
+        }).then(function(info) {
+          return checkResourceAndMeta(resourceid, expected_value, opts._meta);
+        });
+      });
+
+      it('should successfully delete an entire resoruce', function() {
+        var resourceid = '' + cur_resid++;
+        var path = '/' + resourceid;
+        var opts = { _meta: { _mediaType: 'application/vnd.oada.TEST+json' } };
+        var val = { key1: 'val1', key2: 'val2' };
+        return driver.put(path, val, opts)
+        .then(function(info) {
+          return driver.delete(path);
+        }).then(function(info) {
+          return driver.get(path);
+        }).then(function(info) {
+          expect(info.found).to.equal(false);
+          expect(info.existent_path).to.equal('');
+        });
+
+      });
+
+      it('should fail when deleting /resources', function() {
+        return expect(driver.delete('/'))
+        .to.eventually.be.rejected;
+      });
+
     });
+
+    describe('#links', function() {
+      it('should remove a link in an object', function() {
+        var resourceid1;
+        var resourceid2;
+        var path1;
+        var path2;
+        var opts = { _meta: { _mediaType: 'application/vnd.oada.TEST+json' } };
+        var val1 = { key1: 'val1' } ;
+        var val2 = { theversionedlink: { _id: null, _rev: '0-0' }, };
+        var rev1;
+        // First, create resource 1:
+        return driver.post('/', val1, opts)
+        // Then, record resource1's _rev and create reource 2.  resource2's link to resource1
+        // should have it's _rev updated to the current _rev for resource1 after the put.
+        .then(function(info) { 
+          resourceid1 = info._id;
+          return driver.get('/'+resourceid1+'/_rev');
+        }).then(function(info) {
+          rev1 = info.val; 
+          path1 = '/' + resourceid1;
+          val2.theversionedlink._id = resourceid1;
+          return driver.post('/', val2, opts);
+        // Delete the link
+        }).then(function(info) {
+          resourceid2 = info._id;
+          path2 = '/' + resourceid2;
+          return driver.delete(path2 + '/theversionedlink');
+        }).then(function() {
+          var expected_val = _.cloneDeep(val2);
+          delete expected_val.theversionedlink;
+          return checkResourceAndMeta(resourceid2, expected_val, opts._meta);
+        }).then(function() {
+          return checkResourceAndMeta(resourceid1, val1, opts._meta);
+        });
+
+      });
+    });
+
   });
 
 
