@@ -5,7 +5,13 @@ var Promise = require('bluebird');
 // Local libs:
 var oada_util = require('./oada-util.js');
 var db = require('./memory-db.js');
-var rev_graph = require('./rev-graph.js');
+
+// Circular dependency on rev_graph: wrap in function to delay until invocation
+var _rev_graph = null;
+var rev_graph = function() {
+  if (!_rev_graph) _rev_graph = require('./rev-graph.js');
+  return _rev_graph;
+};
 
 // Logger:
 var log = require('./logger.js').child({ module: 'memory-db-resources-driver' });
@@ -144,7 +150,9 @@ var _MemoryDbResourcesDriver = {
         return Promise.map(_.keys(topval), function(key) {
           // can't set _id, _metaid, or _rev from outside:
           if (key === '_id' || key === '_metaid' || key === '_rev') return;
-          return _util.setWrapper(final_path + '/' + key, topval[key]);
+          return _util.setWrapper(final_path + '/' + key, topval[key], { skipQueueRevUpdate: true });
+        }).then(function() {
+          return _util.setWrapper(final_path, null, { skipSet: true });
         });
 
       }).then(function() {
@@ -249,6 +257,7 @@ var _MemoryDbResourcesDriver = {
   directSet: function(full_path_without_links, new_rev) {
     return db.set('resources', full_path_without_links, new_rev);
   },
+
   directGet: function(full_path_without_links) {
     return db.get('resources', full_path_without_links);
   },
@@ -260,22 +269,26 @@ var _util = {
 
   // setWrapper assumes you've already aquired a write lock for the resource you're trying to
   // update.
-  setWrapper: function(path, val) {
+  // opts.skipQueueRevUpdate: true|false
+  // opts.skipSet: true|false // use to only queue the rev for updates
+  setWrapper: function(path, val, opts) {
     var resourceid;
+    opts = opts || {};
     return Promise.try(function() {
       resourceid = pointer.parse(path)[0]; // Do all the sanitizing outside of this function.
-
       // Update the content of the resource to fill in revisions for versioned links
       // and list this resource as a parent of each child.  Also adds parent/child relationships.
-      return rev_graph.updateVersionedLinksInObj(val, resourceid, path)
+      if (opts.skipSet) return;
+      return rev_graph().updateVersionedLinksInObj(val, resourceid, path)
 
     }).then(function(new_val) {
+      if (opts.skipSet) return;
       return db.set('resources', path, new_val);
 
     }).then(function() {
-      return rev_graph.queueRevForUpdate(resourceid); // should be synchronous
+      if (opts.skipQueueRevUpdate) return;
+      return rev_graph().queueRevForUpdate(resourceid); // should be synchronous
     });
-
   },
 
   /////////////////////////////////////////////////////////////////////

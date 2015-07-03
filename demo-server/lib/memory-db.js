@@ -241,7 +241,7 @@ var _MemoryDb = {
 
   clean: function(dbname) {
     return Promise.try(function() {
-      db.dbname = {};
+      db[dbname] = {};
       return true;
     });
   },
@@ -262,5 +262,6 @@ var _MemoryDb = {
   },
 
 };
+
 
 module.exports = _MemoryDb;
