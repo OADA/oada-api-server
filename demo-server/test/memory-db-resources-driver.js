@@ -855,4 +855,17 @@ describe('memory-db-resources-driver', function() {
   });
 
 
+  ////////////////////////////////////////////////////////////////////////
+  // Misc tests
+  ////////////////////////////////////////////////////////////////////////
+  describe('.resourceIdForPath', function() {
+    it('should return the right resourceid for a valid path', function() {
+      var resid = driver.resourceidForPath('/123/a/b');
+      expect(resid).to.equal('123');
+    });
+    it('should return null for an empty path', function() {
+      var resid = driver.resourceidForPath();
+      expect(resid).to.equal(null);
+    });
+  });
 });

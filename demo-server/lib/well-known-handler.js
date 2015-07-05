@@ -1,13 +1,13 @@
 var log = require.main.require('./lib/logger.js').child({ module: 'well-known-handler' });
-var oada_errors = require.main.require('./lib/oada-errors.js');
 var config = require.main.require('./config.js');
+var oada_error = require('./lib/oada-errors.js');
 
 var _WellKnownHandler = {
   get: function(req,res) {
     log.info("GET ",  req.url);
 
     if (req.url !== "/.well-known/oada-configuration") {
-      return oada_errors.notFoundError(res);
+      throw new oada_error.OADAError('/.well-known/oada-configuration not found!', oada_error.codes.NOT_FOUDN);
     }
     // Otherwise, respond intelligently:
     res.set("Content-Type", "application/vnd.oada.oada-configuration.1+json");

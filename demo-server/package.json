@@ -2,7 +2,7 @@
   "name": "oada-demo-server",
   "version": "1.0.0",
   "description": "Demo server with front-end that runs with in-memory server",
-  "main": "app.js",
+  "main": "server.js",
   "dependencies": {
     "MD5": "^1.2.1",
     "bluebird": "^2.9.27",
@@ -12,6 +12,7 @@
     "cors": "^2.6.0",
     "express": "^4.12.3",
     "express-promise": "^0.4.0",
+    "express-promise-router": "0.0.9",
     "extend-error": "0.0.2",
     "json-pointer": "^0.3.0",
     "lodash": "^3.7.0",
@@ -29,12 +30,12 @@
     "request-promise": "^0.4.2"
   },
   "scripts": {
-    "test": "mocha --colors test/memory-db-resources-driver.js | bunyan -o short",
+    "test": "mocha --recursive --colors test | bunyan -o short",
     "test-memdb": "mocha --colors test/memory-db.js | bunyan -o short",
     "test-all": "mocha --colors test | bunyan -o short",
-    "test-watch": "mocha -w --colors test | bunyan -o short",
-    "start": "node app.js | bunyan -o short",
-    "start-watch": "forever -w --watchDirectory . app.js | bunyan -o short"
+    "test-watch": "mocha --recursive -w --colors test | bunyan -o short",
+    "start": "node server.js | bunyan -o short",
+    "start-watch": "forever -w --watchDirectory . server.js | bunyan -o short"
   },
   "repository": {
     "type": "git",

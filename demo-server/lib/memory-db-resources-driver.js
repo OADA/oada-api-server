@@ -52,6 +52,7 @@ var _MemoryDbResourcesDriver = {
   get: function(path, opts) {
     return Promise.try(function() {
       opts = opts || {};
+      if (path.charAt(0) !== '/') path = '/' + path; // leading slash is needed.
 
       var resid = pointer.parse(path)[0]; // resourceid is always first on path
 
@@ -88,6 +89,7 @@ var _MemoryDbResourcesDriver = {
     var lock_release;
     return Promise.try(function() {
       opts = opts || {};
+      if (path.charAt(0) !== '/') path = '/' + path; // leading slash is needed.
       if (path === '' || path === '/') {
         throw new Error('memory-db-resources-driver.put: Cannot PUT to /resources.');
       };
@@ -177,6 +179,7 @@ var _MemoryDbResourcesDriver = {
     var is_new_resource = false;
     return Promise.try(function() {
       opts = opts || {};
+      if (path.charAt(0) !== '/') path = '/' + path; // leading slash is needed.
 
 
       // First, we need to get the correct path without any links.  Use get to follow all the links
@@ -228,6 +231,7 @@ var _MemoryDbResourcesDriver = {
     var found_info;
     return Promise.try(function() {
       opts = opts || {};
+      if (path.charAt(0) !== '/') path = '/' + path; // leading slash is needed.
 
       if (path === '' || path === '/') { // POST /resources
         throw new Error('Cannot delete /resources');
@@ -260,6 +264,18 @@ var _MemoryDbResourcesDriver = {
 
   directGet: function(full_path_without_links) {
     return db.get('resources', full_path_without_links);
+  },
+
+  resourceidForPath: function(path) {
+    path = path || '';
+    if (!path.match(/^\//)) path = '/' + path; // leading slash
+    try {
+      var resid = pointer.parse(path)[0];
+      if (resid === '') return null;
+      return resid;
+    } catch(err) {
+      return null;
+    }
   },
 
 };

@@ -94,4 +94,12 @@ describe('oada-util', function() {
     });
   });
 
+  describe('.parseContentType', function() {
+    it('should get the content type from a request-like object', function() {
+      var type = 'application/vnd.oada.test.1+json';
+      expect(u.parseContentType({ headers: { 'content-type': type + ' ;charset=utf8' } }))
+      .to.equal(type);
+    });
+  });
+
 });

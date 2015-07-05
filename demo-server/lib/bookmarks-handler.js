@@ -1,40 +1,43 @@
-var express = require('express');
+var Promise = require('bluebird');
+var express_router = require('express-promise-router');
 
-var           auth_db = require.main.require('./lib/memory-db.js');
-var            res_db = require.main.require('./lib/memory-db.js');
-var         oada_util = require.main.require('./lib/oada-util.js');
-var               log = require.main.require('./lib/logger.js')
-                        .child({ module: 'bookmarks-handler' });
+var auth_driver = require('./memory-db-auth-driver.js');
+var  res_driver = require('./memory-db-resources-driver.js');
+var      scopes = require('./scopes.js'); // for parseTokenFromRequest
+var      config = require('../config.js');
+var   oada_util = require('./oada-util.js');
+var         log = require('./logger.js').child({ module: 'bookmarks-handler' });
+var  oada_error = require('oada-error');
 
-var _BookmarksHandler = express.Router();
+var _BookmarksHandler = express_router();
 
 // Rewrite the /bookmarks URL to be /resources/<bookmarksid>,
 // using the bookmarksid defined for this token
-_BookmarksHandler.use(/^\/bookmarks(\/.*)?/, function(req, res, next) {
+_BookmarksHandler.all(/^\/bookmarks/, function(req, res) {
 
-  // Let the log know this request occurred:
-  log.info(req.method + " " + req.url);
+  return Promise.try(function() {
+    // Let the log know this request occurred:
+    log.info(req.method + " " + req.url);
 
-  // Figure out the bookmarks resource based on the user associated with
-  // the current token:
-  var token = oada_util.getAuthorizationTokenFromRequest(req);
-  var user_link = auth_db.getUserLinkForToken(token);
-  if (!oada_util.isLink(user_link)) {
-    log.error('Request made with token that has no associated user.');
-    throw new Error("MAKE THIS USE OADA ERRORS");
-  }
+    // Figure out the the user associated with the current token:
+    var token = scopes.parseTokenFromRequest(req);
+    return auth_driver.get(token);
+  }).then(function(token_info) {
+    var userid = token_info.userid;
+    // Get the bookmarks resourceid for that user:
+    return res_driver.get('/'+userid);
 
-  // Return a promise for once the database call is finished:
-  return db.get(user_link._id + "/bookmarks")
-  .then(function(bookmarks_link) {
-    if (!oada_util.isLink(bookmarks_link)) {
-      log.error('Request made for user that has no valid bookmarks link');
-      throw new Error("MAKE THIS USE OADA ERRORS TOO");
+  }).then(function(info) {
+    if (!info || !info.val || !oada_util.isLink(info.val.bookmarks)) {
+      log.error('Request made with token that has no associated user.  auth_db returned info = ', info);
+      throw new oada_error.OADAError('Bookmarks not found', oada_error.codes.NOT_FOUND, 'There is no known bookmarks resource for this user.');
     }
-    req.url = req.url.replace(/^\/bookmarks/, '/resources/'+bookmarks_link._id);
-    next(); // call the next matching router, which will eventually include /resources
+ 
+    // replace the /bookmarks URL with the bookmarksid we found:
+    req.url = req.url.replace(/^\/bookmarks/, '/resources/'+info.val.bookmarks._id);
+    return 'next'; // call the next matching router, which will eventually include /resources
   });
 
-},
+});
 
 module.exports = _BookmarksHandler;

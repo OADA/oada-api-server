@@ -1,4 +1,5 @@
 var _ = require('lodash');
+var content_type_parser = require('content-type');
 
 var _OADAUtil = {
 
@@ -55,6 +56,19 @@ var _OADAUtil = {
     if (typeof req_header !== 'string') return false;
     return req_header.replace(/bearer/i,'').trim();
   },
+
+  // Given an object with a 'content-type' key, strip off the extra '; charset=utf-8' junk:
+  parseContentType: function(req) {
+    // Need to parse content type because they have parameters like ;charset=utf-8
+    if (typeof req.headers['content-type'] !== 'string') return '';
+    try {
+      var ct_header = content_type_parser.parse(req.headers['content-type']);
+    } catch(err) {
+      return req.headers['content-type'];
+    }
+    return ct_header.type;
+  },
+
 
 
 };
