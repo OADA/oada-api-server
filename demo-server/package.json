@@ -17,6 +17,7 @@
     "json-pointer": "^0.3.0",
     "lodash": "^3.7.0",
     "node-uuid": "^1.4.3",
+    "oada-ref-auth": "git://github.com/oada/oada-ref-auth-js.git#features/exportMiddleware",
     "rwlock": "^5.0.0",
     "uuid": "^2.0.1"
   },

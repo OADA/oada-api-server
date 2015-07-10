@@ -19,6 +19,7 @@ var fs = require('fs');
 var https = require('https');
 var well_known_json = require('well-known-json');
 var oada_error = require('oada-error');
+//var oada_ref_auth = require('oada-ref-auth');
 
 // Local libs:
  var bookmarks_handler = require('./lib/bookmarks-handler');
@@ -91,7 +92,10 @@ return Promise.try(function() {
   });
   well_known_handler.addResource('oada-configuration', config.wellKnown);
   app.use(well_known_handler);
-  
+
+  // Enable the OADA Auth code to handle OAuth2
+//  app.use(oada_ref_auth);
+
   
   //////////////////////////////////////////////////
   // Default handler for top-level routes not found:
