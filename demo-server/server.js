@@ -19,7 +19,7 @@ var fs = require('fs');
 var https = require('https');
 var well_known_json = require('well-known-json');
 var oada_error = require('oada-error');
-//var oada_ref_auth = require('oada-ref-auth');
+var oada_ref_auth = require('oada-ref-auth');
 
 // Local libs:
  var bookmarks_handler = require('./lib/bookmarks-handler');
@@ -46,7 +46,7 @@ return Promise.try(function() {
   /////////////////////////////////////////////////////////////////
   // Setup express:
   var app = express();
-  
+
   // Allow route handlers to return promises:
   app.use(express_promise());
 
@@ -55,17 +55,17 @@ return Promise.try(function() {
     log.info('Received request: ' + req.method + ' ' + req.url);
     next(err);
   });
-  
+
   // Turn on CORS for all domains, allow the necessary headers
-  app.use(cors({ 
+  app.use(cors({
     exposedHeaders: [ 'x-oada-rev', 'location' ],
   }));
   app.options('*', cors());
-  
-  
+
+
   /////////////////////////////////////////////////////////////////
   // Setup the body parser and associated error handler:
-  app.use(body_parser.raw({ 
+  app.use(body_parser.raw({
     limit: '10mb',
     type: function(req) {
       return mediatype_parser.canParse(req);
@@ -74,15 +74,14 @@ return Promise.try(function() {
 
   /////////////////////////////////////////////////////////
   // Setup the resources, meta, and bookmarks routes:
-  
-  // NOTE: must register bookmarks_handler and meta_handler prior to 
-  // resources_handler because they call next() to get to the 
+
+  // NOTE: must register bookmarks_handler and meta_handler prior to
+  // resources_handler because they call next() to get to the
   // resources handler.
   app.use(config.wellKnown.oada_base_uri, bookmarks_handler);
   app.use(config.wellKnown.oada_base_uri, meta_handler);
   app.use(config.wellKnown.oada_base_uri, resources_handler);
-  
-  
+
   ////////////////////////////////////////////////////////
   // Configure the OADA well-known handler middleware
   var well_known_handler = well_known_json({
@@ -94,24 +93,38 @@ return Promise.try(function() {
   app.use(well_known_handler);
 
   // Enable the OADA Auth code to handle OAuth2
-//  app.use(oada_ref_auth);
+  app.use(oada_ref_auth({
+    wkj: well_known_handler,
+    server: {
+      port: config.port,
+      mode: config.protocol === 'https://' ? 'https' : 'http',
+      domain: config.domain,
+    }
+  }));
 
-  
   //////////////////////////////////////////////////
   // Default handler for top-level routes not found:
   app.use(function(req, res){
     throw new oada_error.OADAError('Route not found: ' + req.url, oada_error.codes.NOT_FOUND);
   });
- 
+
   ///////////////////////////////////////////////////
   // Use OADA middleware to catch errors and respond
   app.use(oada_error.middleware(console.log));
- 
+
   app.set('port', config.port);
-  app.listen(app.get('port'), function() {
-    log.info('OADA Test Server started on port ' + app.get('port'));
-  });
-  
+  if(config.protocol === 'https://') {
+    var server = https.createServer(config.certs, app);
+    server.listen(app.get('port'), function() {
+      log.info('OADA Test Server started on port ' + app.get('port')
+          + ' [https]');
+    });
+  } else {
+    app.listen(app.get('port'), function() {
+      log.info('OADA Test Server started on port ' + app.get('port'));
+    });
+  }
+
   /////////////////////////////////////////////////
   // Start the _rev updater
   rev_graph.start();

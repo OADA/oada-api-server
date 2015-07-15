@@ -1,3 +1,6 @@
+var fs = require('fs');
+var path = require('path');
+
 module.exports = {
   wellKnown: {
     well_known_version: '1.0.0',
@@ -16,8 +19,14 @@ module.exports = {
     token: "SJKF9jf309", // Hard-coded token for easy API testing
   },
   protocol: "https://",
+  domain: 'vip3.ecn.purdue.edu',
   port: 3000,
   dbsetup: require('./dbsetups/simple.js'),
+  certs: {
+    key: fs.readFileSync(path.join(__dirname, 'certs/ssl/server.key')),
+    cert: fs.readFileSync(path.join(__dirname, 'certs/ssl/server.crt')),
+    ca: fs.readFileSync(path.join(__dirname, 'certs/ssl/ca.crt')),
+    requestCrt: true,
+    rejectUnauthorized: false,
+  },
 };
-
-
