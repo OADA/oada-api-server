@@ -99,6 +99,12 @@ return Promise.try(function() {
       port: config.port,
       mode: config.protocol === 'https://' ? 'https' : 'http',
       domain: config.domain,
+    },
+    datastores: {
+      clients: require('./lib/auth/clients'),
+      users: require('./lib/auth/users'),
+      codes: require('./lib/auth/codes'),
+      tokens: require('./lib/auth/tokens'),
     }
   }));
 

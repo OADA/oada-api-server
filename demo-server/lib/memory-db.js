@@ -19,6 +19,9 @@ var db = {
   parents: {},
   children: {},
   tokens: {},
+  users: {},
+  clients: {},
+  codes: {},
 };
 
 var path_pointer = {
@@ -42,9 +45,9 @@ var path_pointer = {
     for(var i in parts) {
       var p = parts[i];
 
-      // If this part of the path is not found, val should remain the same as 
+      // If this part of the path is not found, val should remain the same as
       // 'the last thing we were able to find'.  It will be the same as parent
-      // in this case.  Note that since 'p' is the result of pointer.parse, you 
+      // in this case.  Note that since 'p' is the result of pointer.parse, you
       // can't use pointer.has because it's already escaped the slashes and tildes.
       if (!_.has(ret.val, p)) {
         ret.existent_path = pointer.compile(parts.slice(0, i));
@@ -60,7 +63,7 @@ var path_pointer = {
       ret.parent = ret.val;
       ret.val = ret.val[p];
       // include this key in the existent path (+1)
-      ret.existent_path = pointer.compile(parts.slice(0, i+1)); 
+      ret.existent_path = pointer.compile(parts.slice(0, i+1));
       ret.nonexistent_path = '';
       ret.found = true; // A later part of the loop may set this back to false.
     }
@@ -159,7 +162,7 @@ var path_pointer = {
 var _MemoryDb = {
 
   // get will return an object representing the search for path:
-  // { 
+  // {
   //   found: true|false,
   //   val: what_was_found_at_existent_path,
   //   existent_path: 'part/of/path/that/exists'

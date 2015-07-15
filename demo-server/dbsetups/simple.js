@@ -4,6 +4,7 @@ var Promise = require('bluebird');
 Promise.longStackTraces();
 var res_driver = require('../lib/memory-db-resources-driver.js');
 var auth_driver = require('../lib/memory-db-auth-driver.js');
+var user_driver = require('../lib/memory-db-user-driver.js');
 var db = require('../lib/memory-db.js'); // for printContents
 var _ = require('lodash');
 
@@ -29,7 +30,7 @@ var _Setup = {
 
   setup: function() {
     // Create the resource:
-    return res_driver.put('/'+_Setup.resource._id, 
+    return res_driver.put('/'+_Setup.resource._id,
       _.cloneDeep(_Setup.resource),  // PUT will remove the _id without cloning: don't want that!
       { _meta: _Setup.meta }
     )
@@ -41,7 +42,7 @@ var _Setup = {
     // Create the user:
     }).then(function() {
       return res_driver.put('/'+_Setup.userid,
-        { bookmarks: { _id: _Setup.bookmarksid, _rev: '0-0' } }, 
+        { bookmarks: { _id: _Setup.bookmarksid, _rev: '0-0' } },
         { _meta: _Setup.meta }
       );
 
@@ -51,10 +52,12 @@ var _Setup = {
         userid: _Setup.userid,
       });
     }).then(function() {
+      return user_driver.set(config().user.username, config().user);
+    }).then(function() {
 //      db.printContents();
     });
   },
-  
+
 };
 
 module.exports = _Setup;

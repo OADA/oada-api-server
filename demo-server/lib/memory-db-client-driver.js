@@ -2,19 +2,19 @@ var _ = require('lodash');
 var db = require('./memory-db.js');
 
 // Logger:
-var log = require('./logger.js').child({ module: 'memory-db-users-driver' });
+var log = require('./logger.js').child({ module: 'memory-db-clients-driver' });
 
-var _AuthDriver = {
+var _ClientDriver = {
 
-  set: function(user, opts) {
-    return db.set('users', '/'+user, opts)
+  set: function(client, opts) {
+    return db.set('clients', '/'+client, opts)
     .then(function(info) {
       return true; // don't need to return anything really
     });
   },
 
-  get: function(user) {
-    return db.get('users', '/'+user)
+  get: function(client) {
+    return db.get('clients', '/'+client)
     .then(function(info) {
        info = info || {};
        if (!info.found) delete info.val;
@@ -23,8 +23,8 @@ var _AuthDriver = {
     });
   },
 
-  delete: function(user) {
-    return db.remove('users', '/'+user)
+  delete: function(client) {
+    return db.remove('clients', '/'+client)
     .then(function() {
       return true;
     });
@@ -32,9 +32,9 @@ var _AuthDriver = {
 
   // For testing:
   clean: function() {
-    return db.clean('users');
+    return db.clean('clients');
   },
 
 };
 
-module.exports = _AuthDriver;
+module.exports = _ClientDriver;
