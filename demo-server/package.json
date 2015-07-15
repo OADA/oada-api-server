@@ -11,6 +11,7 @@
     "bunyan": "^1.3.5",
     "content-type": "^1.0.1",
     "cors": "^2.6.0",
+    "ejs": "^2.3.3",
     "express": "^4.12.3",
     "express-promise": "^0.4.0",
     "express-promise-router": "0.0.9",
@@ -20,7 +21,7 @@
     "lodash": "^3.7.0",
     "node-uuid": "^1.4.3",
     "oada-error": "^1.1.1",
-    "oada-ref-auth": "git://github.com/oada/oada-ref-auth-js.git#features/exportMiddleware",
+    "oada-ref-auth": "git://github.com/oada/oada-ref-auth-js.git",
     "rwlock": "^5.0.0",
     "uuid": "^2.0.1",
     "well-known-json": "^0.2.0"
