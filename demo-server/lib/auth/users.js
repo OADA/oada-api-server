@@ -15,10 +15,14 @@
 'use strict';
 
 var userDriver = require('../memory-db-user-driver');
+var resDriver = require('../memory-db-resources-driver');
 
 function findByUsername(username, cb) {
   return userDriver
     .get(username)
+    .then(function(user) {
+      return _lookupUserRes(user);
+    })
     .nodeify(cb);
 }
 
@@ -27,12 +31,20 @@ function findByUsernamePassword(username, password, cb) {
     .get(username)
     .then(function(user) {
       if (user.password === password) {
-        return user;
+        return _lookupUserRes(user);
       } else {
         return false;
       }
     })
     .nodeify(cb);
+}
+
+function _lookupUserRes(user) {
+  return resDriver
+    .get('/' + user.resource._id)
+    .then(function(user) {
+      return user.val;
+    });
 }
 
 module.exports = {

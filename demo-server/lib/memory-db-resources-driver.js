@@ -37,7 +37,7 @@ var _MemoryDbResourcesDriver = {
 
   // Path should start with the resource id you want to get, not /resources.
   // Get returns a promise which eventually resolves to an 'info' object:
-  // { 
+  // {
   //   found: true|false,
   //   existent_path: '/part/of/path/that/exists'
   //   nonexistent_path: '/part/of/path/that/does/not/exist'
@@ -76,11 +76,11 @@ var _MemoryDbResourcesDriver = {
   },
 
   // Path should start with the resource id you want to put to, not /resources.
-  // Put will merge the top-level keys of the value you pass with the keys 
+  // Put will merge the top-level keys of the value you pass with the keys
   // of the thing at path.
   // If the thing you put to doesn't exist, it will create it.
   // If the thing you put to exists, it will only mess with the keys you give in the object
-  // opts is optional unless your request will create a resource.  Then it must have 
+  // opts is optional unless your request will create a resource.  Then it must have
   // at least the _mediaType in it to store in _meta.
   // Returns: { _id: resourceid, path: final_path }
   put: function(path, topval, opts) {
@@ -112,6 +112,8 @@ var _MemoryDbResourcesDriver = {
       if (last_part === '_id' || last_part === '_rev' || last_part === '_metaid') {
         throw new Error('memory-db-resources-driver.put: cannot PUT directly to _id, _rev, or _metaid');
       }
+
+      topval = _.cloneDeep(topval);
       _util.sanitizeObjectForUpsert(topval, resourceid);
 
       return db.get('resources', final_path);
@@ -134,8 +136,8 @@ var _MemoryDbResourcesDriver = {
         if (info.nonexistent_path === '' || info.nonexistent_path === '/') {
           throw new Error('memory-db-resources-driver.put: Cannot PUT /resources.');
         }
-        // At this point, there must be a nonexistent_path rooted at a non-existent 
-        // resource.  Create a new empty resource in the database, then set the path 
+        // At this point, there must be a nonexistent_path rooted at a non-existent
+        // resource.  Create a new empty resource in the database, then set the path
         // we need on the new one.
         return _util.newEmptyResource(resourceid, opts._meta)
         .then(function() {
@@ -167,7 +169,7 @@ var _MemoryDbResourcesDriver = {
   },
 
   // POST will 'append' to an object (new unique id) or array.  It returns:
-  // Returns: { 
+  // Returns: {
   //   _id: resourceid_that_was_modified_or_created,
   //   path: path_that_was_created,
   //   key_created: the new ID that was made (last entry on path)
@@ -210,15 +212,15 @@ var _MemoryDbResourcesDriver = {
       return _MemoryDbResourcesDriver.put(final_path, val, opts);
 
     }).then(function(info) {
-      return { 
+      return {
         _id: resourceid,
-        path: final_path, 
-        key_created: new_id, 
+        path: final_path,
+        key_created: new_id,
       };
     });
   },
 
-  // DELETE will remove the given path.  If the key does not exist, 
+  // DELETE will remove the given path.  If the key does not exist,
   // it just doesn't do anything.  It won't delete '/', which would be all resources.
   // There are no opts as of yet.
   // Returns info = {

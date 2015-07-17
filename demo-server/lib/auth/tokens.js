@@ -14,6 +14,7 @@
  */
 'use strict';
 
+var _ = require('lodash');
 var authDriver = require('../memory-db-auth-driver');
 
 function findByToken(token, cb) {
@@ -23,11 +24,13 @@ function findByToken(token, cb) {
 }
 
 function save(token, cb) {
+  var t = _.cloneDeep(token);
+  t.user = {_id: token.user._id};
   return authDriver
-    .set(token.token, token)
+    .set(t.token, t)
     .then(function() {
       return authDriver
-        .get(token.token);
+        .get(t.token);
     })
     .nodeify(cb);
 }

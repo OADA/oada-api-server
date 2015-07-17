@@ -23,7 +23,7 @@ _BookmarksHandler.all(/^\/bookmarks/, function(req, res) {
     var token = scopes.parseTokenFromRequest(req);
     return auth_driver.get(token);
   }).then(function(token_info) {
-    var userid = token_info.userid;
+    var userid = token_info.user._id;
     // Get the bookmarks resourceid for that user:
     return res_driver.get('/'+userid);
 
@@ -32,7 +32,7 @@ _BookmarksHandler.all(/^\/bookmarks/, function(req, res) {
       log.error('Request made with token that has no associated user.  auth_db returned info = ', info);
       throw new oada_error.OADAError('Bookmarks not found', oada_error.codes.NOT_FOUND, 'There is no known bookmarks resource for this user.');
     }
- 
+
     // replace the /bookmarks URL with the bookmarksid we found:
     req.url = req.url.replace(/^\/bookmarks/, '/resources/'+info.val.bookmarks._id);
     return 'next'; // call the next matching router, which will eventually include /resources

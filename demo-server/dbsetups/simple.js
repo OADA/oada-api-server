@@ -17,8 +17,6 @@ var config = function() {
 };
 
 var _Setup = {
-  userid: '1',
-  bookmarksid: '2',
   resource: {
     _id: '3',
     a: 'the val at a',
@@ -26,6 +24,20 @@ var _Setup = {
   meta: {
     _mediaType: 'application/vnd.oada.TEST.1+json',
     b: 'the val at b',
+  },
+  user: {
+    _id: 1,
+    bookmarks: {
+      _id: '2',
+      _rev: '0-0'
+    },
+    username: "frank",
+    name: "Farmer Frank",
+    family_name: "Frank",
+    given_name: "Farmer",
+    middle_name: "",
+    nickname: "Frankie",
+    email: "frank@openag.io"
   },
 
   setup: function() {
@@ -37,22 +49,20 @@ var _Setup = {
 
     // Create the bookmark:
     .then(function() {
-      return res_driver.put('/'+_Setup.bookmarksid, { }, { _meta: _Setup.meta });
+      return res_driver.put('/'+_Setup.user.bookmarks._id, { }, { _meta: _Setup.meta });
 
     // Create the user:
     }).then(function() {
-      return res_driver.put('/'+_Setup.userid,
-        { bookmarks: { _id: _Setup.bookmarksid, _rev: '0-0' } },
-        { _meta: _Setup.meta }
-      );
-
+      return res_driver.put('/'+_Setup.user._id, _Setup.user,
+          {_meta: _Setup.meta})
+    }).then(function() {
+      return user_driver.set(_Setup.user.username,
+          {resource: {_id: _Setup.user._id}, password: "pass"});
     // Create the token:
     }).then(function() {
       return auth_driver.set(config().auth.token, {
-        userid: _Setup.userid,
+        user: {_id: _Setup.user._id},
       });
-    }).then(function() {
-      return user_driver.set(config().user.username, config().user);
     }).then(function() {
 //      db.printContents();
     });

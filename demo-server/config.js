@@ -18,18 +18,7 @@ module.exports = {
   auth: {
     token: "SJKF9jf309", // Hard-coded token for easy API testing
   },
-  user: {
-    "id": 1,
-    "username": "frank",
-    "password": "pass",
-    "name": "Farmer Frank",
-    "family_name": "Frank",
-    "given_name": "Farmer",
-    "middle_name": "",
-    "nickname": "Frankie",
-    "email": "frank@openag.io"
-  },
-  protocol: "https://",
+  protocol: "http://",
   domain: 'vip3.ecn.purdue.edu',
   port: 3000,
   dbsetup: require('./dbsetups/simple.js'),

@@ -56,7 +56,7 @@ var checkResourceAndMeta = function(resourceid, expected_val, expected_meta) {
 var cur_resid = 1000;
 
 describe('server tests for simple setup (server must be running!)', function() {
-  
+
   describe('.get', function() {
     it('should be able to get the dummy resource and its /meta', function() {
       var expected_val = _.cloneDeep(setup.resource);
@@ -70,7 +70,7 @@ describe('server tests for simple setup (server must be running!)', function() {
       }))
       .then(function(result) {
         var expected_val = {};
-        return checkResourceAndMeta(setup.bookmarksid, expected_val, setup.meta);
+        return checkResourceAndMeta(setup.user.bookmarks._id, expected_val, setup.meta);
       });
     });
 
