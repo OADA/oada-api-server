@@ -12,6 +12,9 @@ var _ = require('lodash');
 var body_parser = require('body-parser');
 var bunyan = require('bunyan');
 var content_type_parser = require('content-type');
+var cors = require('cors');
+var fs = require('fs');
+var https = require('https');
 
 // Local libs:
 var well_known_handler = require.main.require('./lib/well-known-handler.js');
@@ -39,9 +42,15 @@ app.use(body_parser.raw({
     return _.get(obj, "type", "").match(/\+json$/);
   }
 }));
+app.use(cors({ 
+  exposedHeaders: [ 'x-oada-rev', 'location' ],
+}));
+app.options('*', cors()); // enable CORS for 'complex' requests
 // Generic error handler to catch body-parser JSON errors:
 app.use(function(err, req, res, next) {
-  log.info('req.statusCode = ', req.statusCode);
+  log.info('parser error? err = ', err);
+  log.info('parser error? req = ', req);
+  next();
 });
 
 ///////////////////////////////////////////////////////////
@@ -244,11 +253,24 @@ app.get('/meta/:rid', function(req, res) {
 
 /////////////////////////////////////////////////////
 // Start the server:
-var server = app.listen(3000, function () {
-  var host = server.address().address;
-  if (host === '::') host = 'localhost';
-  var port = server.address().port;
-  console.log('OADA Mock server listening at http://%s:%s', host, port);
-  console.log('CTRL-C to stop');
-});
+if (config.protocol.match(/https/)) {
+  var server = https.createServer({
+    key: fs.readFileSync('certs/server.key'),
+    cert: fs.readFileSync('certs/server.crt'),
+  }, app).listen(3000, function () {
+    var host = server.address().address;
+    if (host === '::') host = 'localhost';
+    var port = server.address().port;
+    console.log('OADA Mock server listening at https://%s:%s', host, port);
+    console.log('CTRL-C to stop');
+  });
+} else {
+  var server = app.listen(3000, function () {
+    var host = server.address().address;
+    if (host === '::') host = 'localhost';
+    var port = server.address().port;
+    console.log('OADA Mock server listening at https://%s:%s', host, port);
+    console.log('CTRL-C to stop');
+  });
+}
 

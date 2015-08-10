@@ -78,10 +78,11 @@ return Promise.try(function() {
   // NOTE: must register bookmarks_handler and meta_handler prior to
   // resources_handler because they call next() to get to the
   // resources handler.
-  app.use(config.wellKnown.oada_base_uri, bookmarks_handler);
-  app.use(config.wellKnown.oada_base_uri, meta_handler);
-  app.use(config.wellKnown.oada_base_uri, resources_handler);
-
+  app.use(config.oada_path_prefix, bookmarks_handler);
+  app.use(config.oada_path_prefix, meta_handler);
+  app.use(config.oada_path_prefix, resources_handler);
+  
+  
   ////////////////////////////////////////////////////////
   // Configure the OADA well-known handler middleware
   var well_known_handler = well_known_json({

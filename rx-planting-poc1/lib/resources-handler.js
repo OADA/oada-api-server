@@ -77,8 +77,10 @@ var _ResourcesHandler = {
 
     // Check that the token has scope to POST this:
     if (!scopes.checkRequest(req, res)) return; // scopes sends it's own oada-errors
+
     // Attempt to parse the posted object in question based on media type:
     var new_obj = mediatype_parser.parseHttpBody(req);
+    log.debug('post: content-type = ', req.headers['content-type']);
     var mediatype = _.get(content_type_parser.parse(req.headers['content-type']), 'type');
     if (!new_obj) return oada_errors.contentTypeError(res);
 

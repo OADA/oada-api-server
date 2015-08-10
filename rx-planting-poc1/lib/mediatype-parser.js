@@ -21,6 +21,14 @@ var parsers = {
       return null 
     }
   },
+
+  "application/json": function(data) {
+    try { return JSON.parse(data.toString()); }
+    catch(err) {
+      log.trace('application/json: unable to parse JSON: ', err);
+      return null;
+    }
+  },
 };
 
 var _MediaTypeParser = {

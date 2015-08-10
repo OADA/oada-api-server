@@ -4,7 +4,7 @@ var path = require('path');
 module.exports = {
   wellKnown: {
     well_known_version: '1.0.0',
-    oada_base_uri: '/',
+    oada_base_uri: 'http://localhost:3000/',
     scopes_supported: [
       {
         name: 'oada.all.1', // can do anything the user can do
@@ -13,6 +13,7 @@ module.exports = {
       }
     ],
   },
+  oada_path_prefix: '/',
 
   // If you want to hard-code the token used for testing, uncomment the auth below:
   auth: {
@@ -21,7 +22,6 @@ module.exports = {
   protocol: "http://",
   domain: 'vip3.ecn.purdue.edu',
   port: 3000,
-  dbsetup: require('./dbsetups/simple.js'),
   certs: {
     key: fs.readFileSync(path.join(__dirname, 'certs/ssl/server.key')),
     cert: fs.readFileSync(path.join(__dirname, 'certs/ssl/server.crt')),
@@ -29,4 +29,5 @@ module.exports = {
     requestCrt: true,
     rejectUnauthorized: false,
   },
+  dbsetup: require('./dbsetups/sales.js'),
 };
