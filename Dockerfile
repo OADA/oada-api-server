@@ -23,7 +23,7 @@ WORKDIR /code
 RUN mkdir /data
 
 # Add the docker-entrypoint.sh script to run whenever the container starts
-ADD ./docker-entrypoint.sh /docker-entrypoint.sh
+ADD ./docker/docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
 
 # When the container starts, start the API server
