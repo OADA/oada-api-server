@@ -1,0 +1,41 @@
+{
+  "name": "oada-api-server",
+  "version": "0.0.0",
+  "description": "Implementation of OADA API in node.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha -w",
+    "cover": "istanbul cover _mocha",
+    "lint": "jshint --reporter node_modules/jshint-stylish/stylish.js .",
+    "style": "jscs .",
+    "clean": "rm -rf ./coverage"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/OADA/oada-api-server.git"
+  },
+  "keywords": [
+    "oada"
+  ],
+  "author": {
+    "name": "Aaron Ault",
+    "email": "aaron@openag.io",
+    "url": "http://openag.io"
+  },
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/OADA/oada-api-server/issues"
+  },
+  "homepage": "https://github.com/OADA/oada-api-server",
+  "devDependencies": {
+    "chai": "^3.2.0",
+    "istanbul": "^0.3.17",
+    "jscs": "^2.1.0",
+    "jshint": "^2.8.0",
+    "jshint-stylish": "^2.0.1",
+    "mocha": "^2.2.5"
+  }
+}
