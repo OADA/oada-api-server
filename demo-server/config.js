@@ -65,7 +65,7 @@ module.exports = function() {
     drivers: {
       // Any initial database setups (for testing, etc.)
       initial_setup: function() {
-        return require('./dbsetups/simple.js')(_Config);
+        return require('./dbsetups/sales.js')(_Config);
       },
   
       // Rev graph updater
@@ -90,7 +90,8 @@ module.exports = function() {
             // starts.  You can comment the persistence line below to disable.
             persistence: function() {
               return require('./lib/memory-db/memory-db-persistence.js')({
-                output_file: './current_db.js',
+                // moved data above this directory because forever keeps restarting despite --watchIgnore...
+                output_file: (process.env.ISDOCKER ? '/data/current_db.js' : '../data/current_db.js'),
                 drivers: _Config.drivers,
               });
             },

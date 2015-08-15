@@ -49,7 +49,7 @@ module.exports = function(config) {
   
       // Create the token:
       }).then(function() {
-        return auth_driver.set(config().auth.token, {
+        return auth_driver.set(config.test.auth.token, {
           userid: _Setup.user._id,
         });
      
