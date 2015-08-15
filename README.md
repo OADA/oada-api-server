@@ -7,10 +7,10 @@
 
 ## Installation ##
 ```shell
-npm install oada-api-server
+npm install
 ```
 
 ## Usage ##
 ```javascript
-var oadaApiServer = require('oada-api-server');
+npm run start
 ```
