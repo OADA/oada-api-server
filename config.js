@@ -65,7 +65,7 @@ module.exports = function() {
     drivers: {
       // Any initial database setups (for testing, etc.)
       initial_setup: function() {
-        return require('./dbsetups/sales.js')(_Config);
+        return require('./dbsetups/simple.js')(_Config);
       },
   
       // Rev graph updater

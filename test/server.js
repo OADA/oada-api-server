@@ -136,6 +136,7 @@ describe('server tests for simple setup (server must be running!)', function() {
 
     it('should update the rev on a document after changing it, '
       +'given a reasonable delay', function() {
+      this.timeout(1500);
       var resourceid = '' + cur_resid++;
       var val = { g: 'val g', h: 'val h' };
       var new_val = { i: 'val i' };

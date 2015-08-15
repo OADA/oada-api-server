@@ -15,7 +15,9 @@ describe('rev-graph', function() {
 
   describe('#revs', function() {
     describe('.incrementRevString', function() {
-      before(function() { return rg.reset(); });
+      before(function() { 
+        return rg.reset(); 
+      });
       it('should increment 0-0 to 1-something', function() {
         expect(rg.incrementRevString('0-0')).to.match(/^1-.+$/);
       });
@@ -309,6 +311,7 @@ describe('rev-graph', function() {
         nonversioned: { _id: resourceid1 },
       };
       before(function() {
+        this.timeout(1500);
         return rg.reset()
         .then(function() {
           rg.start();
