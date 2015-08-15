@@ -9,8 +9,11 @@ RUN apt-get install -y git
 RUN npm install -g forever
 
 # Clone the git project:
+# Note that you can also copy in the local folder: ADD . /code
+# or you can just mount the local folder with the docker using '-v .:/code' on command line
+# or you can use 'VOLUMES .:/code' for docker-compose to mount local directory inside container
 RUN mkdir /code
-RUN cd /code && git clone git@github.com:OADA/oada-demo-tests.git
+RUN cd /code && git clone https://github.com/OADA/oada-api-server.git
 
 # Set default dir for a shell to /code (where the git repo is cloned)
 WORKDIR /code
