@@ -7,7 +7,7 @@
     "cover": "istanbul cover _mocha",
     "lint": "jshint --reporter node_modules/jshint-stylish/stylish.js .",
     "style": "jscs .",
-    "clean": "rm -rf ./coverage"
+    "clean": "rm -rf ./coverage",
     "test": "mocha --recursive --colors test | bunyan -o short",
     "test-memdb": "mocha --colors test/memory-db.js | bunyan -o short",
     "test-all": "mocha --colors test | bunyan -o short",
