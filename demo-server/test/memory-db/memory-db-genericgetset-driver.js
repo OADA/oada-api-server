@@ -1,8 +1,11 @@
 var expect = require('chai').expect;
 
-var driver = require('../lib/memory-db-auth-driver.js');
+var config = require('../../config.js')();
 
-describe('memory-db-auth-driver', function() {
+// Library under test:
+var driver = require('../../lib/memory-db/memory-db-genericgetset-driver.js')(config)('auth');
+
+describe('memory-db-genericgetset-driver', function() {
 
   it('should be able to set a token and then get it back', function() {
     var token = '123/~kw1';

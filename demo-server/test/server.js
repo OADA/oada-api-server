@@ -2,18 +2,25 @@ var expect = require('chai').expect;
 var request = require('request-promise');
 var _ = require('lodash');
 
-var oada_util = require('../lib/oada-util.js');
-var config = require('../config.js');
-var setup = require('../dbsetups/simple.js');
+var config = require('../config.js')();
 
-var host = 'http://localhost:'+config.port+'/';
+var oada_util = config.drivers.util();
+var setup = require('../dbsetups/simple.js')(config);
+
+var host = config.server.protocol + config.server.domain
+  + (config.server.port ? ':'+config.server.port : '')
+  + '/';
+console.log('host = ', host);  
+
+// Need this line to disable checks for self-signed SSL certificates:
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"; 
 
 var opts = function(mergeobj) {
   return _.merge({
     uri: host,
     resolveWithFullResponse: true,
     headers: {
-      'authorization': 'Bearer ' + config.auth.token,
+      'authorization': 'Bearer ' + config.test.auth.token,
       'content-type': setup.meta._mediaType,
     },
     simple: false

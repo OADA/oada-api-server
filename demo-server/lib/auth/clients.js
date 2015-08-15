@@ -14,25 +14,31 @@
  */
 'use strict';
 
-var clientDriver = require('../memory-db-client-driver');
+var singleton = null;
 
-function findById(id, cb) {
-  return clientDriver
-    .get(id)
-    .nodeify(cb);
-}
+module.exports = function(config) {
+  if (singleton) return singleton;
 
-function save(client, cb) {
-  return clientDriver
-    .set(client.clientId, client)
-    .then(function() {
+  var clientDriver = config.drivers.db.client();
+ 
+  var _Clients = {
+    findById: findById(id, cb) {
       return clientDriver
-        .get(client.clientId);
-    })
-    .nodeify(cb);
-}
-
-module.exports = {
-  findById: findById,
-  save: save,
-}
+        .get(id)
+        .nodeify(cb);
+    },
+  
+    save: function(client, cb) {
+      return clientDriver
+        .set(client.clientId, client)
+        .then(function() {
+          return clientDriver
+            .get(client.clientId);
+        })
+        .nodeify(cb);
+    },
+  };
+ 
+  singleton = _Clients;
+  return _Clients;
+};

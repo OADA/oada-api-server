@@ -22,23 +22,27 @@ var oada_error = require('oada-error');
 var oada_ref_auth = require('oada-ref-auth');
 
 // Local libs:
- var bookmarks_handler = require('./lib/bookmarks-handler');
- var resources_handler = require('./lib/resources-handler');
-      var meta_handler = require('./lib/meta-handler');
-            var config = require('./config');
-               var log = require('./lib/logger.js');
-            var errors = require('./lib/errors.js');
-         var rev_graph = require('./lib/rev-graph.js');
-  var mediatype_parser = require('./lib/mediatype-parser.js');
+            var config = require('./config.js')(); // Only server.js includes config: everything else is passed it's config
+ var bookmarks_handler = config.drivers.handlers.bookmarks();
+ var resources_handler = config.drivers.handlers.resources();
+      var meta_handler = config.drivers.handlers.meta();
+  var mediatype_parser = config.drivers.mediatype_parser();
+            var errors = config.drivers.error();
+               var log = config.drivers.log();
+         var rev_graph = config.drivers.rev_graph();
+
+// Optional Local libs:
+var initial_setup = config.drivers.initial_setup;
+initial_setup = (typeof initial_setup === 'function') ? initial_setup() : false;
 
 return Promise.try(function() {
   log.info('-------------------------------------------------------------');
   log.info('Starting server...');
 
   // If config requests that DB be setup, run the given setup function:
-  if (config.dbsetup) {
+  if (initial_setup) {
     log.info('Setting up database...');
-    return config.dbsetup.setup();
+    return initial_setup.setup();
   }
 
 }).then(function() {
@@ -62,7 +66,6 @@ return Promise.try(function() {
   }));
   app.options('*', cors());
 
-
   /////////////////////////////////////////////////////////////////
   // Setup the body parser and associated error handler:
   app.use(body_parser.raw({
@@ -78,9 +81,9 @@ return Promise.try(function() {
   // NOTE: must register bookmarks_handler and meta_handler prior to
   // resources_handler because they call next() to get to the
   // resources handler.
-  app.use(config.oada_path_prefix, bookmarks_handler);
-  app.use(config.oada_path_prefix, meta_handler);
-  app.use(config.oada_path_prefix, resources_handler);
+  app.use(config.server.path_prefix, bookmarks_handler);
+  app.use(config.server.path_prefix, meta_handler);
+  app.use(config.server.path_prefix, resources_handler);
   
   
   ////////////////////////////////////////////////////////
@@ -90,23 +93,14 @@ return Promise.try(function() {
       'content-type': 'application/vnd.oada.oada-configuration.1+json',
     },
   });
-  well_known_handler.addResource('oada-configuration', config.wellKnown);
+  well_known_handler.addResource('oada-configuration', config.oada_configuration);
   app.use(well_known_handler);
 
   // Enable the OADA Auth code to handle OAuth2
   app.use(oada_ref_auth({
     wkj: well_known_handler,
-    server: {
-      port: config.port,
-      mode: config.protocol === 'https://' ? 'https' : 'http',
-      domain: config.domain,
-    },
-    datastores: {
-      clients: require('./lib/auth/clients'),
-      users: require('./lib/auth/users'),
-      codes: require('./lib/auth/codes'),
-      tokens: require('./lib/auth/tokens'),
-    }
+    server: config.server,
+    datastores: config.drivers.auth.datastores,
   }));
 
   //////////////////////////////////////////////////
@@ -119,9 +113,9 @@ return Promise.try(function() {
   // Use OADA middleware to catch errors and respond
   app.use(oada_error.middleware(console.log));
 
-  app.set('port', config.port);
-  if(config.protocol === 'https://') {
-    var server = https.createServer(config.certs, app);
+  app.set('port', config.server.port);
+  if(config.server.protocol === 'https://') {
+    var server = https.createServer(config.server.certs, app);
     server.listen(app.get('port'), function() {
       log.info('OADA Test Server started on port ' + app.get('port')
           + ' [https]');

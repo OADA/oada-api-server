@@ -14,25 +14,31 @@
  */
 'use strict';
 
-var codeDriver = require('../memory-db-code-driver');
+var singleton = null;
 
-function findByCode(code, cb) {
-  return codeDriver
-    .get(code)
-    .nodeify(cb);
-}
+module.exports = function(config) {
+  if(singleton) return singleton;
 
-function save(code, cb) {
-  return codeDriver
-    .set(code.code, code)
-    .then(function() {
+  var codeDriver = config.drivers.db.code();
+
+  var _Codes = {
+    findByCode: function(code, cb) {
       return codeDriver
-        .get(code.code);
-    })
-    .nodeify(cb);
-}
+        .get(code)
+        .nodeify(cb);
+    },
 
-module.exports = {
-  findByCode: findByCode,
-  save: save,
+    save: function(code, cb) {
+      return codeDriver
+        .set(code.code, code)
+        .then(function() {
+          return codeDriver
+            .get(code.code);
+        })
+        .nodeify(cb);
+    },
+  };
+
+  singleton = _Codes;
+  return singleton;
 };

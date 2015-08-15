@@ -4,7 +4,10 @@ chai.use(chai_as_promised);
 var expect = chai.expect;
 var _ = require('lodash');
 
-var u = require('../lib/oada-util.js');
+var config = require('../config.js');
+
+// Library under test:
+var u = require('../lib/oada-util.js')(config);
 
 describe('oada-util', function() {
   describe('isLink', function() {

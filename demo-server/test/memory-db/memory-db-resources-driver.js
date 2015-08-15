@@ -4,8 +4,12 @@ chai.use(chai_as_promised);
 var expect = chai.expect;
 var _ = require('lodash');
 
-var driver = require('../lib/memory-db-resources-driver.js');
-var db = require('../lib/memory-db.js');
+var config = require('../../config.js')();
+
+var db = config.drivers.db.db();
+
+// Library under test:
+var driver = require('../../lib/memory-db/memory-db-resources-driver.js')(config);
 
 var cur_resid = 234;
 

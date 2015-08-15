@@ -1,8 +1,13 @@
 var expect = require('chai').expect;
 
-var rg = require('../lib/rev-graph.js');
-var res_driver = require('../lib/memory-db-resources-driver.js');
-var db = require('../lib/memory-db.js');
+
+var config = require('../config.js')();
+
+var res_driver = config.drivers.db.resources();
+var db = config.drivers.db.db();
+
+// Library under test:
+var rg = require('../lib/rev-graph.js')(config);
 
 var cur_resid = 567;
 

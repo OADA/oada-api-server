@@ -15,27 +15,35 @@
 'use strict';
 
 var _ = require('lodash');
-var authDriver = require('../memory-db-auth-driver');
 
-function findByToken(token, cb) {
-  return authDriver
-    .get(token)
-    .nodeify(cb);
-}
+var singleton = null;
 
-function save(token, cb) {
-  var t = _.cloneDeep(token);
-  t.user = {_id: token.user._id};
-  return authDriver
-    .set(t.token, t)
-    .then(function() {
+module.exports = function(config) {
+  if(singleton) return singleton;
+
+  var authDriver = config.drivers.db.auth();
+
+  var _Tokens = {
+    findByToken: function(token, cb) {
       return authDriver
-        .get(t.token);
-    })
-    .nodeify(cb);
-}
+        .get(token)
+        .nodeify(cb);
+    },
+  
+    save: function(token, cb) {
+      var t = _.cloneDeep(token);
+      t.user = {_id: token.user._id};
+      return authDriver
+        .set(t.token, t)
+        .then(function() {
+          return authDriver
+            .get(t.token);
+        })
+        .nodeify(cb);
+    },
+  
+  };
 
-module.exports = {
-  findByToken: findByToken,
-  save: save,
+  singleton = _Tokens;
+  return singleton;
 };

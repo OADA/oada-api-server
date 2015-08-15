@@ -41,7 +41,7 @@
     "test-all": "mocha --colors test | bunyan -o short",
     "test-watch": "mocha --recursive -w --colors test | bunyan -o short",
     "start": "node server.js | bunyan -o short",
-    "start-watch": "forever -w --watchDirectory . server.js | bunyan -o short"
+    "start-watch": "forever -w --watchDirectory . --watchIgnore ./current_db.js server.js | bunyan -o short"
   },
   "repository": {
     "type": "git",

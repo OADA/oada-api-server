@@ -14,40 +14,47 @@
  */
 'use strict';
 
-var userDriver = require('../memory-db-user-driver');
-var resDriver = require('../memory-db-resources-driver');
+var singleton = null;
 
-function findByUsername(username, cb) {
-  return userDriver
-    .get(username)
-    .then(function(user) {
-      return _lookupUserRes(user);
-    })
-    .nodeify(cb);
-}
+module.exports = function(config) {
 
-function findByUsernamePassword(username, password, cb) {
-  return userDriver
-    .get(username)
-    .then(function(user) {
-      if (user.password === password) {
-        return _lookupUserRes(user);
-      } else {
-        return false;
-      }
-    })
-    .nodeify(cb);
-}
+  var userDriver = config.drivers.db.users();
+  var resDriver = config.drivers.db.resources();
 
-function _lookupUserRes(user) {
-  return resDriver
-    .get('/' + user.resource._id)
-    .then(function(user) {
-      return user.val;
-    });
-}
+  var lookupUserRes = function (user) {
+    return resDriver
+      .get('/' + user.resource._id)
+      .then(function(user) {
+        return user.val;
+      });
+  };
 
-module.exports = {
-  findByUsername: findByUsername,
-  findByUsernamePassword: findByUsernamePassword,
+
+  var _Users = {
+  
+    findByUsername: function(username, cb) {
+      return userDriver
+        .get(username)
+        .then(function(user) {
+          return lookupUserRes(user);
+        })
+        .nodeify(cb);
+    },
+  
+    findByUsernamePassword: function(username, password, cb) {
+      return userDriver
+        .get(username)
+        .then(function(user) {
+          if (user.password === password) {
+            return lookupUserRes(user);
+          } else {
+            return false;
+          }
+        })
+        .nodeify(cb);
+    },
+  };
+  
+  singleton = _Users;
+  return singleton;
 };
