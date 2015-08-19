@@ -6,7 +6,7 @@ var path = require('path');
 var static_config = {
   server: {
     protocol: "https://",
-    domain: 'localhost',
+    domain: (process.env.OADA_API_DOMAIN ? process.env.OADA_API_DOMAIN : 'localhost'),
     port: 3000,
     path_prefix: '/',
   },
