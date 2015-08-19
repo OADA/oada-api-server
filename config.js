@@ -17,7 +17,10 @@ module.exports = function() {
   if (singleton) return singleton;
 
   var _Config = {
-  
+
+    name: 'OADA API server',
+    log_level: 'info',  // trace, debug, info, warn, error, fatal
+
     // Things needed to start the server:
     // (Has to be a function because it refers to other _Config info
     server: {
@@ -76,7 +79,7 @@ module.exports = function() {
       // What you want to use for logging: needs to support 
       // child(), info(), error(), debug(), fatal(), trace()
       log: function() { 
-        return require('./lib/logger.js')();
+        return require('./lib/logger.js')(_Config);
       },
   
       db: {
@@ -95,6 +98,7 @@ module.exports = function() {
                 drivers: _Config.drivers,
               });
             },
+
             drivers: _Config.drivers,
           });
         },

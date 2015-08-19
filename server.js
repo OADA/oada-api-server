@@ -55,9 +55,11 @@ return Promise.try(function() {
   app.use(express_promise());
 
   // Log all requests before anything else gets them for debugging:
-  app.use(function(err, req, res, next) {
+  app.use(function(req, res, next) {
     log.info('Received request: ' + req.method + ' ' + req.url);
-    next(err);
+    log.trace('req.headers = ', req.headers);
+    log.trace('req.body = ', req.body);
+    next();
   });
 
   // Turn on CORS for all domains, allow the necessary headers
