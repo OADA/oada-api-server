@@ -65,7 +65,7 @@ module.exports = function() {
   
   
     // Modules to use for this setup:
-    drivers: {
+    libs: {
       // Any initial database setups (for testing, etc.)
       initial_setup: function() {
         return require('./dbsetups/simple.js')(_Config);
@@ -84,7 +84,7 @@ module.exports = function() {
   
       db: {
   
-        // Bottom-level database, used by all the other database drivers.
+        // Bottom-level database, used by all the other database libs.
         // Yes, I know it's weird to have _Config.db.db(), but hey, it works here.
         db: function() { 
           return require('./lib/memory-db/memory-db.js')({ 
@@ -95,16 +95,16 @@ module.exports = function() {
               return require('./lib/memory-db/memory-db-persistence.js')({
                 // moved data above this directory because forever keeps restarting despite --watchIgnore...
                 output_file: (process.env.ISDOCKER ? '/data/current_db.js' : '../data/current_db.js'),
-                drivers: _Config.drivers,
+                libs: _Config.libs,
               });
             },
 
-            drivers: _Config.drivers,
+            libs: _Config.libs,
           });
         },
   
         // Drivers for higher-level components to interact with database:
-        // Note that they each use _Config.drivers.log and _Config.drivers.db.db
+        // Note that they each use _Config.libs.log and _Config.libs.db.db
         // at minimum.
         resources: function() { return require('./lib/memory-db/memory-db-resources-driver.js')(_Config); },
         auth:      function() { return require('./lib/memory-db/memory-db-genericgetset-driver.js')(_Config)('auth'); },
@@ -113,7 +113,7 @@ module.exports = function() {
         code:      function() { return require('./lib/memory-db/memory-db-genericgetset-driver.js')(_Config)('codes'); },
       },
   
-      // Datastores needed for oada-ref-auth (they use the db drivers defined above)
+      // Datastores needed for oada-ref-auth (they use the db libs defined above)
       auth: {
         datastores: {
           clients: function() { return require('./lib/auth/clients.js')(_Config); },

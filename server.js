@@ -23,16 +23,16 @@ var oada_ref_auth = require('oada-ref-auth');
 
 // Local libs:
             var config = require('./config.js')(); // Only server.js includes config: everything else is passed it's config
- var bookmarks_handler = config.drivers.handlers.bookmarks();
- var resources_handler = config.drivers.handlers.resources();
-      var meta_handler = config.drivers.handlers.meta();
-  var mediatype_parser = config.drivers.mediatype_parser();
-            var errors = config.drivers.error();
-               var log = config.drivers.log();
-         var rev_graph = config.drivers.rev_graph();
+ var bookmarks_handler = config.libs.handlers.bookmarks();
+ var resources_handler = config.libs.handlers.resources();
+      var meta_handler = config.libs.handlers.meta();
+  var mediatype_parser = config.libs.mediatype_parser();
+            var errors = config.libs.error();
+               var log = config.libs.log();
+         var rev_graph = config.libs.rev_graph();
 
 // Optional Local libs:
-var initial_setup = config.drivers.initial_setup;
+var initial_setup = config.libs.initial_setup;
 initial_setup = (typeof initial_setup === 'function') ? initial_setup() : false;
 
 return Promise.try(function() {
@@ -102,7 +102,7 @@ return Promise.try(function() {
   app.use(oada_ref_auth({
     wkj: well_known_handler,
     server: config.server,
-    datastores: config.drivers.auth.datastores,
+    datastores: config.libs.auth.datastores,
   }));
 
   //////////////////////////////////////////////////

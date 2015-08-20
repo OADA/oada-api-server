@@ -4,7 +4,7 @@ var _ = require('lodash');
 
 var config = require('../config.js')();
 
-var oada_util = config.drivers.util();
+var oada_util = config.libs.util();
 var setup = require('../dbsetups/simple.js')(config);
 
 var host = config.server.protocol + config.server.domain

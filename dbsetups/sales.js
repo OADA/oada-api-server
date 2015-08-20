@@ -8,11 +8,11 @@ var singleton = null;
 module.exports = function(config) {
   if (singleton) return singleton;
 
-  var res_driver = config.drivers.db.resources();
-  var auth_driver = config.drivers.db.auth();
-  var db = config.drivers.db.db(); // for printContents
+  var res_driver = config.libs.db.resources();
+  var auth_driver = config.libs.db.auth();
+  var db = config.libs.db.db(); // for printContents
   
-  var log = config.drivers.log().child({ module: 'dbsetups/sales' });
+  var log = config.libs.log().child({ module: 'dbsetups/sales' });
   
   log.info('Using tickets/sales initial db setup');
   

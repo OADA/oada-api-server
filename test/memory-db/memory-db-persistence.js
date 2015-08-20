@@ -14,7 +14,7 @@ var data_file = 'test-persistent-data.js';
 console.log('requiring persistence..');
 var persistence = require('../../lib/memory-db/memory-db-persistence.js')({
   output_file: data_file,
-  drivers: config.drivers, // for config.drivers.log()
+  libs: config.libs, // for config.libs.log()
   forcenew: true,
 });
 

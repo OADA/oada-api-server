@@ -8,10 +8,10 @@ var singleton = null;
 module.exports = function(config) {
   if (singleton) return singleton;
 
-  var res_driver = config.drivers.db.resources();
-  var auth_driver = config.drivers.db.auth();
-  var user_driver = config.drivers.db.users();
-  var db = config.drivers.db.db(); // for printContents
+  var res_driver = config.libs.db.resources();
+  var auth_driver = config.libs.db.auth();
+  var user_driver = config.libs.db.users();
+  var db = config.libs.db.db(); // for printContents
   
   var _Setup = {
     resource: {

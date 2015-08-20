@@ -6,7 +6,7 @@ var _ = require('lodash');
 
 var config = require('../../config.js')();
 
-var db = config.drivers.db.db();
+var db = config.libs.db.db();
 
 // Library under test:
 var driver = require('../../lib/memory-db/memory-db-resources-driver.js')(config);

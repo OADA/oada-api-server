@@ -3,8 +3,8 @@ var expect = require('chai').expect;
 
 var config = require('../config.js')();
 
-var res_driver = config.drivers.db.resources();
-var db = config.drivers.db.db();
+var res_driver = config.libs.db.resources();
+var db = config.libs.db.db();
 
 // Library under test:
 var rg = require('../lib/rev-graph.js')(config);

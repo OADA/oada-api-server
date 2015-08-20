@@ -2,8 +2,8 @@ var expect = require('chai').expect;
 
 var config = require('../../config.js')();
 
-var res_driver = config.drivers.db.resources();
-var auth_driver = config.drivers.db.auth();
+var res_driver = config.libs.db.resources();
+var auth_driver = config.libs.db.auth();
 
 // Library under test:
 var setup = require('../../dbsetups/simple.js')(config);
