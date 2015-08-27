@@ -68,6 +68,25 @@ return Promise.try(function() {
   }));
   app.options('*', cors());
 
+  ////////////////////////////////////////////////////////
+  //
+  // Configure the OADA well-known handler middleware
+  var well_known_handler = well_known_json({
+    headers: {
+      'content-type': 'application/vnd.oada.oada-configuration.1+json',
+    },
+  });
+  well_known_handler.addResource('oada-configuration', config.oada_configuration);
+  app.use(well_known_handler);
+
+  // Enable the OADA Auth code to handle OAuth2
+  app.use(oada_ref_auth({
+    wkj: well_known_handler,
+    server: config.server,
+    // Weird fix to the self needing config awkwardness
+    datastores: _.map(config.libs.auth.datastores, _.invoke)
+  }));
+
   /////////////////////////////////////////////////////////////////
   // Setup the body parser and associated error handler:
   app.use(body_parser.raw({
@@ -86,24 +105,6 @@ return Promise.try(function() {
   app.use(config.server.path_prefix, bookmarks_handler);
   app.use(config.server.path_prefix, meta_handler);
   app.use(config.server.path_prefix, resources_handler);
-  
-  
-  ////////////////////////////////////////////////////////
-  // Configure the OADA well-known handler middleware
-  var well_known_handler = well_known_json({
-    headers: {
-      'content-type': 'application/vnd.oada.oada-configuration.1+json',
-    },
-  });
-  well_known_handler.addResource('oada-configuration', config.oada_configuration);
-  app.use(well_known_handler);
-
-  // Enable the OADA Auth code to handle OAuth2
-  app.use(oada_ref_auth({
-    wkj: well_known_handler,
-    server: config.server,
-    datastores: config.libs.auth.datastores,
-  }));
 
   //////////////////////////////////////////////////
   // Default handler for top-level routes not found:
