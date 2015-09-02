@@ -8,6 +8,8 @@
 ## Installation ##
 ```shell
 npm install
+# Ensure this directory exists
+mkdir ../data
 ```
 
 ## Usage ##
