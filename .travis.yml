@@ -4,13 +4,12 @@ node_js:
 - '0.11'
 - '0.12'
 - node
-- iojs
 sudo: false
 deploy:
   provider: npm
   email: aaron@openag.io
   api_key:
-    secure: 
+    secure:
   on:
     tags: true
     all_branches: true
