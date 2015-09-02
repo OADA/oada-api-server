@@ -2,7 +2,7 @@
   "name": "oada-api-server",
   "version": "0.0.0",
   "description": "Implementation of OADA API in node.js",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
     "cover": "istanbul cover _mocha",
     "lint": "jshint --reporter node_modules/jshint-stylish/stylish.js .",
@@ -12,8 +12,8 @@
     "test-memdb": "mocha --colors test/memory-db.js | bunyan -o short",
     "test-all": "mocha --colors test | bunyan -o short",
     "test-watch": "mocha --recursive -w --colors test | bunyan -o short",
-    "start": "node server.js | bunyan -o short",
-    "start-watch": "forever -w --watchDirectory . server.js | bunyan -o short"
+    "start": "node main.js | bunyan -o short",
+    "start-watch": "forever -w --watchDirectory . main.js | bunyan -o short"
   },
   "directories": {
     "test": "test"
@@ -37,13 +37,16 @@
   "homepage": "https://github.com/OADA/oada-api-server",
   "devDependencies": {
     "chai": "^3.2.0",
+    "chai-as-promised": "^5.1.0",
     "istanbul": "^0.3.17",
     "jscs": "^2.1.0",
     "jshint": "^2.8.0",
     "jshint-stylish": "^2.0.1",
-    "chai-as-promised": "^5.1.0",
     "mocha-steps": "0.0.1",
-    "request-promise": "^0.4.2"
+    "request-promise": "^0.4.2",
+    "supertest": "^1.1.0",
+    "supertest-as-promised": "^2.0.2",
+    "supertest-promised": "^0.1.0"
   },
   "dependencies": {
     "MD5": "^1.2.1",
@@ -64,6 +67,7 @@
     "node-uuid": "^1.4.3",
     "oada-error": "^1.1.1",
     "oada-ref-auth": "oada/oada-ref-auth-js",
+    "oada-formats": "git://github.com/oada/oada-formats.git",
     "rwlock": "^5.0.0",
     "uuid": "^2.0.1",
     "well-known-json": "^0.2.0"

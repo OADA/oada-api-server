@@ -5,7 +5,7 @@ var expect = chai.expect;
 var _ = require('lodash');
 var Promise = require('bluebird');
 
-var config = require('../../config.js');
+var config = require('../../config.js')();
 
 // Library under test:
 var memory_db = require('../../lib/memory-db/memory-db.js')(config);

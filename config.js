@@ -37,6 +37,8 @@ module.exports = function() {
         requestCrt: true,
         rejectUnauthorized: false,
       },
+      // For testing:
+      // nolisten: true,  // tells server not to actually start listening on a port
     },
   
     // Things that should go in the /.well-known/oada-configuration:
@@ -80,6 +82,11 @@ module.exports = function() {
       // child(), info(), error(), debug(), fatal(), trace()
       log: function() { 
         return require('./lib/logger.js')(_Config);
+      },
+
+      // Library used for format examples and validation:
+      formats: function() {
+        return require('oada-formats')(_Config);
       },
   
       db: {
