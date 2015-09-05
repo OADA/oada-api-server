@@ -10,8 +10,6 @@ var config = require('../../config.js')();
 
 var data_file = 'test-persistent-data.js';
 
-console.log('persistence1');
-
 // Library under test:
 var persistence = require('../../lib/memory-db/memory-db-persistence.js')({
   output_file: data_file,

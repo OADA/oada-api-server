@@ -129,7 +129,7 @@ module.exports = function(config) {
         ///////////////////////////////////////////////////
         // Testing libraries can disable the actual listening
         // on a port by passing opts.nolisten to start()
-        if (!(opts.nolisten === true)) {
+        if (!opts.nolisten) {
           // Set the port and start the server (HTTPS vs. HTTP)
           _server.app.set('port', config.server.port);
           if(config.server.protocol === 'https://') {

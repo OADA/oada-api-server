@@ -9,8 +9,8 @@ module.exports = function(config) {
   if (singleton) return singleton;
 
   var res_driver = config.libs.db.resources();
-  var auth_driver = config.libs.db.auth();
-  var user_driver = config.libs.db.users();
+  var tokens_driver = config.libs.db.tokens();
+  var users_driver = config.libs.db.users();
   var db = config.libs.db.db(); // for printContents
   
   var _Setup = {
@@ -36,6 +36,15 @@ module.exports = function(config) {
       nickname: "Frankie",
       email: "frank@openag.io"
     },
+    auth_user: {
+      username: 'frank',
+      password: 'test',
+      resource: { _id: '1' }, // link to user resource
+    },
+    token: {
+      token: config.test.auth.token,
+      user: { _id: 'frank' }, // username of this user
+    },
   
     setup: function() {
       // Create the resource:
@@ -52,16 +61,14 @@ module.exports = function(config) {
       }).then(function() {
         return res_driver.put('/'+_Setup.user._id, _Setup.user,
             {_meta: _Setup.meta})
+
       }).then(function() {
-        return user_driver.set(_Setup.user.username, { 
-          resource: { _id: _Setup.user._id }, 
-          password: "pass"
-        });
+        return users_driver.set(_Setup.user.username, _Setup.auth_user);
+
       // Create the token:
       }).then(function() {
-        return auth_driver.set(config.test.auth.token, {
-          user: {_id: _Setup.user._id},
-        });
+        return tokens_driver.set(_Setup.token.token, _Setup.token);
+
       }).then(function() {
 //        db.printContents();
       });

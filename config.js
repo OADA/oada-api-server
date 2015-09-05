@@ -37,8 +37,6 @@ module.exports = function() {
         requestCrt: true,
         rejectUnauthorized: false,
       },
-      // For testing:
-      // nolisten: true,  // tells server not to actually start listening on a port
     },
   
     // Things that should go in the /.well-known/oada-configuration:
@@ -70,7 +68,7 @@ module.exports = function() {
     libs: {
       // Any initial database setups (for testing, etc.)
       initial_setup: function() {
-        return require('./dbsetups/simple.js')(_Config);
+        return require('./dbsetups/valleyix.js')(_Config);
       },
   
       // Rev graph updater
@@ -114,7 +112,7 @@ module.exports = function() {
         // Note that they each use _Config.libs.log and _Config.libs.db.db
         // at minimum.
         resources: function() { return require('./lib/memory-db/memory-db-resources-driver.js')(_Config); },
-        auth:      function() { return require('./lib/memory-db/memory-db-genericgetset-driver.js')(_Config)('auth'); },
+        tokens:    function() { return require('./lib/memory-db/memory-db-genericgetset-driver.js')(_Config)('tokens'); },
         users:     function() { return require('./lib/memory-db/memory-db-genericgetset-driver.js')(_Config)('users'); },
         client:    function() { return require('./lib/memory-db/memory-db-genericgetset-driver.js')(_Config)('clients'); },
         code:      function() { return require('./lib/memory-db/memory-db-genericgetset-driver.js')(_Config)('codes'); },

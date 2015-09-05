@@ -3,7 +3,8 @@ var expect = require('chai').expect;
 var config = require('../../config.js')();
 
 var res_driver = config.libs.db.resources();
-var auth_driver = config.libs.db.auth();
+var tokens_driver = config.libs.db.tokens();
+var users_driver = config.libs.db.users();
 
 // Library under test:
 var setup = require('../../dbsetups/simple.js')(config);
@@ -36,9 +37,16 @@ describe('simple db setup', function() {
   });
 
   it('should have the token', function() {
-    return auth_driver.get(config.test.auth.token)
+    return tokens_driver.get(setup.token.token)
     .then(function(val) {
-      expect(val.user._id).to.equal(setup.user._id);
+      expect(val.user._id).to.equal(setup.token.user._id);
+    });
+  });
+
+  it('should have the auth user with password', function() {
+    return users_driver.get(setup.user.username)
+    .then(function(val) {
+      expect(val.password).to.equal(setup.auth_user.password);
     });
   });
 
