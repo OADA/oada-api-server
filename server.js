@@ -48,22 +48,22 @@ module.exports = function(config) {
         opts = opts || {};
         log.info('-------------------------------------------------------------');
         log.info('Starting server...');
-      
+
         // If config requests that DB be setup, run the given setup function:
         if (initial_setup) {
           log.info('Setting up database...');
           return initial_setup.setup();
         }
-    
+
       }).then(function() {
-      
+
         /////////////////////////////////////////////////////////////////
         // Setup express:
         _server.app = express();
-      
+
         // Allow route handlers to return promises:
         _server.app.use(express_promise());
-      
+
         // Log all requests before anything else gets them for debugging:
         _server.app.use(function(req, res, next) {
           log.info('Received request: ' + req.method + ' ' + req.url);
@@ -71,33 +71,13 @@ module.exports = function(config) {
           log.trace('req.body = ', req.body);
           next();
         });
-      
+
         // Turn on CORS for all domains, allow the necessary headers
         _server.app.use(cors({
           exposedHeaders: [ 'x-oada-rev', 'location' ],
         }));
         _server.app.options('*', cors());
-      
-        /////////////////////////////////////////////////////////////////
-        // Setup the body parser and associated error handler:
-        _server.app.use(body_parser.raw({
-          limit: '10mb',
-          type: function(req) {
-            return mediatype_parser.canParse(req);
-          }
-        }));
-      
-        /////////////////////////////////////////////////////////
-        // Setup the resources, meta, and bookmarks routes:
-      
-        // NOTE: must register bookmarks_handler and meta_handler prior to
-        // resources_handler because they call next() to get to the
-        // resources handler.
-        _server.app.use(config.server.path_prefix, bookmarks_handler);
-        _server.app.use(config.server.path_prefix, meta_handler);
-        _server.app.use(config.server.path_prefix, resources_handler);
-        
-        
+
         ////////////////////////////////////////////////////////
         // Configure the OADA well-known handler middleware
         var well_known_handler = well_known_json({
@@ -107,20 +87,39 @@ module.exports = function(config) {
         });
         well_known_handler.addResource('oada-configuration', config.oada_configuration);
         _server.app.use(well_known_handler);
-      
+
         // Enable the OADA Auth code to handle OAuth2
         _server.app.use(oada_ref_auth({
           wkj: well_known_handler,
           server: config.server,
           datastores: _.map(config.libs.auth.datastores, _.invoke),
         }));
-      
+
+        /////////////////////////////////////////////////////////////////
+        // Setup the body parser and associated error handler:
+        _server.app.use(body_parser.raw({
+          limit: '10mb',
+          type: function(req) {
+            return mediatype_parser.canParse(req);
+          }
+        }));
+
+        /////////////////////////////////////////////////////////
+        // Setup the resources, meta, and bookmarks routes:
+
+        // NOTE: must register bookmarks_handler and meta_handler prior to
+        // resources_handler because they call next() to get to the
+        // resources handler.
+        _server.app.use(config.server.path_prefix, bookmarks_handler);
+        _server.app.use(config.server.path_prefix, meta_handler);
+        _server.app.use(config.server.path_prefix, resources_handler);
+
         //////////////////////////////////////////////////
         // Default handler for top-level routes not found:
         _server.app.use(function(req, res){
           throw new oada_error.OADAError('Route not found: ' + req.url, oada_error.codes.NOT_FOUND);
         });
-      
+
         ///////////////////////////////////////////////////
         // Use OADA middleware to catch errors and respond
         _server.app.use(oada_error.middleware(console.log));
@@ -144,7 +143,7 @@ module.exports = function(config) {
             });
           }
         }
-      
+
         /////////////////////////////////////////////////
         // Start the _rev updater
         rev_graph.start();
