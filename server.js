@@ -92,7 +92,7 @@ module.exports = function(config) {
         _server.app.use(oada_ref_auth({
           wkj: well_known_handler,
           server: config.server,
-          datastores: _.map(config.libs.auth.datastores, _.invoke),
+          datastores: _.mapValues(config.libs.auth.datastores, function(d) { return d(); }), // invoke each config
         }));
 
         /////////////////////////////////////////////////////////////////

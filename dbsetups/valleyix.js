@@ -28,8 +28,10 @@ module.exports = function(config) {
     user: function() {
       return {
         _meta: { _mediaType: 'application/vnd.oada.user.1+json' },
-        bookmarks: _Setup.bookmarks()
-      }
+        bookmarks: _Setup.bookmarks(),
+        username: 'frank',
+        // password defined in auth_user below
+      };
     },
       
     bookmarks: function(opts) {
@@ -95,7 +97,7 @@ module.exports = function(config) {
     auth_user: function() {
       return {
         username: _Setup.treeWithIds().username,
-        password: 'test',
+        password: 'pass',
         resource: { _id: _Setup.treeWithIds()._id },
       };
     },
@@ -157,8 +159,13 @@ module.exports = function(config) {
     // Given an example, override any keys with override values in the descriptor
     replaceOverrides: function(desc, example) {
       if (!desc) return example; // no descriptor for this level, no need to check further
-      if (typeof desc === 'object' && desc.overrideExample) return desc;
-      var ret = (_.isArray(example)) ? [] : {};
+      var ret;
+      if (typeof desc === 'object' && desc.overrideExample) {
+        ret = _.cloneDeep(desc);
+        delete ret.overrideExample;
+        return ret;
+      }
+      ret = (_.isArray(example)) ? [] : {};
       _.each(example, function(val, key) {
         if (desc[key] && desc[key].overrideExample) {
           ret[key] = _.cloneDeep(desc[key]);
