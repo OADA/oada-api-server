@@ -17,6 +17,7 @@ module.exports = function(config) {
     resource: {
       _id: '3',
       a: 'the val at a',
+      anemptystring: '',
     },
     meta: {
       _mediaType: 'application/vnd.oada.TEST.1+json',

@@ -89,6 +89,16 @@ describe('server tests for simple setup', function() {
       });
     });
 
+    // Had a bug where an empty string was returning not found, so added this test
+    it('should be able to get the "anemptystring" subdocument from the example resource', function() {
+      return base().get('/resources/'+setup.resource._id+'/anemptystring')
+      .set(headers)
+      .then(function(result) {
+        expect(result.statusCode).to.equal(200);
+        expect(JSON.parse(result.text)).to.equal('');
+      });
+    });
+
   });
 
   describe('.put', function() {
