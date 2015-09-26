@@ -2,6 +2,7 @@ var Promise = require('bluebird');
 Promise.longStackTraces();
 var fs = require('fs');
 var path = require('path');
+var Formats = require('oada-formats');
 
 var static_config = {
   server: {
@@ -38,7 +39,7 @@ module.exports = function() {
         rejectUnauthorized: false,
       },
     },
-  
+
     // Things that should go in the /.well-known/oada-configuration:
     // (Has to be a function because it refers to other _Config info
     oada_configuration: {
@@ -55,44 +56,51 @@ module.exports = function() {
         }
       ],
     },
-  
+
     // If you want to hard-code the token used for testing, uncomment the auth below:
     test: {
       auth: {
         token: "SJKF9jf309", // Hard-coded token for easy API testing
       },
     },
-  
-  
+
+
     // Modules to use for this setup:
     libs: {
       // Any initial database setups (for testing, etc.)
       initial_setup: function() {
         return require('./dbsetups/valleyix.js')(_Config);
       },
-  
+
       // Rev graph updater
       rev_graph: function() {
         return require('./lib/rev-graph.js')(_Config);
       },
-  
-      // What you want to use for logging: needs to support 
+
+      // What you want to use for logging: needs to support
       // child(), info(), error(), debug(), fatal(), trace()
-      log: function() { 
+      log: function() {
         return require('./lib/logger.js')(_Config);
       },
 
       // Library used for format examples and validation:
       formats: function() {
-        return require('oada-formats')(_Config);
+        return new Formats({
+            debug: function() {
+                return _Config.libs.log().info.bind(_Config.libs.log());
+            },
+            error: function() {
+                return _Config.libs.log().error.bind(_Config.libs.log());
+            }
+        });
       },
-  
+
       db: {
-  
+
         // Bottom-level database, used by all the other database libs.
         // Yes, I know it's weird to have _Config.db.db(), but hey, it works here.
-        db: function() { 
-          return require('./lib/memory-db/memory-db.js')({ 
+        db: function() {
+          return require('./lib/memory-db/memory-db.js')({
             // MemoryDB has an optional persistence module that periodically writes
             // the entire in-memory database to a file, and loads it when the server
             // starts.  You can comment the persistence line below to disable.
@@ -107,7 +115,7 @@ module.exports = function() {
             libs: _Config.libs,
           });
         },
-  
+
         // Drivers for higher-level components to interact with database:
         // Note that they each use _Config.libs.log and _Config.libs.db.db
         // at minimum.
@@ -117,7 +125,7 @@ module.exports = function() {
         client:    function() { return require('./lib/memory-db/memory-db-genericgetset-driver.js')(_Config)('clients'); },
         code:      function() { return require('./lib/memory-db/memory-db-genericgetset-driver.js')(_Config)('codes'); },
       },
-  
+
       // Datastores needed for oada-ref-auth (they use the db libs defined above)
       auth: {
         datastores: {
@@ -144,12 +152,12 @@ module.exports = function() {
     },
 
     ///////////////////////////////////////////////////////////////////
-    // Functions to mess with dependency injection 
+    // Functions to mess with dependency injection
 
-    // replaces any factory function with a new factory function.  Call this before 
+    // replaces any factory function with a new factory function.  Call this before
     // anybody else tries to use any of the factory function and you'll be fine using it.
     override: function(new_opt) {
-      _.merge(_Config, new_opt); 
+      _.merge(_Config, new_opt);
     },
   };
 
