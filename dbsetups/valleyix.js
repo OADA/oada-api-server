@@ -71,7 +71,7 @@ module.exports = function(config) {
           _meta: { _mediaType: 'application/vnd.valleyix.machine.configuration.1+json' },
         },
         status: {
-          _meta: { _mediaType: 'application/vnd.valleyix.machine.configuration.1+json' },
+          _meta: { _mediaType: 'application/vnd.valleyix.machine.status.1+json' },
         },
         applied: {
           _meta: { _mediaType: 'application/vnd.valleyix.machine.as-applied.1+json' },
@@ -194,6 +194,7 @@ module.exports = function(config) {
           return;
         }
         if (val._id) { // If it's an object, and has an '_id', make it a link from descriptor
+
           ret[key] = { _id: desc[key]._id, _rev: '0-0' };
           return;
         }
