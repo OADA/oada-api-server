@@ -68,7 +68,7 @@
     "node-uuid": "^1.4.3",
     "oada-error": "^1.1.1",
     "oada-formats": "^1.3.2",
-    "oada-ref-auth": "git://github.com/oada/oada-ref-auth-js.git",
+    "oada-ref-auth": "^0.0.2",
     "rwlock": "^5.0.0",
     "uuid": "^2.0.1",
     "valleyix-formats": "^1.1.1",
