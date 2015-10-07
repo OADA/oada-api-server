@@ -107,7 +107,7 @@ module.exports = function() {
             persistence: function() {
               return require('./lib/memory-db/memory-db-persistence.js')({
                 // moved data above this directory because forever keeps restarting despite --watchIgnore...
-                output_file: (process.env.ISDOCKER ? '/data/current_db.js' : '../data/current_db.js'),
+                output_file: (process.env.ISDOCKER ? '/data/current_db.js' : './data/current_db.js'),
                 libs: _Config.libs,
               });
             },

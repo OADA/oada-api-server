@@ -34,3 +34,6 @@ dist
 
 # Local yeoman stuff
 .yo-rc.json
+
+# Database persistent data
+data
