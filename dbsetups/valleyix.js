@@ -13,7 +13,8 @@ module.exports = function(config) {
   var users_driver = config.libs.db.users();
   var db = config.libs.db.db(); // for printContents
   var formats = config.libs.formats();
-  
+  formats.use(require('valleyix-formats'));
+
   var log = config.libs.log().child({ module: 'dbsetups/valleyix' });
   log.info('Using valleyix irrigation examples as initial setup');
 
@@ -33,7 +34,7 @@ module.exports = function(config) {
         // password defined in auth_user below
       };
     },
-      
+
     bookmarks: function(opts) {
       opts = opts || {};
       var ret = {
@@ -62,15 +63,15 @@ module.exports = function(config) {
       };
       return ret;
     },
-  
+
     machine: function() {
       return {
         _meta: { _mediaType: 'application/vnd.valleyix.machine.1+json' },
-        configuration: { 
-          _meta: { _mediaType: 'application/vnd.valleyix.machine.configuration.1+json' }, 
+        configuration: {
+          _meta: { _mediaType: 'application/vnd.valleyix.machine.configuration.1+json' },
         },
         status: {
-          _meta: { _mediaType: 'application/vnd.valleyix.machine.configuration.1+json' },
+          _meta: { _mediaType: 'application/vnd.valleyix.machine.status.1+json' },
         },
         applied: {
           _meta: { _mediaType: 'application/vnd.valleyix.machine.as-applied.1+json' },
@@ -86,7 +87,7 @@ module.exports = function(config) {
         },
       };
     },
-  
+
     grower: function() {
       return {
         _meta: { _mediaType: 'application/vnd.valleyix.grower.1+json' },
@@ -130,12 +131,12 @@ module.exports = function(config) {
         if (typeof val === 'object') {
           ret[key] = _Setup.populateDescriptors(val);
           return;
-        } 
+        }
         ret[key] = val;
       });
       return ret;
     },
-  
+
     ///////////////////////////////////////////////////////////////////////////
     // Walk through entire tree and assign id's to anything with an _meta:
     populateIds: function(obj) {
@@ -153,8 +154,8 @@ module.exports = function(config) {
       });
       return ret;
     },
- 
-    
+
+
     ///////////////////////////////////////////////////////////////////////////
     // Given an example, override any keys with override values in the descriptor
     replaceOverrides: function(desc, example) {
@@ -176,7 +177,7 @@ module.exports = function(config) {
           ret[key] = val;
           return;
         }
-        ret[key] = _Setup.replaceOverrides(desc[key], val); 
+        ret[key] = _Setup.replaceOverrides(desc[key], val);
       });
       return ret;
     },
@@ -193,6 +194,7 @@ module.exports = function(config) {
           return;
         }
         if (val._id) { // If it's an object, and has an '_id', make it a link from descriptor
+
           ret[key] = { _id: desc[key]._id, _rev: '0-0' };
           return;
         }
@@ -200,7 +202,7 @@ module.exports = function(config) {
       });
       return ret;
     },
-  
+
     //////////////////////////////////////////////////////////////////////////
     // Recursively put all the new objects as resources
     putLinkedTree: function(desc) {
@@ -210,12 +212,16 @@ module.exports = function(config) {
         if (typeof val === 'object' && val) {
           return _Setup.putLinkedTree(val);
         }
-      }).then(function() {
-
-        if (!desc._id) return; // don't put non-resource objects
-
+      })
+      .then(function() {
+        // TODO: This is sort of a hack but I don't fully understand the flow
+        // to rework it upstream. This seems to work...
+        if (!desc._id) throw {cancel: true}; // don't put non-resources
         // Get the example
-        var resource = formats.require(desc._meta).example();
+        return formats.model(desc._meta._mediaType);
+      })
+      .call('example', 'default')
+      .then(function(resource) {
         // Override any lists with keys in descriptor
         resource = _Setup.replaceOverrides(desc, resource);
         // Set the _id on the example object
@@ -230,9 +236,15 @@ module.exports = function(config) {
           // return a link to the object we put (for testing).
           return { _id: resource._id };
         });
+      })
+      .catch(function(e) {
+          // Skip non-resource objects
+          if(!e.cancel) {
+              throw e;
+          }
       });
     },
-  
+
 
     //////////////////////////////////////////////////////////////////////
     // Auth
