@@ -6,7 +6,7 @@ var supertest = require('supertest-as-promised');
 var config = require('../config.js')();
 
 // Override any configs for this test:
-config.log_level = 'error';
+// config.log_level = 'trace';
 config.libs.initial_setup = function() { return require('../dbsetups/simple.js')(config) };
 
 // Get any other libraries we'll need from config
@@ -113,6 +113,19 @@ describe('server tests for simple setup', function() {
         return checkResourceAndMeta(resourceid, val, { _mediaType: setup.meta._mediaType });
       });
     });
+
+    it('should be able to put an array at a key inside a resource, then get it back', function() {
+      var resourceid = '' + cur_resid++;
+      var val = { thearray: [ 'one', 'two', 'three' ] };
+      return base().put('/resources/'+resourceid)
+      .set(headers)
+      .send(JSON.stringify(val))
+      .then(function(result) {
+        expect(result.statusCode).to.equal(200);
+        return checkResourceAndMeta(resourceid, val, { _mediaType: setup.meta._mediaType });
+      });
+    });
+
   });
 
   describe('.post', function() {
