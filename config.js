@@ -11,6 +11,20 @@ var static_config = {
     port: 3000,
     path_prefix: '/',
   },
+  db: {
+    db_file: (process.env.ISDOCKER ? '/data/current_db.js' : './data/current_db.js')
+  }
+}
+
+//Use sample database if option is provided.
+if (process.env.DEMO != null) {
+  var sampleDataFile = process.env.ISDOCKER ? ('/sampleData/'+process.env.DEMO+'.js') : ('./sampleData/'+process.env.DEMO+'.js');
+  try {
+    fs.accessSync(sampleDataFile, fs.F_OK);
+    static_config.db.db_file = sampleDataFile;
+  } catch (e) {
+    //Sample data file does not exist
+  }
 }
 
 var singleton = null;
@@ -107,7 +121,7 @@ module.exports = function() {
             persistence: function() {
               return require('./lib/memory-db/memory-db-persistence.js')({
                 // moved data above this directory because forever keeps restarting despite --watchIgnore...
-                output_file: (process.env.ISDOCKER ? '/data/current_db.js' : './data/current_db.js'),
+                output_file: static_config.db.db_file,
                 libs: _Config.libs,
               });
             },
