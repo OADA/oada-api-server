@@ -3,7 +3,8 @@
 [![Dependency Status](https://david-dm.org/oada/oada-api-server.svg)](https://david-dm.org/oada/oada-api-server)
 [![License](http://img.shields.io/:license-Apache%202.0-green.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 
-# oada-api-server #
+# This repo is old and no longer used. #
+Please use [oada-srvc-docker](https://github.com/oada/oada-srvc-docker) instead.
 
 ## Installation ##
 ```shell
